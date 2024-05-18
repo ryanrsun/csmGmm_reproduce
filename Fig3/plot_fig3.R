@@ -12,11 +12,10 @@ sapply(file.sources,source,.GlobalEnv)
 #-----------------------------------------#
 # change to where the output files are stored
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig3/origOutput"
-names3a <- paste0("sim_n1k_j100k_ind3d_changeeff_new_raiseAlt_aID", 1:620, ".txt")
-names3b <- paste0("sim_n1k_j100k_ind3d_changepi0_raiseAlt_38_aID", 1:160, ".txt")
-#names3c <- paste0("sim_n1k_j100k_bincor_changeeff_raiseAlt_one_aID", 1:1400, ".txt")
+names3a <- paste0("Fig3A_aID", 1:620, ".txt")
+names3b <- paste0("Fig3B_aID", 1:160, ".txt")
 names3c <- paste0("Fig3C_aID", 401:1240, ".txt")
-names3d <- paste0("sim_n1k_j100k_rep2d_randomeff_raiseAlt_aID", 1:1000, ".txt")
+names3d <- paste0("Fig3D_aID", 1:1000, ".txt")
 #-----------------------------------------#
 
 # read raw output files
