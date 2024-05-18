@@ -1,0 +1,14 @@
+#BSUB -J 3dpi0A[1-160]
+#BSUB -W 7:00
+#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig8/errDir/sfig8c_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig8/errDir/sfig8c_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -q medium
+#BSUB -u rsun3@mdanderson.org
+#BSUB -n 1
+#BSUB -M 4
+#BSUB -R rusage[mem=4]
+
+# Run 1-160
+module load R/4.2.1
+Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig8/SFig8C_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig8/errDir/sfig8c_$LSB_JOBINDEX.out

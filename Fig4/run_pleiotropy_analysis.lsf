@@ -1,0 +1,13 @@
+#BSUB -J ukbanalysis[7-9]
+#BSUB -W 24:50
+#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/errDir/Fig4_data_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/errDir/Fig4_data_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -q long
+#BSUB -u rsun3@mdanderson.org
+#BSUB -n 1
+#BSUB -M 64
+#BSUB -R rusage[mem=64]
+
+module load R/4.2.1
+Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/ukb_analysis.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/errDir/Fig4_data_$LSB_JOBINDEX.out

@@ -1,0 +1,14 @@
+#BSUB -J SFig26A_f3[101-102]
+#BSUB -W 3:00
+#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig26/errDir/SFig26A_f3_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig26/errDir/SFig26A_f3_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -q short
+#BSUB -u rsun3@mdanderson.org
+#BSUB -n 1
+#BSUB -M 3
+#BSUB -R rusage[mem=3]
+
+# run 1-400
+module load R/4.2.1
+Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig26/SFig26A_sim_fit3.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig26/errDir/SFig26A_f3_$LSB_JOBINDEX.out

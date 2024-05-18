@@ -1,0 +1,14 @@
+#BSUB -J SFig14C5k[1-2000]
+#BSUB -W 3:01
+#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig14/errDir/SFig14C5k_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig14/errDir/SFig14C5k_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -q medium
+#BSUB -u rsun3@mdanderson.org
+#BSUB -n 1
+#BSUB -M 4
+#BSUB -R rusage[mem=4]
+
+# run 1-500
+module load R/4.2.1
+Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig14/SuppFig14C_sim5k.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig14/errDir/SFig14C5k_$LSB_JOBINDEX.out

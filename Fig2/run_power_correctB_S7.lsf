@@ -1,0 +1,14 @@
+#BSUB -J pcBS7[1-2]
+#BSUB -W 3:00
+#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/errDir/power_correctB_S7_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/errDir/power_correctB_S7_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -q short
+#BSUB -u rsun3@mdanderson.org
+#BSUB -n 1
+#BSUB -M 3
+#BSUB -R rusage[mem=3]
+
+# run 1-160
+module load R/4.2.1
+Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/Fig2B_power_correction.R $LSB_JOBINDEX 7 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/errDir/power_correctB_S7_$LSB_JOBINDEX.out
