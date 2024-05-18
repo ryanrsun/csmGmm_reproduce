@@ -1,12 +1,6 @@
 # For each of the 18 sentinel SNPs identified by ILCCO, test if it is
 # associated with the expressions of a group of genes at the other 17 loci in lung.
 
-# Note: The GTEx gene expression data cannot be shared due to privacy concerns.
-# We have provided the synthetic replacement data "synthDat.txt," however of course
-# using the synthetic data will not reproduce the original results. If the original
-# data is obtained upon request to dbGaP, the original data can be substituted below
-# and this script will reproduce the manuscript results.
-
 library(gdsfmt)
 library(SNPRelate)
 library(GWASTools)
@@ -15,7 +9,11 @@ library(tibble)
 library(dplyr)
 library(tidyr)
 library(data.table)
-library(LungCancerAssoc)
+devtools::install.packages("ryanrsun/lungCancerAssoc")
+devtools::install.packages("ryanrsun/csmGmm")
+setwd('../supportingCode')
+file.sources = list.files(pattern="*.R")
+sapply(file.sources,source,.GlobalEnv)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
@@ -27,27 +25,11 @@ Snum <- as.numeric(args[2])
 # set output directory 
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
 
-# TWAS summary statistics we have provided in Data folder
-twasLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/scc_lung_addchr1.csv"
-
-# synthetic GTEx data
-synthName <- "synthDat.txt"
-  
-# original=1 means we have the real data, 0 means using synthetic data
-original <- 0
-
-# these next lines only matter if you have the original GTEx data 
 # location of the GTEx_v7 folder
 rootDir <- "/rsrch3/home/biostatistics/rsun3/GTEx_v7/"
-# location of genotype data
-genoLoc <- paste0(rootDir, "GenotypeFiles/phg000830.v1.GTEx_WGS.genotype-calls-vcf.c1/GTEx_Analysis_2016-01-15_v7_WholeGenomeSeq_635Ind_PASS_AB02_GQ20_HETX_MISS15_PLINKQC_SNPs_maf.gds")
-# location of expression raw data
-exprLoc <- paste0(rootDir, "ExpressionFiles/phe000020.v1.GTEx_RNAseq.expression-data-matrixfmt.c1/GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_Lung_Gene.txt")
-# location of expression metadata
-metaLoc <- paste0(rootDir, "ExpressionFiles/phe000020.v1.GTEx_RNAseq.expression-data-matrixfmt.c1/GTEx_Data_20160115_v7_RNAseq_RNASeQCv1.1.8_metrics.tsv")
-# location of covariate data
-covarLoc <- paste0(rootDir, "Covariates/Lung.v7.covariates.txt")
 
+# the TWAS part of the mediation data
+twasFname <- "scc_ilcco_pm_Lung.csv"
 #-------------------------------------------------------------------#
 
 # some parameters for analysis
@@ -257,30 +239,31 @@ MPreg <- function(covarNames, genoNames, exprNames, allDat) {
 
 #----------------------------------------------------_#
 # start analysis
+# these files are all named in the way that GTEx originally provides them
+gdsName <- paste0(rootDir, "GenotypeFiles/phg000830.v1.GTEx_WGS.genotype-calls-vcf.c1/GTEx_Analysis_2016-01-15_v7_WholeGenomeSeq_635Ind_PASS_AB02_GQ20_HETX_MISS15_PLINKQC_SNPs_maf.gds")
 
-# the original GTEx data comes in some very complicated formats, we 
-# keep the synthetic data much more clean
-if (original) {
-  # read from gds on disk
-  retGds <- read_gds(genoLoc)
-  genoData <- retGds$genoData
+# read from gds on disk
+retGds <- read_gds(gdsName)
+genoData <- retGds$genoData
 
-  # make SNP position df
-  snpPosDF <- getSnpAnnotation(genoData) %>%
-    pData() 
+# make SNP position df
+snpPosDF <- getSnpAnnotation(genoData) %>%
+  pData() 
 
-  # read expression metadata
-  exprMeta <- fread(metaLoc)
-  # read expression dataset - lung
-  exprDF <- fread(exprLoc)
-  # read covariates
-  covarDF <- fread(covarLoc)
+# read expression metadata
+exprMeta <- fread(paste0(rootDir, "ExpressionFiles/phe000020.v1.GTEx_RNAseq.expression-data-matrixfmt.c1/GTEx_Data_20160115_v7_RNAseq_RNASeQCv1.1.8_metrics.tsv"))
 
-  # convert GTEx IDs to subject IDs
-  subjIDs <- strsplit(exprMeta$Sample, "-") %>%
-    sapply(function(x) {paste0(x[1], "-", x[2])})
-  exprMeta$subj_id <- subjIDs
-}
+# read expression dataset - lung
+exprDF <- fread(paste0(rootDir, "ExpressionFiles/phe000020.v1.GTEx_RNAseq.expression-data-matrixfmt.c1/GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_Lung_Gene.txt"))
+
+# read covariates
+covarFilename <- paste0(rootDir, "Covariates/Lung.v7.covariates.txt")
+covarDF <- fread(covarFilename)
+
+# convert GTEx IDs to subject IDs
+subjIDs <- strsplit(exprMeta$Sample, "-") %>%
+  sapply(function(x) {paste0(x[1], "-", x[2])})
+exprMeta$subj_id <- subjIDs
 
 # read gene location information
 setwd(outputDir)
@@ -289,7 +272,7 @@ geneRanges <-  data.table(ensembl_refgene_hg19_20180109)
 
 # gene expressions we want
 setwd(outputDir)
-exprNames <- read.csv(twasLoc) %>%
+exprNames <- read.csv(twasFname) %>%
   select(gene_name) %>%
   unlist(.)
 
@@ -318,30 +301,21 @@ for (snp_locus_it in 1:length(locusToDo)) {
     mutate(start = BP - sentinelWindow, end = BP + sentinelWindow)
   
   # clean and merge expression, genotypes, covariates
-  if (original) { 
-
-    # clean data 
-    lungCleaned <- clean_and_subset(exprGeneNames = exprNames, tissue = "Lung", genoData = genoData, 
+  lungCleaned <- clean_and_subset(exprGeneNames = exprNames, tissue = "Lung", genoData = genoData, 
                                   snpsToGet = snpsToGet, covarDF = covarDF, 
-                                 exprMeta = exprMeta, exprDF = exprDF) 
-    # found the SNP?
-    if (class(lungCleaned) == "numeric") {next}
-  
-    # names of genes and SNPs
-    exprNames <- colnames(lungCleaned$exprINT %>% select(-subj_id))
-    genoNames <- colnames(lungCleaned$gMatSelected %>% select(-subj_id))
-    # names of covariates
-    covarNames <- unlist(covarDF$ID)
-    # there is a gene named C2 and C3
-    covarNames[which(covarNames == "C2")] <- "Cov2"
-    covarNames[which(covarNames == "C3")] <- "Cov3"
-    allDat <- lungCleaned$allDat
-  } else {
-    allDat <- fread(synthName)
-    genoNames <- colnames(allDat)[2]
-    exprNames <- colnames(allDat)[3:13571]
-    covarNames <- colnames(allDat)[13572:13636]
-  } 
+                                exprMeta = exprMeta, exprDF = exprDF) 
+
+  # found the SNP?
+  if (class(lungCleaned) == "numeric") {next}
+
+  # names of genes and SNPs
+  exprNames <- colnames(lungCleaned$exprINT %>% select(-subj_id))
+  genoNames <- colnames(lungCleaned$gMatSelected %>% select(-subj_id))
+  # names of covariates
+  covarNames <- unlist(covarDF$ID)
+  # there is a gene named C2 and C3
+  covarNames[which(covarNames == "C2")] <- "Cov2"
+  covarNames[which(covarNames == "C3")] <- "Cov3"
 
   # checkpoint
   cat("Starting number ", snp_locus_it, "\n")
@@ -350,7 +324,7 @@ for (snp_locus_it in 1:length(locusToDo)) {
 
   # run eQTL analysis
   mpOutput <- MPreg(covarNames = covarNames, genoNames = genoNames, 
-                  exprNames = exprNames, allDat = allDat)
+                  exprNames = exprNames, allDat = lungCleaned$allDat)
     
   setwd(outputDir) 
   tempFname <- paste0(snpsToGet$RS[1], "_", snpsToGet$Gene[1], "_", snpsToGet$Chr[1], "_", snpsToGet$BP[1], "_analysis.txt")

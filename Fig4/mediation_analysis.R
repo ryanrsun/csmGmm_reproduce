@@ -1,4 +1,4 @@
-# Perform mediation analysis to get raw data for Table 1.
+# Perform mediation analysis to get raw data for Table 1
 
 # load libraries
 library(mvtnorm)
@@ -45,7 +45,7 @@ tab2DF <- data.frame(RS = c("rs71658797", "rs6920364", "rs11780471",
 
 # read the lung twas results
 setwd(outputDir)
-twasRes <- read.csv(twasFname) %>%
+  twasRes <- read.csv(twasFname) %>%
   select(gene_name, zscore, pvalue) %>%
   set_colnames(c("Gene", "Z_twas", "p_twas")) %>%
   filter(!is.na(Z_twas))
