@@ -12,5 +12,8 @@ LC Only Summary Statistics - https://www.dropbox.com/scl/fi/pszo9ojmsod5wv4rh3sx
 
 The Lung Cancer Only Summary statistics hold only summary statistics for lung cancer from the UK Biobank and the International Lung Cancer Consortium. They are used for replication analysis of lung cancer risk SNPs.
 
+synthDat.txt - https://www.dropbox.com/scl/fi/l6dk45obfgh8uxxl3f67q/synthDat.txt?rlkey=3mzrf7a8oogcz30itp3voih6r&st=k0w364ka&dl=0
+
+This synthetic dataset is provided in place of the GTEx dataset, which we cannot provide for privacy reasons. This dataset can be used to run our code, but it will not reproduce the original results.
 
  
