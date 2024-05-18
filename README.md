@@ -11,7 +11,7 @@ Code to reproduce simulation results, figures, and real data analysis results fr
 
 - Each folder contains _sim.R scripts needed to perform simulations or analysis. At the top of each script, there is a clearly marked box that identifies any code that may need to be changed. For example, the output directory will generally need to be changed to accomodate the varied directory structures of different users. Other than changing these few lines of code, it is not necessary to interact with these scripts.
 
-- Each folder also contains LSF batch submission scripts that end with the .lsf extension. A few lines in these scripts will also generally need to be slightly modified. For example, the job submission queues will generally have different names at different institutions.
+- Each folder also contains LSF batch submission scripts that end with the .lsf extension. A few lines in these scripts will also generally need to be slightly modified. For example, the job submission queues will generally have different names at different institutions. The number of jobs to run will be placed in a comment, e.g. "#Run 1-800" means that an array of jobs with IDs from 1 to 800 should be run.
 
 - After making any necessary adjustments, all .lsf files in a folder should be run (e.g. with the command "bsub <run_Fig1A.lsf"), and then the user should wait until all jobs from the folder are finished running.
 
