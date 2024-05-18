@@ -20,7 +20,8 @@ Snum <- as.numeric(args[2])
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
 fnameRoot <- paste0("Fig4_data_aID", aID, ".txt")
 
-# where is the data
+# where are the data files bmi_with_overall.txt, replication_with_lcoverall.txt, and 
+# cad_for_replication.txt
 summaryStatDir <- "/rsrch3/home/biostatistics/rsun3/summaryStats"
 #-------------------------------------------------------------------#
 
