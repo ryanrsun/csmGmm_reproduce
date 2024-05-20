@@ -20,6 +20,6 @@ synthDat.txt - https://www.dropbox.com/scl/fi/l6dk45obfgh8uxxl3f67q/synthDat.txt
 
 This synthetic dataset is provided in place of the GTEx dataset, which we cannot provide for privacy reasons. This dataset can be used to run our code, but it will not reproduce the original results.
 
-eqtl_results - https://www.dropbox.com/scl/fi/5mq5qms7byq2643drnme1/eqtl_results.zip?rlkey=rxoo6k99wsbpdue5i26r3qk4y&st=kx1469x3&dl=0
+eqtl_results folder - https://www.dropbox.com/scl/fi/kbnmmsr82ybah3bg0l4kk/eqtl_results.zip?rlkey=rurppk5d80dxihge2emrzr17i&st=pp8owbdp&dl=0
 
-The output in these folders is what would be produced if running the mediation_analysis.R script with the original data (to produce Table 1). Since the original data cannot be shared without restrictions, we provide the output, which can be used in the rest of the Table 1 pipeline.
+The output in these folders is what would be produced if running the calculate_eqtl_stats_synthetic.R script with the original data (needed to produce Table 1). Since the original data cannot be shared without restrictions, we provide the output, which can be used in the rest of the Table 1 pipeline.

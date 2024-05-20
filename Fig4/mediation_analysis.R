@@ -7,7 +7,7 @@ library(dplyr)
 library(magrittr)
 library(devtools)
 library(ks)
-devtools::install.packages("ryanrsun/csmGmm")
+devtools::install_packages("ryanrsun/csmGmm")
 library(csmGmm)
 setwd('../supportingCode')
 file.sources = list.files(pattern="*.R")
@@ -22,7 +22,10 @@ Snum <- as.numeric(args[2])
 # parameters to be changed
 # set output directory 
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
+# please place the files starting with "med_analysis_aID" (see DATA folder) in the
+# output folder as well
 outRoot <- paste0("med_analysis_aID", aID)
+# please place this file (see DATA folder) in output folder as well
 twasFname <- "scc_lung_addchr1.csv"
 #-------------------------------------------------------------------#
 
