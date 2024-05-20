@@ -2,7 +2,7 @@
 library(data.table)
 library(dplyr)
 library(ks)
-devtools::install.packages("ryanrsun/csmGmm")
+devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
 setwd('../supportingCode')
 file.sources = list.files(pattern="*.R")
