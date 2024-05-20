@@ -5,7 +5,7 @@ library(data.table)
 library(dplyr)
 library(devtools)
 library(ks)
-devtools::install.packages("ryanrsun/csmGmm")
+devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
 setwd('../supportingCode')
 file.sources = list.files(pattern="*.R")
@@ -74,7 +74,7 @@ selections[[9]] <- c("Zcadukb", "Zbmi")
 
 # results
 allResults <- c()
-for (file_it in 7:9) {
+for (file_it in 1:9) {
 
   setwd(outputDir)
   if (file_it == 4) {
