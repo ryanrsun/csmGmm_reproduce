@@ -17,7 +17,6 @@ library(tibble)
 library(dplyr)
 library(tidyr)
 library(data.table)
-library(LungCancerAssoc)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
