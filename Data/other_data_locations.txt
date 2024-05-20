@@ -12,6 +12,10 @@ LC Only Summary Statistics - https://www.dropbox.com/scl/fi/pszo9ojmsod5wv4rh3sx
 
 The Lung Cancer Only Summary statistics hold only summary statistics for lung cancer from the UK Biobank and the International Lung Cancer Consortium. They are used for replication analysis of lung cancer risk SNPs.
 
+Lung cancer TWAS summary statistics - https://www.dropbox.com/scl/fi/ftrbybngfat6y0fe3q1lc/scc_lung_addchr1.csv?rlkey=2gct1647k21k9uw9uqxwcrzxh&st=2jo3cmu8&dl=0
+
+These summary statistics test the association between gene expression in lung tissue and lung cancer.
+
 synthDat.txt - https://www.dropbox.com/scl/fi/l6dk45obfgh8uxxl3f67q/synthDat.txt?rlkey=3mzrf7a8oogcz30itp3voih6r&st=k0w364ka&dl=0
 
 This synthetic dataset is provided in place of the GTEx dataset, which we cannot provide for privacy reasons. This dataset can be used to run our code, but it will not reproduce the original results.
