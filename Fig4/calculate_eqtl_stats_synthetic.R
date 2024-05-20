@@ -31,6 +31,9 @@ outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
 # the TWAS part of the mediation data (see DATA folder)
 twasLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/scc_lung_addchr1.csv"
 
+# the gene location information (see DATA folder)
+geneInfoLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/ensembl_refgene_hg19_20180109.rda" 
+
 # where is the synthetic data expression data (see DATA folder)
 synthLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/synthDat.txt"
 
@@ -285,7 +288,7 @@ if (original) {
 
 # read gene location information
 setwd(outputDir)
-load(file="ensembl_refgene_hg19_20180109.rda")
+load(file=geneInfoLoc)
 geneRanges <-  data.table(ensembl_refgene_hg19_20180109)
 
 # gene expressions we want
