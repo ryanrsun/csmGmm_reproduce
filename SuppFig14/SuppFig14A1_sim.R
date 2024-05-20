@@ -8,11 +8,13 @@ library(dplyr)
 library(magrittr)
 library(rje)
 library(devtools)
+library(ks)
 devtools::install.packages("ryanrsun/csmGmm")
+library(csmGmm)
 setwd('../supportingCode')
 file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
- 
+
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
