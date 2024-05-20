@@ -4,11 +4,12 @@
 library(data.table)
 library(dplyr)
 library(devtools)
+library(ks)
 devtools::install.packages("ryanrsun/csmGmm")
+library(csmGmm)
 setwd('../supportingCode')
 file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
-
 #------------------------------------------------------------------#
 # parameters to be changed
 # set output directory 
