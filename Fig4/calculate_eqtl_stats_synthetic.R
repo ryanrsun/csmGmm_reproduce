@@ -29,8 +29,11 @@ Snum <- as.numeric(args[2])
 # set output directory 
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
 
-# the TWAS part of the mediation data
+# the TWAS part of the mediation data (see DATA folder)
 twasLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/scc_lung_addchr1.csv"
+
+# where is the synthetic data expression data (see DATA folder)
+synthLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/synthDat.txt"
 
 # original=1 means we have the real data
 original <- 0
@@ -287,7 +290,6 @@ load(file="ensembl_refgene_hg19_20180109.rda")
 geneRanges <-  data.table(ensembl_refgene_hg19_20180109)
 
 # gene expressions we want
-setwd(outputDir)
 exprNames <- read.csv(twasLoc) %>%
   select(gene_name) %>%
   unlist(.)
@@ -336,7 +338,7 @@ for (snp_locus_it in 1:length(locusToDo)) {
     covarNames[which(covarNames == "C3")] <- "Cov3"
     allDat <- lungCleaned$allDat
   } else {
-    allDat <- fread(synthName)
+    allDat <- fread(synthLoc)
     genoNames <- colnames(allDat)[2]
     exprNames <- colnames(allDat)[3:13571]
     covarNames <- colnames(allDat)[13572:13636]
