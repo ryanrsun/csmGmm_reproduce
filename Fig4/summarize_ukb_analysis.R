@@ -156,7 +156,7 @@ for (file_it in 1:9) {
     arrange(origIdx)
   tempRes$numReject[4] <- sum(tempDat$rejdf7)
 
-  if (file_it >= 5 & file_it <= 6) {
+  if (file_it >= 4 & file_it <= 6) {
     # any rejection
     tempDat <- tempDat %>% mutate(rejAny = ifelse(rejdf7 == 1 |  rejdf50 == 1 | rejKernel == 1 | rejNew == 1, 1, 0))
     rejectDat <- tempDat %>% filter(rejAny == 1)
