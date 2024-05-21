@@ -5,11 +5,7 @@ library(data.table)
 library(dplyr)
 library(devtools)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
@@ -18,6 +14,12 @@ Snum <- as.numeric(args[2])
 
 #------------------------------------------------------------------#
 # parameters to be changed
+
+# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
+setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
+file.sources = list.files(pattern="*.R")
+sapply(file.sources,source,.GlobalEnv)
+
 # set output directory 
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
 fnameRoot <- paste0("Fig4_data_aID", aID, ".txt")

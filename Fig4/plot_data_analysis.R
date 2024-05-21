@@ -7,10 +7,6 @@ library(cowplot)
 library(data.table)
 library(xtable)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # 1 is CAD and BMI
 # 2 is ILCCO overall and Cardiogram CAD
@@ -21,6 +17,12 @@ sapply(file.sources,source,.GlobalEnv)
 
 #------------------------------------------------------------------#
 # parameters to be changed
+
+# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
+setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
+file.sources = list.files(pattern="*.R")
+sapply(file.sources,source,.GlobalEnv)
+
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
 origOutputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/origOutput"
 #------------------------------------------------------------------#

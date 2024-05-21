@@ -7,11 +7,7 @@ library(dplyr)
 library(magrittr)
 library(devtools)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
@@ -20,10 +16,14 @@ Snum <- as.numeric(args[2])
 
 #------------------------------------------------------------------#
 # parameters to be changed
+
+# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
+setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
+file.sources = list.files(pattern="*.R")
+sapply(file.sources,source,.GlobalEnv)
+
 # set output directory 
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
-# please place the files starting with "med_analysis_aID" (see DATA folder) in the
-# output folder as well
 outRoot <- paste0("med_analysis_aID", aID)
 # please place this file (see DATA folder) in output folder as well
 twasFname <- "scc_lung_addchr1.csv"

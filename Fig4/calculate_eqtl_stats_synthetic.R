@@ -25,6 +25,12 @@ Snum <- as.numeric(args[2])
 
 #------------------------------------------------------------------#
 # parameters to be changed
+
+# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
+setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
+file.sources = list.files(pattern="*.R")
+sapply(file.sources,source,.GlobalEnv)
+
 # set output directory 
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
 

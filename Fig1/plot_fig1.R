@@ -4,12 +4,13 @@ library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
+
+#-----------------------------------------#
+# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
+setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
 file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
 # change to where the output files are stored
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig1/origOutput"
 names1a <- paste0("Fig1A_aID", 1:800, ".txt")
