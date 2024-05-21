@@ -1,7 +1,7 @@
 #BSUB -J Fig3B[101-102]
 #BSUB -W 7:00
-#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig3/errDir/Fig3B_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig3/errDir/Fig3B_%I.err
+#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/test/errDir/Fig3B_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/test/errDir/Fig3B_%I.err
 #BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
 #BSUB -q medium
 #BSUB -u rsun3@mdanderson.org
@@ -11,4 +11,4 @@
 
 # run 1-160
 module load R/4.2.1
-Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig3/Fig3B_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig3/errDir/Fig3B_$LSB_JOBINDEX.out
+Rscript /rsrch3/home/biostatistics/rsun3/empBayes/test/csmGmm_reproduce/Fig3/Fig3B_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/test/errDir/Fig3B_$LSB_JOBINDEX.out

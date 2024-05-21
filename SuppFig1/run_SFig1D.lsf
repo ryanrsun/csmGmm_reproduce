@@ -1,7 +1,7 @@
 #BSUB -J SFig1D[1-320]
 #BSUB -W 3:00
-#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig1/errDir/SFig1D_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig1/errDir/SFig1D_%I.err
+#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/test/errDir/SFig1D_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/test/errDir/SFig1D_%I.err
 #BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
 #BSUB -q short
 #BSUB -u rsun3@mdanderson.org
@@ -11,4 +11,4 @@
 
 # Run 1-320
 module load R/4.2.1
-Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig1/SuppFig1D_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig1/errDir/SFig1D_$LSB_JOBINDEX.out
+Rscript /rsrch3/home/biostatistics/rsun3/empBayes/test/csmGmm_reproduce/SuppFig1/SuppFig1D_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/test/errDir/SFig1D_$LSB_JOBINDEX.out
