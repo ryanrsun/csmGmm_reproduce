@@ -14,7 +14,7 @@ setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
 file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig3/origOutput"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 names3a <- paste0("Fig3A_aID", 1:620, ".txt")
 names3b <- paste0("Fig3B_aID", 1:160, ".txt")
 names3c <- paste0("Fig3C_aID", 401:1240, ".txt")

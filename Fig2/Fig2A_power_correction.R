@@ -22,7 +22,7 @@ file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/output"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 outName <- paste0("Power_correction2A_S", Snum, "_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,

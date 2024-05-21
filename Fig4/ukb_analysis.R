@@ -21,7 +21,7 @@ file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 fnameRoot <- paste0("Fig4_data_aID", aID, ".txt")
 
 # where is the data

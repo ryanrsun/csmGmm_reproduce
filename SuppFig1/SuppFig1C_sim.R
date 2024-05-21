@@ -23,7 +23,7 @@ file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig1/output"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 outName <- paste0("SuppFig1C_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,

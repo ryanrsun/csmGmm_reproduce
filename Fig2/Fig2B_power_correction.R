@@ -15,14 +15,14 @@ Snum <- as.numeric(args[2])
 
 #------------------------------------------------------------------#
 # parameters to be changed
-# set output directory 
 
 # source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
 setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
 file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/output"
+# set output directory 
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 outName <- paste0("Power_correction2B_S", Snum, "_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,

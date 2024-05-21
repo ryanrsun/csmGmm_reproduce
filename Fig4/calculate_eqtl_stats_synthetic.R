@@ -32,7 +32,7 @@ file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 
 # the TWAS part of the mediation data (see DATA folder)
 twasLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/scc_lung_addchr1.csv"

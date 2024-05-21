@@ -23,8 +23,7 @@ setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
 file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
-origOutputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/origOutput"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 #------------------------------------------------------------------#
 
 

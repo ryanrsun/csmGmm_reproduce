@@ -23,7 +23,7 @@ file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 outRoot <- paste0("med_analysis_aID", aID)
 # please place this file (see DATA folder) in output folder as well
 twasFname <- "scc_lung_addchr1.csv"

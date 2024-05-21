@@ -13,7 +13,7 @@ setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
 file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig1/origOutput"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 snames1a <- paste0("sim_n1k_j100k_med2d_changeeff_flipz_noalt_aID", 1:800, ".txt")
 snames1b <- paste0("sim_n1k_j100k_med2d_raisealt_changepi0_flipz_noalt_aID", 1:320, ".txt")
 snames1c <- paste0("SuppFig1C_aID", 1:800, ".txt")

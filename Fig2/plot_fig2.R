@@ -13,7 +13,7 @@ file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
 # change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/origOutput"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 names2aq1 <- paste0("Power_correction2A_S1_aID", 1:400, ".txt")
 names2aq2 <- paste0("Power_correction2A_S2_aID", 1:400, ".txt")
 names2aq3 <- paste0("Power_correction2A_S3_aID", 1:400, ".txt")

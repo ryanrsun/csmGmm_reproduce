@@ -12,7 +12,7 @@ file.sources = list.files(pattern="*.R")
 sapply(file.sources,source,.GlobalEnv)
 
 # change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig1/origOutput"
+outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 names1a <- paste0("Fig1A_aID", 1:800, ".txt")
 names1b <- paste0("Fig1B_aID", 1:320, ".txt")
 names1c <- paste0("Fig1C_aID", 1:800, ".txt")
