@@ -1,26 +1,33 @@
 # Collect results and plot Figure 1
+
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/Fig1/Fig1B_sim.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig1/plot_fig1.R")
+
+# load libraries
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
+library(here)
 
-#-----------------------------------------#
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-names1a <- paste0("Fig1A_aID", 1:800, ".txt")
-names1b <- paste0("Fig1B_aID", 1:320, ".txt")
-names1c <- paste0("Fig1C_aID", 1:800, ".txt")
-names1d <- paste0("Fig1D_aID", 1:320, ".txt")
-#-----------------------------------------#
+# get output file names
+outputDir <- here::here("Fig1", "output")
+names1a <- here::here(outputDir, paste0("Fig1A_aID", 1:800, ".txt"))
+names1b <- here::here(outputDir, paste0("Fig1B_aID", 1:320, ".txt"))
+names1c <- here::here(outputDir, paste0("Fig1C_aID", 1:800, ".txt"))
+names1d <- here::here(outputDir, paste0("Fig1D_aID", 1:320, ".txt"))
 
 # read raw output files
-setwd(outputDir)
 res1a <- c()
 for (file_it in 1:length(names1a)) {
   tempRes <- tryCatch(fread(names1a[file_it]), error=function(e) e)
@@ -63,11 +70,10 @@ summary1c <- summarize_raw(res1c)
 summary1d <- summarize_raw(res1d)
 
 # save summaries
-setwd(outputDir)
-write.table(summary1a, "Fig1a_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary1b, "Fig1b_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary1c, "Fig1c_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary1d, "Fig1d_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary1a, paste0(outputDir, "/Fig1a_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary1b, paste0(outputDir, "Fig1b_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary1c, paste0(outputDir, "/Fig1c_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary1d, paste0(outputDir, "/Fig1d_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -82,8 +88,7 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # Fig 1A
-setwd(outputDir)
-Fig1a_data <- fread("Fig1a_summary.txt", data.table=F) %>%
+Fig1a_data <- fread(paste0(outputDir, "/Fig1a_summary.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
@@ -105,8 +110,7 @@ Fig1a_plot <- ggplot(data=Fig1a_data, aes(x=minEff1, y=FDP, group=Method)) +
   theme(legend.key.size = unit(3,"line"))
 
 # Fig 1B
-setwd(outputDir)
-Fig1b_data <- fread("Fig1b_summary.txt", data.table=F) %>%
+Fig1b_data <- fread(paste0(outputDir, "/Fig1b_summary.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
@@ -129,8 +133,7 @@ Fig1b_plot <-ggplot(data=Fig1b_data, aes(x=minEff1, y=FDP, group=Method)) +
 
 
 # Figure 1C
-setwd(outputDir)
-Fig1c_data <- fread("Fig1c_summary.txt", data.table=F) %>%
+Fig1c_data <- fread(paste0(outputDir, "/Fig1c_summary.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
@@ -152,8 +155,7 @@ Fig1c_plot <- ggplot(data=Fig1c_data, aes(x=minEff1, y=FDP, group=Method)) +
   theme(legend.key.size = unit(3,"line"))
 
 # Figure 1D
-setwd(outputDir)
-Fig1d_data <- fread("Fig1d_summary.txt", data.table=F) %>%
+Fig1d_data <- fread(paste0(outputDir, "/Fig1d_summary.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
