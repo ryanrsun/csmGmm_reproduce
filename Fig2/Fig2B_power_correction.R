@@ -1,10 +1,17 @@
 # For power correction of Figure 2B
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/Fig2/Fig2B_power_correction.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig2/Fig2B_power_correction.R")
+
 # load libraries
 library(mvtnorm)
+library(here)
 library(data.table)
 library(bindata)
-library(dplyr)
+library(tidyverse)
 library(ks)
 library(csmGmm)
 
@@ -13,27 +20,24 @@ args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
-
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-outName <- paste0("Power_correction2B_S", Snum, "_aID", aID, ".txt")
+outputDir <- here::here("Fig2", "output")
+outName <- paste0(outputDir, "/Power_correction2B_S", Snum, "_aID", aID, ".txt")
 
-# option to save or load intermediate data to save time,
-# set as FALSE for first run and then TRUE thereafter
+
+# option to save or load intermediate data to save time
 loadData <- FALSE
 saveData <- FALSE
-testStatsName <- paste0("Power_correction2B_S", Snum, "_allZ")
-betaName <- paste0("Power_correction2B_S", Snum, "_allBeta")
-#-------------------------------------------------------------------#
+# these names are for if saveData <- TRUE
+testStatsName <- here::here(outputDir, paste0("Power_correction2B_S", Snum, "_allZ"))
+betaName <- here::here(outputDir, paste0("Power_correction2B_S", Snum, "_allBeta"))
 
-# parameters
+# simulation parameters
 doHDMT <- TRUE
 doDACT <- TRUE
 doKernel <- TRUE

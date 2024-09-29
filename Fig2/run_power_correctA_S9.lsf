@@ -1,8 +1,8 @@
 #BSUB -J pcS9[1-2]
 #BSUB -W 3:01
-#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/errDir/power_correct_S9_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/errDir/power_correct_S9_%I.err
-#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig2/errDir/power_correct_S9_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig2/errDir/power_correct_S9_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/
 #BSUB -q medium
 #BSUB -u rsun3@mdanderson.org
 #BSUB -n 1
@@ -11,4 +11,4 @@
 
 # run 1-500
 module load R/4.2.1
-Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/Fig2A_power_correction.R $LSB_JOBINDEX 9 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/errDir/power_correct_S9_$LSB_JOBINDEX.out
+Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig2/Fig2A_power_correction.R $LSB_JOBINDEX 9 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig2/errDir/power_correct_S9_$LSB_JOBINDEX.out

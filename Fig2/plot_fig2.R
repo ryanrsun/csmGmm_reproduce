@@ -1,46 +1,50 @@
 # Collect results and plot Figure 2
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/Fig1/plot_fig2.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig2/plot_fig2.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
+library(here)
 
-#-----------------------------------------#
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-names2aq1 <- paste0("Power_correction2A_S1_aID", 1:400, ".txt")
-names2aq2 <- paste0("Power_correction2A_S2_aID", 1:400, ".txt")
-names2aq3 <- paste0("Power_correction2A_S3_aID", 1:400, ".txt")
-names2aq4 <- paste0("Power_correction2A_S4_aID", 1:400, ".txt")
-names2aq5 <- paste0("Power_correction2A_S5_aID", 1:400, ".txt")
-names2aq6 <- paste0("Power_correction2A_S6_aID", 1:400, ".txt")
-names2aq7 <- paste0("Power_correction2A_S7_aID", 1:400, ".txt")
-names2aq8 <- paste0("Power_correction2A_S8_aID", 1:400, ".txt")
-names2aq9 <- paste0("Power_correction2A_S9_aID", 1:400, ".txt")
+# get output file names
+outputDir <- here::here("Fig2", "output")
+names2aq1 <- here::here(outputDir, paste0("Power_correction2A_S1_aID", 1:400, ".txt"))
+names2aq2 <- here::here(outputDir, paste0("Power_correction2A_S2_aID", 1:400, ".txt"))
+names2aq3 <- here::here(outputDir, paste0("Power_correction2A_S3_aID", 1:400, ".txt"))
+names2aq4 <- here::here(outputDir, paste0("Power_correction2A_S4_aID", 1:400, ".txt"))
+names2aq5 <- here::here(outputDir, paste0("Power_correction2A_S5_aID", 1:400, ".txt"))
+names2aq6 <- here::here(outputDir, paste0("Power_correction2A_S6_aID", 1:400, ".txt"))
+names2aq7 <- here::here(outputDir, paste0("Power_correction2A_S7_aID", 1:400, ".txt"))
+names2aq8 <- here::here(outputDir, paste0("Power_correction2A_S8_aID", 1:400, ".txt"))
+names2aq9 <- here::here(outputDir, paste0("Power_correction2A_S9_aID", 1:400, ".txt"))
 names2aList <- list(names2aq1, names2aq2, names2aq3, names2aq4, names2aq5, names2aq6,
                     names2aq7, names2aq8, names2aq9)
-names2bq1 <- paste0("Power_correction2B_S1_aID", 1:400, ".txt")
-names2bq2 <- paste0("Power_correction2B_S2_aID", 1:400, ".txt")
-names2bq3 <- paste0("Power_correction2B_S3_aID", 1:400, ".txt")
-names2bq4 <- paste0("Power_correction2B_S4_aID", 1:400, ".txt")
-names2bq5 <- paste0("Power_correction2B_S5_aID", 1:400, ".txt")
-names2bq6 <- paste0("Power_correction2B_S6_aID", 1:400, ".txt")
-names2bq7 <- paste0("Power_correction2B_S7_aID", 1:400, ".txt")
-names2bq8 <- paste0("Power_correction2B_S8_aID", 1:400, ".txt")
-names2bq9 <- paste0("Power_correction2B_S9_aID", 1:400, ".txt")
+names2bq1 <- here::here(outputDir, paste0("Power_correction2B_S1_aID", 1:400, ".txt"))
+names2bq2 <- here::here(outputDir, paste0("Power_correction2B_S2_aID", 1:400, ".txt"))
+names2bq3 <- here::here(outputDir, paste0("Power_correction2B_S3_aID", 1:400, ".txt"))
+names2bq4 <- here::here(outputDir, paste0("Power_correction2B_S4_aID", 1:400, ".txt"))
+names2bq5 <- here::here(outputDir, paste0("Power_correction2B_S5_aID", 1:400, ".txt"))
+names2bq6 <- here::here(outputDir, paste0("Power_correction2B_S6_aID", 1:400, ".txt"))
+names2bq7 <- here::here(outputDir, paste0("Power_correction2B_S7_aID", 1:400, ".txt"))
+names2bq8 <- here::here(outputDir, paste0("Power_correction2B_S8_aID", 1:400, ".txt"))
+names2bq9 <- here::here(outputDir, paste0("Power_correction2B_S9_aID", 1:400, ".txt"))
 names2bList <- list(names2bq1, names2bq2, names2bq3, names2bq4, names2bq5, names2bq6,
                     names2bq7, names2bq8, names2bq9)
 
-#-----------------------------------------#
-
 # read raw output files
-setwd(outputDir)
 res2a <- c()
 for (file_it in 1:length(names2aq1)) {
   for (q_it in 1:9) {
@@ -51,7 +55,6 @@ for (file_it in 1:length(names2aq1)) {
   }
 }
 
-setwd(outputDir)
 res2b <- c()
 for (file_it in 1:length(names2bq1)) {
   for (q_it in 1:9) {
@@ -67,11 +70,13 @@ setwd(outputDir)
 for (q_it in 1:9) {
   tempResa <- res2a %>% filter(q == q_it)
   tempSummarya <- summarize_raw(tempResa)
-  write.table(tempSummarya, paste0("Fig2a_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+  tempSummaryaName <- here::here(outputDir, paste0("Fig2a_power", q_it, "_summary.txt"))
+  write.table(tempSummarya, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
   tempResb <- res2b %>% filter(q == q_it)
   tempSummaryb <- summarize_raw(tempResb)
-  write.table(tempSummaryb, paste0("Fig2b_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+  tempSummarybName <- here::here(outputDir, paste0("Fig2b_power", q_it, "_summary.txt"))
+  write.table(tempSummaryb, tempSummarybName, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 }
 
 #------------------------------------------------#
@@ -88,10 +93,11 @@ mycols[5] <- "blue"
 
 
 # load all the files needed for corrected power
-setwd(outputDir)
-Fig2a_fixq <- fread("Fig2a_power1_summary.txt", data.table=F)  %>% mutate(q=0.01)
+tempSummaryaName <- here::here(outputDir, paste0("Fig2a_power1_summary.txt"))
+Fig2a_fixq <- fread(tempSummaryaName, data.table=F)  %>% mutate(q=0.01)
 for (q_it in 2:9) {
-  tempFile <- fread(paste0("Fig2a_power", q_it, "_summary.txt"), data.table=F) %>% mutate(q = q_it / 100)
+  tempSummaryaName <- here::here(outputDir, paste0("Fig2a_power", q_it, "_summary.txt"))
+  tempFile <- fread(tempSummaryaName, data.table=F) %>% mutate(q = q_it / 100)
   Fig2a_fixq <- rbind(Fig2a_fixq, tempFile)
 }
 Fig2a_fixq <- Fig2a_fixq %>%
@@ -145,10 +151,11 @@ fig2a_plot <- ggplot(data=Fig2a_correctedPow,
   theme(legend.key.size = unit(3,"line"))
 
 # Fig 2b
-setwd(outputDir)
-Fig2b_fixq <- fread("Fig2b_power1_summary.txt", data.table=F)  %>% mutate(q = 0.01)
+tempSummarybName <- here::here(outputDir, paste0("Fig2b_power1_summary.txt"))
+Fig2b_fixq <- fread(tempSummarybName, data.table=F)  %>% mutate(q = 0.01)
 for (q_it in 2:9) {
-  tempFile <- fread(paste0("Fig2b_power", q_it, "_summary.txt"), data.table=F) %>% mutate(q = q_it / 100)
+  tempSummarybName <- here::here(outputDir, paste0("Fig2b_power", q_it, "_summary.txt"))
+  tempFile <- fread(tempSummarybName, data.table=F) %>% mutate(q = q_it / 100)
   Fig2b_fixq <- rbind(Fig2b_fixq, tempFile)
 }
 Fig2b_fixq <- Fig2b_fixq %>%
@@ -201,7 +208,8 @@ Fig2b_plot <- ggplot(data=Fig2b_correctedPow,
   theme(legend.key.size = unit(3,"line"))
 
 # Fig 2C
-Fig2c_plot <- ggplot(data=fread("Fig1c_summary.txt") %>% 
+summary1c <- fread(here::here("Fig1", "output", "Fig1c_summary.txt"))
+Fig2c_plot <- ggplot(data=summary1c %>% 
         mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
         mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
         mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -220,7 +228,8 @@ Fig2c_plot <- ggplot(data=fread("Fig1c_summary.txt") %>%
   theme(legend.key.size = unit(3,"line"))
 
 # Fig 2D
-Fig2d_plot <- ggplot(data=fread("Fig1d_summary.txt") %>% 
+summary1d <- fread(here::here("Fig1", "output", "Fig1d_summary.txt"))
+Fig2c_plot <- ggplot(data=summary1d  %>% 
         mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
         mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
         mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
