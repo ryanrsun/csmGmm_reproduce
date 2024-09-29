@@ -1,5 +1,11 @@
 # Figure 3C
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/Fig3/Fig3C_sim.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig3/Fig3C_sim.R")
+
 # load libraries
 library(mvtnorm)
 library(data.table)
@@ -8,33 +14,31 @@ library(dplyr)
 library(rje)
 library(ks)
 library(csmGmm)
+library(here)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
-
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-outName <- paste0("Fig3C_aID", aID, ".txt")
+outputDir <- here::here("Fig3", "output")
+outName <- paste0(outputDir, "/Fig3C_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
 loadData <- FALSE
-saveData <- TRUE
-testStatsName <- "Fig3C_allZ"
-betaName <- "Fig3C_allBeta"
-#-------------------------------------------------------------------#
+saveData <- FALSE
+# these names are for if saveData <- TRUE
+testStatsName <- here::here(outputDir, "Fig3C_allZ")
+betaName <- here::here(outputDir, "Fig3C_allBeta")
 
-# parameters
+# simulation parameters
 outcomeCor <- 0.1
 doHDMT <- TRUE
 doDACT <- TRUE

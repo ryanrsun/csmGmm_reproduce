@@ -1,28 +1,33 @@
 # Collect results and plot Figure 3
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/Fig3/plot_fig3.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig3/plot_fig3.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(csmGmm)
+library(here)
 
-#-----------------------------------------#
-# change to where the output files are stored
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
-
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-names3a <- paste0("Fig3A_aID", 1:620, ".txt")
-names3b <- paste0("Fig3B_aID", 1:160, ".txt")
-names3c <- paste0("Fig3C_aID", 401:1240, ".txt")
-names3d <- paste0("Fig3D_aID", 1:1000, ".txt")
+# get output file names
+outputDir <- here::here("Fig3", "output")
+names3a <- here::here(outputDir, paste0("Fig3A_aID", 1:620, ".txt"))
+names3b <- here::here(outputDir, paste0("Fig3B_aID", 1:160, ".txt"))
+names3c <- here::here(outputDir, paste0("Fig3C_aID", 401:1240, ".txt"))
+names3d <- here::here(outputDir, paste0("Fig3D_aID", 1:1000, ".txt"))
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res3a <- c()
 for (file_it in 1:length(names3a)) {
   tempRes <- tryCatch(fread(names3a[file_it]), error=function(e) e)
@@ -66,11 +71,10 @@ summary3c <- summarize_raw(res3c)
 summary3d <- summarize_raw(res3d)
 
 # save summaries
-setwd(outputDir)
-write.table(summary3a, "Fig3a_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary3b, "Fig3b_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary3c, "Fig3c_summary_final.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary3d, "Fig3d_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary3a, paste0(outputDir, "/Fig3a_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary3b, paste0(outputDir, "/Fig3b_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary3c, paste0(outputDir, "/Fig3c_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary3d, paste0(outputDir, "/Fig3d_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #-----------------------------------------#
 # start plotting
@@ -85,8 +89,7 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # Figure 3A
-setwd(outputDir)
-Fig3A_data <- fread("Fig3a_summary.txt", data.table=F) %>%
+Fig3A_data <- fread(paste0(outputDir, "/Fig3a_summary.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
@@ -109,8 +112,7 @@ Fig3A_plot <- ggplot(data=Fig3A_data, aes(x=minEff1, y=FDP, group=Method)) +
   theme(legend.key.size = unit(3,"line"))
 
 # Figure 3B
-setwd(outputDir)
-Fig3B_data <- fread("Fig3b_summary.txt", data.table=F) %>%
+Fig3B_data <- fread(paste0(outputDir, "/Fig3b_summary.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
@@ -133,8 +135,7 @@ Fig3B_plot <- ggplot(data=Fig3B_data, aes(x=minEff1, y=FDP, group=Method)) +
   theme(legend.key.size = unit(3,"line"))
 
 # Figure 3C
-setwd(outputDir)
-Fig3C_data <- fread("Fig3c_summary_final.txt", data.table=F) %>%
+Fig3C_data <- fread(paste0(outputDir, "/Fig3c_summary.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "c-csmGmm", Method)) %>%
@@ -156,8 +157,7 @@ Fig3C_plot <- ggplot(data=Fig3C_data, aes(x=minEff1, y=FDP, group=Method)) +
   theme(legend.key.size = unit(3,"line"))
 
 # Figure 3D
-setwd(outputDir)
-Fig3D_data <- fread("Fig3d_summary.txt", data.table=F) %>%
+Fig3D_data <- fread(paste0(outputDir, "/Fig3d_summary.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "r-csmGmm", Method)) %>%
@@ -178,7 +178,6 @@ Fig3D_plot <- ggplot(data=Fig3D_data %>% mutate(FDP = ifelse(Method %in% c("HDMT
   theme(legend.title = element_text(size=22), legend.text = element_text(size=20))+
   theme(legend.key.size = unit(3,"line"))
 
-
 # put together figure 3
 Fig3_plot <- plot_grid(Fig3A_plot + theme(legend.position = "none"),
                         Fig3B_plot + theme(legend.position = "none"),
@@ -189,8 +188,7 @@ Fig3_legend <- get_legend(Fig3C_plot +  theme(legend.direction="horizontal",
                                                                                         legend.justification="center",
                                                                                         legend.box.just="bottom"))
 plot_grid(Fig3_plot, Fig3_legend, ncol=1, rel_heights=c(1, 0.1))
-setwd(outputDir)
-ggsave('Fig3.pdf', width=18, height=12)
+ggsave(paste0(outputDir, "/Fig3.pdf"), width=18, height=12)
 
 
 
