@@ -9,6 +9,12 @@
 # We have placed the original output of this step in the Data/ folder. Using that output
 # will reproduce our findings.
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/Fig4/calculate_eqtl_stats_synthetic.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig4/calculate_eqtl_stats_synthetic.R")
+
 library(gdsfmt)
 library(SNPRelate)
 library(GWASTools)
@@ -17,36 +23,36 @@ library(tibble)
 library(dplyr)
 library(tidyr)
 library(data.table)
+library(here)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+# set output and data directories
+outputDir <- here::here("Fig4", "output")
+dataDir <- here::here("data")
 
-# set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 
 # the TWAS part of the mediation data (see DATA folder)
-twasLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/scc_lung_addchr1.csv"
+twasLoc <- here::here(dataDir, "scc_lung_addchr1.csv") 
 
 # the gene location information (see DATA folder)
-geneInfoLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/ensembl_refgene_hg19_20180109.rda" 
+geneInfoLoc <- here::here(dataDir, "ensembl_refgene_hg19_20180109.rda")  
 
 # where is the synthetic data expression data (see DATA folder)
-synthLoc <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output/synthDat.txt"
+synthLoc <- geneInfoLoc <- here::here(dataDir, "synthDat.txt")  
 
 # original=1 means we have the real data
 original <- 0
 
-# these next lines only matter if you have the original data 
+# these next lines only matter if you have the original data, which we are not providing
 # location of the GTEx_v7 folder
 rootDir <- "/rsrch3/home/biostatistics/rsun3/GTEx_v7/"
 # location of genotype data
@@ -57,8 +63,6 @@ exprLoc <- paste0(rootDir, "ExpressionFiles/phe000020.v1.GTEx_RNAseq.expression-
 metaLoc <- paste0(rootDir, "ExpressionFiles/phe000020.v1.GTEx_RNAseq.expression-data-matrixfmt.c1/GTEx_Data_20160115_v7_RNAseq_RNASeQCv1.1.8_metrics.tsv")
 # location of covariate data
 covarLoc <- paste0(rootDir, "Covariates/Lung.v7.covariates.txt")
-
-#-------------------------------------------------------------------#
 
 # some parameters for analysis
 sentinelWindow <- 5000
@@ -293,7 +297,6 @@ if (original) {
 }
 
 # read gene location information
-setwd(outputDir)
 load(file=geneInfoLoc)
 geneRanges <-  data.table(ensembl_refgene_hg19_20180109)
 
@@ -361,8 +364,7 @@ for (snp_locus_it in 1:length(locusToDo)) {
   mpOutput <- MPreg(covarNames = covarNames, genoNames = genoNames, 
                   exprNames = exprNames, allDat = allDat)
     
-  setwd(outputDir) 
-  tempFname <- paste0(snpsToGet$RS[1], "_", snpsToGet$Gene[1], "_", snpsToGet$Chr[1], "_", snpsToGet$BP[1], "_analysis.txt")
+  tempFname <- here::here(outputDir, paste0(snpsToGet$RS[1], "_", snpsToGet$Gene[1], "_", snpsToGet$Chr[1], "_", snpsToGet$BP[1], "_analysis.txt"))
   write.table(mpOutput$individualDF, tempFname, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 }

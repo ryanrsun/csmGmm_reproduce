@@ -1,30 +1,35 @@
 # Process raw analysis of UKB data
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/Fig4/summarize_ukb_analysis.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig4/summarize_ukb_analysis.R")
+
 # load libraries
 library(data.table)
 library(dplyr)
 library(devtools)
 library(ks)
 library(csmGmm)
+library(here)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
-
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-fnameOut <- "processed_ukb_data"
-rejectOutRoot <- "reject_bmi_with_overall_neg5_reject_aID"
-#------------------------------------------------------------------#
+outputDir <- here::here("Fig4", "output")
+dataDir <- here::here("data")
+outName <- paste0(outputDir, "/Fig1A_aID", aID, ".txt")
+fnameOut <- here::here(outputDir, "processed_ukb_data")
+rejectOutRoot <- here::here(outputDir, "reject_bmi_with_overall_neg5_reject_aID")
 
 # nominal fdr
 if (Snum == 1) {
@@ -78,23 +83,22 @@ selections[[9]] <- c("Zcadukb", "Zbmi")
 allResults <- c()
 for (file_it in 1:9) {
 
-  setwd(outputDir)
   if (file_it == 4) {
-    cleanZ <- fread("replication_with_lcoverall.txt")
+    cleanZ <- fread(here::here(dataDir, "replication_with_lcoverall.txt"))
     fdrLimitHDMT <- fdrLimitHDMTr
     fdrLimitDACT <- fdrLimitDACTr
     fdrLimitKernel <- fdrLimitKernelr
     fdrLimit50 <- fdrLimit50r
     fdrLimit7 <- fdrLimit7r
   } else if (file_it == 5) {
-    cleanZ <- fread("cad_for_replication.txt")
+    cleanZ <- fread(here::here(dataDir, "cad_for_replication.txt"))
     fdrLimitHDMT <- fdrLimitHDMTr
     fdrLimitDACT <- fdrLimitDACTr
     fdrLimitKernel <- fdrLimitKernelr
     fdrLimit50 <- fdrLimit50r
     fdrLimit7 <- fdrLimit7r
   } else {
-    cleanZ <- fread("bmi_with_overall.txt")
+    cleanZ <- fread(here::here(dataDir, "bmi_with_overall.txt"))
     fdrLimitHDMT <- fdrLimitHDMTi
     fdrLimitDACT <- fdrLimitDACTi
     fdrLimitKernel <- fdrLimitKerneli
@@ -202,15 +206,13 @@ for (file_it in 1:9) {
   allResults <- rbind(allResults, tempRes %>% mutate(aID = file_it))
 
   # save rejections
-  setwd(outputDir)
-  write.table(rejectDat, paste0(rejectOutRoot, file_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+  write.table(rejectDat, paste0(outputDir, rejectOutRoot, file_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
   cat(file_it)
 }
 
 # save
-setwd(outputDir)
-write.table(allResults, paste0(fnameOut, "_S", Snum, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+write.table(allResults, paste0(outputDir, fnameOut, "_S", Snum, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 
 

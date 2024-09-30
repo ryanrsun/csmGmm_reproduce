@@ -1,5 +1,11 @@
 # Perform mediation analysis to get raw data for Table 1
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/Fig4/mediation_analysis.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig4/mediation_analysis.R")
+
 # load libraries
 library(mvtnorm)
 library(data.table)
@@ -8,26 +14,28 @@ library(magrittr)
 library(devtools)
 library(ks)
 library(csmGmm)
+library(here)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+# set output directory 
+outputDir <- here::here("Fig4", "output")
+outRoot <- paste0(outputDir, "/med_analysis_aID", aID)
 
 # set output directory 
 outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
 outRoot <- paste0("med_analysis_aID", aID)
-# please place this file (see DATA folder) in output folder as well
-twasFname <- "scc_lung_addchr1.csv"
-#-------------------------------------------------------------------#
+
+# additional data needed
+twasFname <- here::here("data/scc_lung_addchr1.csv")
 
 # convergence of EM
 oldEps <- 0.01
@@ -49,16 +57,14 @@ tab2DF <- data.frame(RS = c("rs71658797", "rs6920364", "rs11780471",
   slice(aID:aID)
 
 # read the lung twas results
-setwd(outputDir)
-  twasRes <- read.csv(twasFname) %>%
+twasRes <- read.csv(twasFname) %>%
   select(gene_name, zscore, pvalue) %>%
   set_colnames(c("Gene", "Z_twas", "p_twas")) %>%
   filter(!is.na(Z_twas))
 
 # loop through 15 SNPs
 for (snp_it in 1:nrow(tab2DF)) {
-  setwd(outputDir) 
-  tempFname <- paste0(tab2DF$RS[snp_it], "_", tab2DF$Gene[snp_it], "_", tab2DF$Chr[snp_it], "_", tab2DF$BP[snp_it], ".txt")
+  tempFname <- paste0(outputDir, "/", tab2DF$RS[snp_it], "_", tab2DF$Gene[snp_it], "_", tab2DF$Chr[snp_it], "_", tab2DF$BP[snp_it], ".txt")
   tempEqtl <- fread(tempFname) %>% 
     select(Gene, testStat, pval) %>%
     set_colnames(c("Gene", "Z_eqtl", "p_eqtl"))
@@ -93,7 +99,6 @@ for (snp_it in 1:nrow(tab2DF)) {
   }
 
   # save the test statistics
-  setwd(outputDir)
   write.table(allDat, paste0(outRoot, "_dat.txt"), append=F, quote=F, row.names=F, col.names=T)
 
   # run HDMT 
@@ -106,7 +111,6 @@ for (snp_it in 1:nrow(tab2DF)) {
     hdmtOut <- rep(NA, nrow(testDat))
   }
   # save
-  setwd(outputDir)
   write.table(hdmtOut, paste0(outRoot, "_hdmt.txt"), append=F, quote=F, row.names=F, col.names=T)
 
   # run the DACT
@@ -121,7 +125,6 @@ for (snp_it in 1:nrow(tab2DF)) {
     DACTfreqp <- DACTout$pval
   }
   # save
-  setwd(outputDir)
   write.table(DACTfreqp, paste0(outRoot, "_DACTp.txt"), append=F, quote=F, row.names=F, col.names=T)
 
   # kernel
@@ -133,7 +136,6 @@ for (snp_it in 1:nrow(tab2DF)) {
       kernelLfdr <- oldResKernel$lfdrVec
   }
   # save
-  setwd(outputDir)
   write.table(kernelLfdr, paste0(outRoot, "_kernel.txt"), append=F, quote=F, row.names=F, col.names=T)
 
   # 7 df
@@ -145,7 +147,6 @@ for (snp_it in 1:nrow(tab2DF)) {
         df7Lfdr <- oldRes7df$lfdrVec
   }
   # save
-  setwd(outputDir)
   write.table(df7Lfdr, paste0(outRoot, "_df7.txt"), append=F, quote=F, row.names=F, col.names=T)
 
   # 50 df
@@ -158,7 +159,6 @@ for (snp_it in 1:nrow(tab2DF)) {
     df50Lfdr <- oldRes50df$lfdrVec
   }
   # save
-  setwd(outputDir)
   write.table(df50Lfdr, paste0(outRoot, "df50.txt"), append=F, quote=F, row.names=F, col.names=T)
 
   # new
@@ -168,7 +168,6 @@ for (snp_it in 1:nrow(tab2DF)) {
   newRes <- symm_fit_ind_EM(testStats = testDat[, 1:2], sameDirAlt = FALSE, initMuList = initMuList, initPiList = initPiList, eps=newEps)
 
   # save
-  setwd(outputDir)
   newOut <- allDat %>% mutate(newLfdr = newRes$lfdrResults)
   write.table(newOut, paste0(outRoot, "_newlfdr.txt"), append=F, quote=F, row.names=F, col.names=T)
   write.table(do.call(cbind, newRes$muInfo), paste0(outRoot, "_muInfo.txt"), append=F, quote=F, row.names=F, col.names=T)

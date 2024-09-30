@@ -1,33 +1,30 @@
 # Analysis of real data - pleiotropy and replication studies
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/Fig1/Fig1A_sim.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig4/ukb_analysis.R")
+
 # load libraries
 library(data.table)
 library(dplyr)
 library(devtools)
 library(ks)
 library(csmGmm)
+library(here)
 
-# record input - controls seed, parameters, etc.
-args <- commandArgs(trailingOnly=TRUE)
-aID <- as.numeric(args[1])
-Snum <- as.numeric(args[2])
-
-#------------------------------------------------------------------#
-# parameters to be changed
-
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-fnameRoot <- paste0("Fig4_data_aID", aID, ".txt")
+outputDir <- here::here("Fig4", "output")
+fnameRoot <- paste0(outputDir, "/Fig4_data_aID", aID, ".txt")
 
 # where is the data
-summaryStatDir <- "/rsrch3/home/biostatistics/rsun3/summaryStats"
-#-------------------------------------------------------------------#
-
+summaryStatDir <- here::here("data")
 
 # controls convergence of EM algorithms
 oldEps <- 0.01
@@ -37,50 +34,49 @@ newEps <- 10^(-5)
 replication <- FALSE
 threeway <- FALSE
 cor <- FALSE
-setwd(summaryStatDir)
 if (aID == 1) {
   # CAD, BMI
-  cleanUKB <- fread("bmi_with_overall.txt")
+  cleanUKB <- fread(here::here(summaryStatDir, "bmi_with_overall.txt"))
   testDat <- cleanUKB %>% select(Zcad, Zbmi, p_CAD, pBMI)
 } else if (aID == 2) {
   # Overall LC, CAD
-  cleanUKB <- fread("bmi_with_overall.txt")
+  cleanUKB <- fread(here::here(summaryStatDir, "bmi_with_overall.txt"))
   testDat <- cleanUKB %>% select(Zoverall, Zcad, pOverall, p_CAD)
 } else if (aID == 3) {
   # Overall LC, BMI
-  cleanUKB <- fread("bmi_with_overall.txt")
+  cleanUKB <- fread(here::here(summaryStatDir, "bmi_with_overall.txt"))
   testDat <- cleanUKB %>% select(Zoverall, Zbmi, pOverall, pBMI)
 } else if (aID == 4) {
   # Replication - overall LC, UKB LC
   replication <- TRUE 
-  cleanUKB <- fread("replication_with_lcoverall.txt")
+  cleanUKB <- fread(here::here(summaryStatDir, "replication_with_lcoverall.txt"))
   testDat <- cleanUKB %>% select(Zoverall, Zlcukb, pOverall, pLCukb)
 } else if (aID == 5) {
   # Replication - CAD, UKB CAD
   replication <- TRUE
-  cleanUKB <- fread("cad_for_replication.txt")
+  cleanUKB <- fread(here::here(summaryStatDir, "cad_for_replication.txt"))
   testDat <- cleanUKB %>% select(Zcad_cardio, Zcadukb, p_CAD_cardio, pCADukb)
 } else if (aID == 6) {
   # three way - overall, cad, bmi
   threeway <- TRUE
-  cleanUKB <- fread("cad_for_replication.txt") 
+  cleanUKB <- fread(here::here(summaryStatDir, "cad_for_replication.txt"))
   testDat <- cleanUKB %>% select(Zoverall, Zcad, Zbmi, pOverall, p_CAD, pBMI)
 } else if (aID == 7) {
   # Correlation - LC UKB, CAD UKB 
   cor <- TRUE 
-  cleanUKB <- fread("bmi_with_overall.txt")
+  cleanUKB <- fread(here::here(summaryStatDir, "bmi_with_overall.txt"))
   # pvalue doesn't matter 
   testDat <- cleanUKB %>% select(Zlcukb, Zcadukb, pLC, p_CAD)
 } else if (aID == 8) {
   # Correlation - LC UKB, bmi
   cor <- TRUE 
-  cleanUKB <- fread("bmi_with_overall.txt")
+  cleanUKB <- fread(here::here(summaryStatDir, "bmi_with_overall.txt"))
   # pvalue doesn't matter
   testDat <- cleanUKB %>% select(Zlcukb, Zbmi, pLC, pBMI)
 } else if (aID == 9) {
   # Correlation - CAD UKB, bmi
   cor <- TRUE 
-  cleanUKB <- fread("bmi_with_overall.txt") 
+  cleanUKB <- fread(here::here(summaryStatDir, "bmi_with_overall.txt"))
   # pvalue doesn't matter
   testDat <- cleanUKB %>% select(Zcadukb, Zbmi, pCAD, pBMI)
 }
@@ -123,8 +119,7 @@ if (!replication & !threeway & !cor) {
     hdmtOut <- rep(NA, nrow(testDat))
   } 
   # save
-  setwd(outputDir) 
-  write.table(hdmtOut, paste0(fnameRoot, "_hdmt.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(hdmtOut, here::here(fnameRoot, "_hdmt.txt"), append=F, quote=F, row.names=F, col.names=T)
 
   # sped up version of DACT - negligible differences but much faster
   if (class(nullprop)[1] != "list") {
@@ -139,8 +134,7 @@ if (!replication & !threeway & !cor) {
   }
 
   # save
-  setwd(outputDir) 
-  write.table(DACTfreqp, paste0(fnameRoot, "_DACTp.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(DACTfreqp, here::here(fnameRoot, "_DACTp.txt"), append=F, quote=F, row.names=F, col.names=T)
 
 } 
 
@@ -154,8 +148,7 @@ if (!cor) {
     kernelLfdr <- oldResKernel$lfdrVec
   }
   # save
-  setwd(outputDir)
-  write.table(kernelLfdr, paste0(fnameRoot, "_kernel.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(kernelLfdr, hre::here(fnameRoot, "_kernel.txt"), append=F, quote=F, row.names=F, col.names=T)
 }
 
 # run 7 df
@@ -168,8 +161,7 @@ if (!cor) {
       df7Lfdr <- oldRes7df$lfdrVec
   }
   # save
-  setwd(outputDir)
-  write.table(df7Lfdr, paste0(fnameRoot, "_df7.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(df7Lfdr, here::here(fnameRoot, "_df7.txt"), append=F, quote=F, row.names=F, col.names=T)
 }
 
 # run 50 df
@@ -182,8 +174,7 @@ if (!cor) {
         df50Lfdr <- oldRes50df$lfdrVec
   }
   # save
-  setwd(outputDir)
-  write.table(df50Lfdr, paste0(fnameRoot, "df50.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(df50Lfdr, here::here(fnameRoot, "df50.txt"), append=F, quote=F, row.names=F, col.names=T)
 }
 
 # 2D cases pleiotropy
@@ -219,10 +210,9 @@ if (!threeway) {
 }
 
 # save
-setwd(outputDir)
-write.table(newRes$lfdrResults, paste0(fnameRoot, "_newlfdr.txt"), append=F, quote=F, row.names=F, col.names=T)
-write.table(do.call(cbind, newRes$muInfo), paste0(fnameRoot, "_muInfo.txt"), append=F, quote=F, row.names=F, col.names=T)
-write.table(do.call(cbind, newRes$piInfo), paste0(fnameRoot, "_piInfo.txt"), append=F, quote=F, row.names=F, col.names=T)
+write.table(newRes$lfdrResults, here::here(fnameRoot, "_newlfdr.txt"), append=F, quote=F, row.names=F, col.names=T)
+write.table(do.call(cbind, newRes$muInfo), here::here(fnameRoot, "_muInfo.txt"), append=F, quote=F, row.names=F, col.names=T)
+write.table(do.call(cbind, newRes$piInfo), here::here(fnameRoot, "_piInfo.txt"), append=F, quote=F, row.names=F, col.names=T)
 
 
 

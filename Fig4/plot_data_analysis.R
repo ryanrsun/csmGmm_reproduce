@@ -1,4 +1,11 @@
 # Make Figure 4 and Tables 1 and 2
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/Fig4/plot_data_analysis.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("Fig4/plot_data_analysis.R")
+
 library(dplyr)
 library(magrittr)
 library(data.table)
@@ -7,6 +14,7 @@ library(cowplot)
 library(data.table)
 library(xtable)
 library(devtools)
+library(here)
 
 # 1 is CAD and BMI
 # 2 is ILCCO overall and Cardiogram CAD
@@ -15,17 +23,13 @@ library(devtools)
 # 5 is replication CAD
 # 6 is three way ILCCO overall, Cardiogram CAD, UKB BMI
 
-#------------------------------------------------------------------#
-# parameters to be changed
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
-
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-#------------------------------------------------------------------#
-
+# set output directory 
+outputDir <- here::here("Fig4", "output")
 
 # for colors
 gg_color_hue <- function(n) {
@@ -74,12 +78,11 @@ plotManhattan <- function(plotRes, chrCounts, colValues, shapeValues, ylimits, l
 }
 
 # add position information to data
-setwd(outputDir)
-s1 <- fread("reject_bmi_with_overall_neg5_reject_aID1.txt")
-s2 <- fread("reject_bmi_with_overall_neg5_reject_aID2.txt")
-s3 <- fread("reject_bmi_with_overall_neg5_reject_aID3.txt")
-s4 <- fread("reject_bmi_with_overall_neg5_reject_aID4.txt")
-s5 <- fread("reject_bmi_with_overall_neg5_reject_aID5.txt")
+s1 <- fread(here::here(outputDir, "reject_bmi_with_overall_neg5_reject_aID1.txt"))
+s2 <- fread(here::here(outputDir, "reject_bmi_with_overall_neg5_reject_aID2.txt"))
+s3 <- fread(here::here(outputDir, "reject_bmi_with_overall_neg5_reject_aID3.txt"))
+s4 <- fread(here::here(outputDir, "reject_bmi_with_overall_neg5_reject_aID4.txt"))
+s5 <- fread(here::here(outputDir, "reject_bmi_with_overall_neg5_reject_aID5.txt"))
 s1new <- s1 %>% filter(rejNew == 1) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(chars = nchar(chrpos)) %>%
@@ -117,8 +120,7 @@ s5new <- s5 %>% filter(rejNew == 1) %>%
   mutate(BP = substr(chrpos, colonPos + 1, chars))
 
 # for plotting axes
-setwd(outputDir)
-allZ <- fread("bmi_with_overall.txt") %>%
+allZ <- fread(here::here(outputDir, "bmi_with_overall.txt")) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(colonPos = gregexpr(":", chrpos)) %>%
   mutate(colonPos = as.numeric(colonPos)) %>%
@@ -172,9 +174,8 @@ manPlotRep
 # Table 2
 
 # read summary of pleiotropy analysis
-setwd(outputDir)
-adjAnal <- fread("processed_ukb_data_S1.txt")
-origAnal <- fread("processed_ukb_data_S2.txt")
+adjAnal <- fread(here::here(outputDir, "processed_ukb_data_S1.txt"))
+origAnal <- fread(here::here("processed_ukb_data_S2.txt"))
 
 tab2 <- origAnal %>% filter(aID == 6) %>% select(Method, numReject) %>%
   mutate(a4 = origAnal %>% filter(aID == 2) %>% select(numReject) %>% unlist(.)) %>%
@@ -193,10 +194,9 @@ tab2final
 
 
 # Table 1
-setwd(outputDir)
 qval <- 0.1
 
-initDat <- fread("med_analysis_aID1_newlfdr.txt") %>%
+initDat <- fread(here::here(outputDir, "med_analysis_aID1_newlfdr.txt")) %>%
   select(Gene, Z_eqtl, p_eqtl, Z_twas, p_twas)
 
 # hold results
