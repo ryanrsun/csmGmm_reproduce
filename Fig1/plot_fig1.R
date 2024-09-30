@@ -1,9 +1,8 @@
 # Collect results and plot Figure 1
 
-
 # Using the here package to manage file paths. If an error is thrown, please
 # set the working directory to the folder that holds this Rscript, e.g.
-# setwd("/path/to/Fig1/Fig1B_sim.R") or set the path after the -cwd flag
+# setwd("/path/to/Fig1/plot_fig1.R") or set the path after the -cwd flag
 # in the .lsf file, and then run again.
 here::i_am("Fig1/plot_fig1.R")
 
