@@ -1,7 +1,7 @@
 #BSUB -J sfig10bs9[101-102]
 #BSUB -W 3:01
-#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig10/errDir/sfig10bs9_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig10/errDir/sfig10bs9_%I.err
+#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig10/errDir/sfig10bs9_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig10/errDir/sfig10bs9_%I.err
 #BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
 #BSUB -q medium
 #BSUB -u rsun3@mdanderson.org
@@ -11,4 +11,4 @@
 
 # Run 1-2000
 module load R/4.2.1
-Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig10/SFig10B_sim_combined.R $LSB_JOBINDEX 9 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig10/errDir/sfig10bs9_$LSB_JOBINDEX.out
+Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig10/SFig10B_sim_combined.R $LSB_JOBINDEX 9 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig10/errDir/sfig10bs9_$LSB_JOBINDEX.out
