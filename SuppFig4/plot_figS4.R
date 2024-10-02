@@ -1,45 +1,53 @@
 # Collect results and plot Figure S4
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig4/plot_figS4.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig4/plot_figS4.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+library(csmGmm)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig4/origOutput"
-names4aq1 <- paste0("sim_n1k_j100k_power3d_changeeff_power1_raiseAlt_aID", 1:600, ".txt")
-names4aq2 <- paste0("sim_n1k_j100k_power3d_changeeff_power2_raiseAlt_aID", 1:600, ".txt")
-names4aq3 <- paste0("sim_n1k_j100k_power3d_changeeff_power3_raiseAlt_aID", 1:600, ".txt")
-names4aq4 <- paste0("sim_n1k_j100k_power3d_changeeff_power4_raiseAlt_aID", 1:600, ".txt")
-names4aq5 <- paste0("sim_n1k_j100k_power3d_changeeff_power5_raiseAlt_aID", 1:600, ".txt")
-names4aq6 <- paste0("sim_n1k_j100k_power3d_changeeff_power6_raiseAlt_aID", 1:600, ".txt")
-names4aq7 <- paste0("sim_n1k_j100k_power3d_changeeff_power7_raiseAlt_aID", 1:600, ".txt")
-names4aq8 <- paste0("sim_n1k_j100k_power3d_changeeff_power8_raiseAlt_aID", 1:600, ".txt")
-names4aq9 <- paste0("sim_n1k_j100k_power3d_changeeff_power9_raiseAlt_aID", 1:600, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig1", "output/")
+
+names4aq1 <- paste0(outputDir, "sim_n1k_j100k_power3d_changeeff_power1_raiseAlt_aID", 1:600, ".txt")
+names4aq2 <- paste0(outputDir, "sim_n1k_j100k_power3d_changeeff_power2_raiseAlt_aID", 1:600, ".txt")
+names4aq3 <- paste0(outputDir, "sim_n1k_j100k_power3d_changeeff_power3_raiseAlt_aID", 1:600, ".txt")
+names4aq4 <- paste0(outputDir, "sim_n1k_j100k_power3d_changeeff_power4_raiseAlt_aID", 1:600, ".txt")
+names4aq5 <- paste0(outputDir, "sim_n1k_j100k_power3d_changeeff_power5_raiseAlt_aID", 1:600, ".txt")
+names4aq6 <- paste0(outputDir, "sim_n1k_j100k_power3d_changeeff_power6_raiseAlt_aID", 1:600, ".txt")
+names4aq7 <- paste0(outputDir, "sim_n1k_j100k_power3d_changeeff_power7_raiseAlt_aID", 1:600, ".txt")
+names4aq8 <- paste0(outputDir, "sim_n1k_j100k_power3d_changeeff_power8_raiseAlt_aID", 1:600, ".txt")
+names4aq9 <- paste0(outputDir, "sim_n1k_j100k_power3d_changeeff_power9_raiseAlt_aID", 1:600, ".txt")
 names4aList <- list(names4aq1, names4aq2, names4aq3, names4aq4, names4aq5, names4aq6,
                     names4aq7, names4aq8, names4aq9)
-names4bq1 <- paste0("Power_correctionS4B_S1_aID", 1:400, ".txt")
-names4bq2 <- paste0("Power_correctionS4B_S2_aID", 1:400, ".txt")
-names4bq3 <- paste0("Power_correctionS4B_S3_aID", 1:400, ".txt")
-names4bq4 <- paste0("Power_correctionS4B_S4_aID", 1:400, ".txt")
-names4bq5 <- paste0("Power_correctionS4B_S5_aID", 1:400, ".txt")
-names4bq6 <- paste0("Power_correctionS4B_S6_aID", 1:400, ".txt")
-names4bq7 <- paste0("Power_correctionS4B_S7_aID", 1:400, ".txt")
-names4bq8 <- paste0("Power_correctionS4B_S8_aID", 1:400, ".txt")
-names4bq9 <- paste0("Power_correctionS4B_S8_aID", 1:400, ".txt")
+names4bq1 <- paste0(outputDir, "Power_correctionS4B_S1_aID", 1:400, ".txt")
+names4bq2 <- paste0(outputDir, "Power_correctionS4B_S2_aID", 1:400, ".txt")
+names4bq3 <- paste0(outputDir, "Power_correctionS4B_S3_aID", 1:400, ".txt")
+names4bq4 <- paste0(outputDir, "Power_correctionS4B_S4_aID", 1:400, ".txt")
+names4bq5 <- paste0(outputDir, "Power_correctionS4B_S5_aID", 1:400, ".txt")
+names4bq6 <- paste0(outputDir, "Power_correctionS4B_S6_aID", 1:400, ".txt")
+names4bq7 <- paste0(outputDir, "Power_correctionS4B_S7_aID", 1:400, ".txt")
+names4bq8 <- paste0(outputDir, "Power_correctionS4B_S8_aID", 1:400, ".txt")
+names4bq9 <- paste0(outputDir, "Power_correctionS4B_S8_aID", 1:400, ".txt")
 names4bList <- list(names4bq1, names4bq2, names4bq3, names4bq4, names4bq5, names4bq6,
                     names4bq7, names4bq8, names4bq9)
 
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res4a <- c()
 for (file_it in 1:length(names4aq1)) {
   for (q_it in 1:9) {
@@ -50,7 +58,6 @@ for (file_it in 1:length(names4aq1)) {
   }
 }
 
-setwd(outputDir)
 res4b <- c()
 for (file_it in 1:length(names4bq1)) {
   for (q_it in 1:9) {
@@ -62,15 +69,14 @@ for (file_it in 1:length(names4bq1)) {
 }
 
 # summarize
-setwd(outputDir)
 for (q_it in 1:9) {
   tempResa <- res4a %>% filter(q == q_it)
   tempSummarya <- summarize_raw(tempResa)
-  write.table(tempSummarya, paste0("FigS4a_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+  write.table(tempSummarya, paste0(outputDir, "FigS4a_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
   tempResb <- res4b %>% filter(q == q_it)
   tempSummaryb <- summarize_raw(tempResb)
-  write.table(tempSummaryb, paste0("FigS4b_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+  write.table(tempSummaryb, paste0(outputDir, "FigS4b_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
 }
 
 #------------------------------------------------#
@@ -87,10 +93,9 @@ mycols[5] <- "blue"
 
 
 # load all the files needed for corrected power
-setwd(outputDir)
-FigS4a_fixq <- fread("FigS4a_power1_summary.txt", data.table=F)  %>% mutate(q=0.01)
+FigS4a_fixq <- fread(paste0(outputDir, "FigS4a_power1_summary.txt"), data.table=F)  %>% mutate(q=0.01)
 for (q_it in 2:9) {
-  tempFile <- fread(paste0("FigS4a_power", q_it, "_summary.txt"), data.table=F) %>% mutate(q = q_it / 100)
+  tempFile <- fread(paste0(outputDir, "FigS4a_power", q_it, "_summary.txt"), data.table=F) %>% mutate(q = q_it / 100)
   FigS4a_fixq <- rbind(FigS4a_fixq, tempFile)
 }
 FigS4a_fixq <- FigS4a_fixq %>%
@@ -141,10 +146,9 @@ FigS4a_plot <- ggplot(data=FigS4a_correctedPow, aes(x=minEff1, y=actualPower, gr
 
 
 # Fig S4b
-setwd(outputDir)
-FigS4b_fixq <- fread("FigS4b_power1_summary.txt", data.table=F)  %>% mutate(q = 0.01)
+FigS4b_fixq <- fread(paste0(outputDir, "FigS4b_power1_summary.txt"), data.table=F)  %>% mutate(q = 0.01)
 for (q_it in 2:9) {
-  tempFile <- fread(paste0("FigS4b_power", q_it, "_summary.txt"), data.table=F) %>% mutate(q = q_it / 100)
+  tempFile <- fread(paste0(outputDir, "FigS4b_power", q_it, "_summary.txt"), data.table=F) %>% mutate(q = q_it / 100)
   FigS4b_fixq <- rbind(FigS4b_fixq, tempFile)
 }
 FigS4b_fixq <- FigS4b_fixq %>%
@@ -198,8 +202,7 @@ FigS4b_plot <- ggplot(data=FigS4b_correctedPow,
 
 
 # Supp Fig S4c
-setwd(outputDir)
-FigS4c_data <- fread("Fig3a_summary.txt", data.table=F) %>%
+FigS4c_data <- fread(here::here("Fig3/output/Fig3a_summary.txt"), data.table=F) %>%
   filter(Method != "DACT" & Method != "HDMT") %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
@@ -218,7 +221,7 @@ FigS4c_plot <- ggplot(data=FigS4c_data, aes(x=minEff1, y=Incongruous, group=Meth
 
 #Supp Fig S4d
 setwd(outputDir)
-FigS4d_data <- fread("Fig3b_summary.txt", data.table=F)  %>%
+FigS4d_data <- fread(here::here("Fig3/output/Fig3b_summary.txt"), data.table=F)  %>%
   filter(Method != "DACT" & Method != "HDMT") %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
@@ -246,8 +249,7 @@ s4_legend <- get_legend(FigS4d_plot +  theme(legend.direction="horizontal",
                                                                    legend.justification="center",
                                                                    legend.box.just="bottom"))
 plot_grid(s4_plot, s4_legend, ncol=1, rel_heights=c(1, 0.15))
-setwd(outputDir)
-ggsave("s4.pdf",  width=20, height=12)
+#ggsave("s4.pdf",  width=20, height=12)
 
 
 

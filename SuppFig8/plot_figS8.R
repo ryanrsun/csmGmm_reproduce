@@ -1,21 +1,29 @@
 # Collect results and plot Supp Fig 8
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig8/plot_figS8.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig8/plot_figS8.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig8/origOutput"
-names8a <- paste0("sim_n1k_j100k_med2d_noalt_changepi0_randomeff_pi0_aID", 1:160, ".txt")
-names8b <- paste0("sim_n1k_j100k_med2d_raisealt_changepi0_randomeff_pi0_aID", 1:160, ".txt")
-names8c <- paste0("sim_n1k_j100k_ind3d_changepi0_raiseAlt_randomeff_aID", 1:160, ".txt")
+
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig1", "output/")
+names8a <- paste0(outputDir, "sim_n1k_j100k_med2d_noalt_changepi0_randomeff_pi0_aID", 1:160, ".txt")
+names8b <- paste0(outputDir, "sim_n1k_j100k_med2d_raisealt_changepi0_randomeff_pi0_aID", 1:160, ".txt")
+names8c <- paste0(outputDir, "sim_n1k_j100k_ind3d_changepi0_raiseAlt_randomeff_aID", 1:160, ".txt")
 #-----------------------------------------#
 
 # read raw output files
@@ -52,10 +60,9 @@ summary8b <- summarize_raw(res8b)
 summary8c <- summarize_raw(res8c)
 
 # save summaries
-setwd(outputDir)
-write.table(summary8a, "med2d_noalt_changepi0_randomeff.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary8b, "med2d_changepi0_randomeff.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary8c, "ind3d_changepi0_randomeff.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary8a, paste0(outputDir, "med2d_noalt_changepi0_randomeff.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary8b, paste0(outputDir, "med2d_changepi0_randomeff.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary8c, paste0(outputDir, "ind3d_changepi0_randomeff.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -70,8 +77,7 @@ mycols[5] <- "blue"
 
 
 # no effect change pi0
-setwd(outputDir)
-ind2d_noalt_changepi0_randomeff <- fread("med2d_noalt_changepi0_randomeff.txt", data.table=F) %>%
+ind2d_noalt_changepi0_randomeff <- fread(paste0(outputDir, "med2d_noalt_changepi0_randomeff.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -96,8 +102,7 @@ ind2d_changepi0_noalt_fdp_randomeff_plot <-ggplot(data=ind2d_noalt_changepi0_ran
 ind2d_changepi0_noalt_fdp_randomeff_plot
 
 # change pi0 data
-setwd(outputDir)
-ind2d_changepi0_randomeff <- fread("med2d_changepi0_randomeff.txt", data.table=F) %>%
+ind2d_changepi0_randomeff <- fread(paste0(outputDir, "med2d_changepi0_randomeff.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -142,8 +147,7 @@ ind2d_changepi0_power_randomeff_plot
 
 
 # 3d change pi0
-setwd(outputDir)
-ind3d_changepi0_randomeff <- fread("ind3d_changepi0_randomeff.txt", data.table=F) %>%
+ind3d_changepi0_randomeff <- fread(paste0(outputDir, "ind3d_changepi0_randomeff.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   filter(Method != "DACT") %>%
   filter(Method != "HDMT") %>%
@@ -168,8 +172,6 @@ ind3d_changepi0_fdp_randomeff_plot <- ggplot(data=ind3d_changepi0_randomeff, aes
   theme(legend.key.size = unit(3,"line"))
 ind3d_changepi0_fdp_randomeff_plot
 
-
-
 # save
 changepi0_randomeff_plot <- plot_grid(ind2d_changepi0_noalt_fdp_randomeff_plot + theme(legend.position = "none"),
                                       ind2d_changepi0_fdp_randomeff_plot + theme(legend.position = "none"),
@@ -180,7 +182,7 @@ changepi0_randomeff_legend <- get_legend(ind2d_changepi0_noalt_fdp_randomeff_plo
                                                                    legend.justification="center",
                                                                    legend.box.just="bottom"))
 plot_grid(changepi0_randomeff_plot, changepi0_randomeff_legend, ncol=1, rel_heights=c(1, 0.15))
-ggsave('SFig8.pdf', width=20, height=12)
+#ggsave('SFig8.pdf', width=20, height=12)
 
 
 

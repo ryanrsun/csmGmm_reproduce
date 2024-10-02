@@ -6,23 +6,17 @@ library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig9/origOutput"
-names9a7 <- paste0("sim_n1k_j100k_ind5d_changeeff2_7df_aID", 1:2000, ".txt")
-names9a50 <- paste0("sim_n1k_j100k_ind5d_changeeff2_50df_aID", 1:2000, ".txt")
-names9ak <- paste0("sim_n1k_j100k_ind5d_changeeff2_kernel_aID", 1:2000, ".txt")
-names9ac <- paste0("sim_n1k_j100k_ind5d_changeeff2_new_aID", 1:2000, ".txt")
-names9b <- paste0("sim_n1k_j100k_ind5d_changepi0_combined_aID", 1:800, ".txt")
-names9c <- paste0("sim_n1k_j100k_ind6d_changeeff2_combined_aID", 1:2000, ".txt")
-names9d <- paste0("sim_n1k_j100k_ind6d_changepi0_combined_aID", 1:800, ".txt")
-#-----------------------------------------#
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
+outputDir <- here::here("SuppFig9", "output")
+names9a <- paste0(outputDir, "\sim_n1k_j100k_ind5d_changeeff2_combined_aID", 1:2000, ".txt")
+names9b <- paste0(outputDir, "sim_n1k_j100k_ind5d_changepi0_combined_aID", 1:800, ".txt")
+names9c <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff2_combined_aID", 1:2000, ".txt")
+names9d <- paste0(outputDir, "sim_n1k_j100k_ind6d_changepi0_combined_aID", 1:800, ".txt")
 
 gg_color_hue <- function(n) {
   hues = seq(15, 375, length = n + 1)
@@ -223,7 +217,7 @@ ind6d_changeeff_fdp_plot
 
 # s fig 9d
 setwd(outputDir)
-ind6d_changepi0 <- fread("ind6d_changepi0.txt", data.table=F) %>%
+ind6d_changepi0 <- fread(paste0(outputDir, "ind6d_changepi0.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -258,8 +252,7 @@ ind56d_fdp_legend <- get_legend(ind5d_changeeff_fdp_plot +  theme(legend.directi
                                                                  legend.justification="center",
                                                                  legend.box.just="bottom"))
 plot_grid(ind56d_fdp_plot, ind56d_fdp_legend, ncol=1, rel_heights=c(1, 0.15))
-setwd(outputDir)
-ggsave('ind56d_fdp.pdf', width=20, height=12)
+#ggsave('ind56d_fdp.pdf', width=20, height=12)
 
 
 

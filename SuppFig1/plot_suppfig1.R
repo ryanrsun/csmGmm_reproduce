@@ -1,23 +1,28 @@
-# Collect results and plot Figure 1
+# Collect results and plot Supp Figure 1
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig1/plot_suppfig1.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig1/plot_suppfig1.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
+library(here)
 
-#-----------------------------------------#
-# change to where the output files are stored
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-# source the .R scripts from the supportingCode/ folder in the csmGmm_reproduce repository
-setwd('/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SupportingCode/')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
-
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-snames1a <- paste0("sim_n1k_j100k_med2d_changeeff_flipz_noalt_aID", 1:800, ".txt")
-snames1b <- paste0("sim_n1k_j100k_med2d_raisealt_changepi0_flipz_noalt_aID", 1:320, ".txt")
-snames1c <- paste0("SuppFig1C_aID", 1:800, ".txt")
-snames1d <- paste0("SuppFig1D_aID", 1:320, ".txt")
+outputDir <- here::here("SuppFig1/output/")
+snames1a <- paste0(outputDir, "sim_n1k_j100k_med2d_changeeff_flipz_noalt_aID", 1:800, ".txt")
+snames1b <- paste0(outputDir, "sim_n1k_j100k_med2d_raisealt_changepi0_flipz_noalt_aID", 1:320, ".txt")
+snames1c <- paste0(outputDir, "SuppFig1C_aID", 1:800, ".txt")
+snames1d <- paste0(outputDir, "SuppFig1D_aID", 1:320, ".txt")
 #-----------------------------------------#
 
 # colors
@@ -32,7 +37,6 @@ mycols[5] <- "blue"
 
 # read raw output files
 # supp 1a
-setwd(outputDir)
 sres1a <- c()
 for (file_it in 1:length(snames1a)) {
   tempRes <- tryCatch(fread(snames1a[file_it]), error=function(e) e)
@@ -76,19 +80,17 @@ summarys1c <- summarize_raw(sres1c)
 summarys1d <- summarize_raw(sres1d)
 
 # save summaries
-setwd(outputDir)
-write.table(summarys1a, "SFig1a_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summarys1b, "SFig1b_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summarys1c, "SFig1c_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summarys1d, "SFig1d_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summarys1a, paste0(outputDir, "SFig1a_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summarys1b, paste0(outputDir, "SFig1b_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summarys1c, paste0(outputDir, "SFig1c_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summarys1d, paste0(outputDir, "SFig1d_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
 
 # Supp fig - swap alleles
 # s1a data
-setwd(outputDir)
-SFig1a_data <- fread("SFig1a_summary.txt", data.table=F)  %>%
+SFig1a_data <- fread(paste0(outputDir, "SFig1a_summary.txt"), data.table=F)  %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -111,7 +113,7 @@ SFig1a_plot <- ggplot(data=SFig1a_data, aes(x=minEff1, y=FDP, group=Method)) +
 
 # s1b data
 setwd(outputDir)
-SFig1b_data <- fread("SFig1b_summary.txt", data.table=F)  %>%
+SFig1b_data <- fread(paste0(outputDir, "SFig1b_summary.txt"), data.table=F)  %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -136,7 +138,7 @@ SFig1b_plot <- ggplot(data=SFig1b_data, aes(x=minEff1, y=FDP, group=Method)) +
 
 # s1c data
 setwd(outputDir)
-SFig1c_data <- fread("SFig1c_summary.txt", data.table=F)  %>%
+SFig1c_data <- fread(paste0(outputDir, "SFig1c_summary.txt"), data.table=F)  %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -159,7 +161,7 @@ SFig1c_plot <- ggplot(data=SFig1c_data, aes(x=minEff1, y=FDP, group=Method)) +
 
 # s1d data
 setwd(outputDir)
-SFig1d_data <- fread("SFig1d_summary.txt", data.table=F)  %>%
+SFig1d_data <- fread(paste0(outputDir, "SFig1d_summary.txt"), data.table=F)  %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -192,8 +194,7 @@ S1_legend <- get_legend(SFig1a_plot +  theme(legend.direction="horizontal",
                                                                      legend.justification="center",
                                                                      legend.box.just="bottom"))
 plot_grid(S1_plot, S1_legend, ncol=1, rel_heights=c(1, 0.15))
-setwd(outputDir)
-ggsave('SFig1.pdf', width=18, height=12)
+#ggsave(paste0(outputDir, 'SFig1.pdf'), width=18, height=12)
 
 
 

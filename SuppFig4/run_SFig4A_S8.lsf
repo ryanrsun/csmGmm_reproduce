@@ -1,8 +1,8 @@
 #BSUB -J S4A_S8[101-102]
 #BSUB -W 7:00
-#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig4/errDir/SFig4A_S8_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig4/errDir/SFig4A_S8_%I.err
-#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig4/errDir/SFig4A_S8_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig4/errDir/SFig4A_S8_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/
 #BSUB -q medium
 #BSUB -u rsun3@mdanderson.org
 #BSUB -n 1
@@ -11,4 +11,4 @@
 
 # run 221-600
 module load R/4.2.1
-Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig4/SFig4A_power_correction.R $LSB_JOBINDEX 8 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig4/errDir/SFig4A_S8_$LSB_JOBINDEX.out
+Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig4/SFig4A_power_correction.R $LSB_JOBINDEX 8 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig4/errDir/SFig4A_S8_$LSB_JOBINDEX.out

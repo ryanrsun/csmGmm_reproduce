@@ -1,5 +1,11 @@
 # Supp Fig 5A
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig5/SuppFig5A_sim.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig5/SuppFig5A_sim.R")
+
 # load libraries
 library(mvtnorm)
 library(data.table)
@@ -7,36 +13,33 @@ library(bindata)
 library(dplyr)
 library(devtools)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig5/output"
-genotypeDir <- "/rsrch3/scratch/biostatistics/rsun3/empBayesGeneticData"
-outName <- paste0("SFig5A_aID", aID, ".txt")
+outputDir <- here::here("SuppFig1", "output")
+outName <- paste0(outputDir, "/SFig5A_aID", aID, ".txt")
 
 # real genotypes location and names
-genotypeDir <- "/rsrch3/scratch/biostatistics/rsun3/empBayesGeneticData"
-#genotypeNames <- paste0("cleanG_set", 1:260, "_dataset1.txt")
+genotypeDir <- here::here("data") 
 genotypeNames <-rep("cleanG_set1_dataset1.txt", 2000)
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
 loadData <- FALSE
 saveData <- TRUE
-testStatsName <- "SFig5A_allZ"
-betaName <- "SFig5A_allBeta"
-#-------------------------------------------------------------------#
+# these names are for if saveData <- TRUE
+testStatsName <- here::here(outputDir, "SFig5A_allZ")
+betaName <- here::here(outputDir, "SFig5A_allBeta")
 
 # parameters
 doHDMT <- TRUE
@@ -90,7 +93,6 @@ for (sim_it in 1:nSims) {
 
   # load or save data
   if (loadData) {
-    setwd(outputDir)
     allZ <- fread(paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
     allBeta <- fread(paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
   } else { 
@@ -175,7 +177,6 @@ for (sim_it in 1:nSims) {
 
     # save it 
     if (saveData) {
-      setwd(outputDir)
       write.table(allZ, paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
       write.table(allBeta, paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     }
@@ -356,7 +357,6 @@ for (sim_it in 1:nSims) {
   cat('\n \n \n \n \n \n \n \n \n \n')
 }
 
-setwd(outputDir)
 write.table(powerRes, outName, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 

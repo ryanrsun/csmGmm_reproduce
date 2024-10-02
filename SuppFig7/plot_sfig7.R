@@ -1,19 +1,26 @@
 # Collect results and plot Supp Fig 7
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig6/plot_figS7.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig7/plot_figS7.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig7/output"
-snames7b <- paste0("SFig7B_aID", 1:160, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig7", "output/")
+snames7b <- paste0(outputDir, "SFig7B_aID", 1:160, ".txt")
 #-----------------------------------------#
 
 # colors
@@ -26,7 +33,6 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # read raw output files
-setwd(outputDir)
 sres7b <- c()
 for (file_it in 1:length(snames7b)) {
   tempRes <- tryCatch(fread(snames7b[file_it]), error=function(e) e)
@@ -39,15 +45,13 @@ for (file_it in 1:length(snames7b)) {
 summarys7b <- summarize_raw(sres7b)
 
 # save summaries
-setwd(outputDir)
-write.table(summarys7b, "SFig7b_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summarys7b, paste0(outputDir, "SFig7b_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
 
-
 # S7a 
-SFig7a_data <- fread("Fig3d_summary.txt", data.table=F) %>%
+SFig7a_data <- fread(here::here("Fig3/output/Fig3d_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   filter(Method != "DACT") %>%
   filter(Method != "HDMT") %>%
@@ -89,7 +93,7 @@ SFig7c_plot <- ggplot(data=SFig7a_data %>% mutate(Power = ifelse(Method %in% c("
 
 # S7b
 setwd(outputDir)
-SFig7b_data <- fread("SFig7b_summary.txt", data.table=F) %>%
+SFig7b_data <- fread(paste0(outputDir, "SFig7b_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   filter(Method != "DACT") %>%
   filter(Method != "HDMT") %>%
@@ -136,8 +140,8 @@ s7_legend <- get_legend(SFig7a_plot +  theme(legend.direction="horizontal",
                                                                        legend.justification="center",
                                                                        legend.box.just="bottom"))
 plot_grid(s7_plot, s7_legend, ncol=1, rel_heights=c(1, 0.15))
-setwd(outputDir)
-ggsave('s7.pdf', width=18, height=12)
+
+#ggsave('s7.pdf', width=18, height=12)
 
 
 

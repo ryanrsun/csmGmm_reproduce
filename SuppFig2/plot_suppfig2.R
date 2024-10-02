@@ -1,19 +1,26 @@
 # Plot Supp Fig 2
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig2/plot_suppfig2.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig2/plot_suppfig2.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+library(csmGmm)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig2/origOutput"
-#-----------------------------------------#
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# where the output files are stored
+outputDir <- here::here("Fig2/output") 
 
 # define colors
 gg_color_hue <- function(n) {
@@ -25,8 +32,7 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # Supp Fig 2a
-setwd(outputDir)
-SFig2a_dat <- fread("Fig2a_power5_summary.txt", data.table=F)  %>%
+SFig2a_dat <- fread(here::here(outputDir, "Fig2a_power5_summary.txt"), data.table=F)  %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -49,8 +55,7 @@ SFig2a_plot <- ggplot(data=SFig2a_dat %>% filter(minEff1 >= 0.07 & minEff1 <= 0.
 
 
 # Supp Fig 2b
-setwd(outputDir)
-SFig2b_dat <- fread("Fig2b_power5_summary.txt", data.table=F) %>%
+SFig2b_dat <- fread(here::here(outputDir, "Fig2b_power5_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -74,8 +79,7 @@ SFig2b_plot <- ggplot(data=SFig2b_dat, aes(x=minEff1, y=FDP, group=Method)) +
 
 
 # Supp Fig 2c
-setwd(outputDir)
-SFig2c_fixq <- fread("Fig2a_power1_summary.txt", data.table=F) %>%
+SFig2c_fixq <- fread(here::here(outputDir, "Fig2a_power1_summary.txt"), data.table=F) %>%
   mutate(qval=0.01)
 for (q_it in 2:5) {
   tempFile <- fread(paste0("Fig2a_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
@@ -126,8 +130,7 @@ SFig2c_plot <- ggplot(data=SFig2c_correctedPos,
   theme(legend.key.size = unit(3,"line"))
 
 # Supp Fig 2d
-setwd(outputDir)
-Sfig2d_fixq <- fread("Fig2b_power1_summary.txt", data.table=F) %>%
+Sfig2d_fixq <- fread(here::here(outputDir, "Fig2b_power1_summary.txt"), data.table=F) %>%
   mutate(qval=0.01)
 for (q_it in 2:5) {
   tempFile <- fread(paste0("Fig2b_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)

@@ -1,20 +1,20 @@
-# Supp Fig 1D
+# For Supp Fig 9A
 
 # Using the here package to manage file paths. If an error is thrown, please
 # set the working directory to the folder that holds this Rscript, e.g.
-# setwd("/path/to/csmGmm_reproduce/SuppFig1/SuppFig1D_sim.R") or set the path after the -cwd flag
+# setwd("/path/to/csmGmm_reproduce/SuppFig9/SFig9A_sim_combined.R") or set the path after the -cwd flag
 # in the .lsf file, and then run again.
-here::i_am("SuppFig1/SuppFig1D_sim.R")
+here::i_am("SuppFig9/SFig9A_sim_combined.R")
 
 # load libraries
 library(mvtnorm)
 library(data.table)
 library(bindata)
 library(dplyr)
+library(magrittr)
 library(devtools)
 library(ks)
 library(csmGmm)
-library(here)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
@@ -27,19 +27,20 @@ toBeSourced <- list.files(codePath, "\\.R$")
 purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
-outputDir <- here::here("SuppFig1", "output")
-outName <- paste0(outputDir, "/SuppFig1D_aID", aID, ".txt")
+outputDir <- here::here("SuppFig9", "output")
+outName <- paste0(outputDir, "/sim_n1k_j100k_ind5d_changeeff2_combined_aID", aID, ".txt")
 
-# option to save or load intermediate data to save time
-loadData <- FALSE
+# option to save or load intermediate data to save time,
+# set as FALSE for first run and then TRUE thereafter
+loadData <- TRUE
 saveData <- FALSE
-# these names are for if saveData <- TRUE
-testStatsName <- here::here(outputDir, "SuppFig1D_allZ")
-betaName <- here::here(outputDir, "SuppFig1D_allBeta")
+# the name will be [testStatsName]_[betaStart]_S[Snum]_aID[aID].txt
+testStatsName <- here::here(outputDir, "allZ")
+betaName <- here::here(outputDir, "allBeta")
 
-# other simulation parameters
-doHDMT <- TRUE
-doDACT <- TRUE
+# parameters
+doHDMT <- FALSE
+doDACT <- FALSE
 doKernel <- TRUE
 do50df <- TRUE
 do7df <- TRUE
@@ -48,24 +49,24 @@ qvalue <- 0.1
 nSNPs <- 10^5 
 setSize <- 1000
 n <- 1000
-nDims <- 2
+nDims <- 5
 nSets <- nSNPs / setSize
-nSims <- 5
+nSims <- 1
 margprob <- rep(0.3, setSize)
-simsPerEffSize <- 40
+simsPerEffSize <- 100
 effSizeMult <- ceiling(aID / simsPerEffSize)
-betaMin <- c(0.14, 0.18)
-betaMax <- c(0.14, 0.18)
+betaStart <- 0.24
+betaMin <- rep(betaStart + 0.01 * effSizeMult, nDims)
+betaMax <- rep(betaStart + 0.1 + 0.01 * effSizeMult, nDims)
 beta0 <- -1
 
 # determines how many signals there are
-pi1 <- 0.01 * effSizeMult
-pi11 <- 3 * pi1^2
-pi00 <- 1 - 2*pi1 - pi11
-sProp <- c(pi00, 2 * pi1, pi11)
-hMat <- expand.grid(c(-1, 0, 1), c(-1, 0, 1)) %>%
+sProp <- c(0.9579, 0.04, 0.0012, 0.0006, 0.0000, 0.0003)
+hMat <- expand.grid(rep(list(c(-1, 0, 1)), nDims)) %>%
+  as.matrix(.) %>%
+  cbind(., rowSums(abs(.))) %>%
   as.data.frame(.) %>%
-  mutate(s = abs(Var1) + abs(Var2)) %>%
+  set_colnames(c(paste0("Var", 1:(ncol(.)-1)), "s")) %>%
   arrange(s)
 number <- c()
 for (s_it in 0:max(hMat$s)) {
@@ -75,63 +76,57 @@ for (s_it in 0:max(hMat$s)) {
 hMat <- hMat %>% mutate(number = number)
 
 # record results here
-powerRes <- data.frame(nCausal=rep(NA, nSims),  minEff1=pi1, 
-                       seed=NA, pi0aTrue=NA, pi0bTrue=NA, 
-                       nRejDACT=NA, nRejHDMT=NA, nRejKernel=NA, nRej7df=NA, nRej50df=NA, nRejNew=NA, 
+powerRes <- data.frame(nCausal=rep(NA, nSims),  minEff1=betaMin[1],
+                       seed=NA, pi0aTrue=NA, pi0bTrue=NA,
                        powerDACT=NA, powerHDMT=NA, powerKernel=NA, power7df=NA,
                        power50df=NA, powerNew=NA, fdpDACT=NA, fdpHDMT=NA, fdpKernel=NA, fdp7df=NA, fdp50df=NA, fdpNew=NA,
                        inconKernel=NA, incon7df=NA, incon50df=NA, inconNew=NA)
 # each loop is one simulation iteration
 for (sim_it in 1:nSims) {
 
-  # set the seed
+  # set the seed 
   set.seed(aID * 10^5 + sim_it)
   powerRes$seed[sim_it] <- aID * 10^5 + sim_it
 
   # load or save data
   if (loadData) {
-    allZ <- fread(paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
-    allBeta <- fread(paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
+    allZ <- fread(paste0(testStatsName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), data.table=F)
+    allBeta <- fread(paste0(betaName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), data.table=F)
   } else {
     # hold test statistics and signals
-    allZ <- matrix(data=NA, nrow=nSNPs, ncol=2)
-    allBeta <- matrix(data=NA, nrow=nSNPs, ncol=2)
+    allZ <- matrix(data=NA, nrow=nSNPs, ncol=nDims)
+    allBeta <- matrix(data=NA, nrow=nSNPs, ncol=nDims)
 
     # select signal locations
     sigLocsMat <- allocate_sigs(hMat = hMat, nSNPs = nSNPs, nDims=nDims)
-
+  
     # generate data in multiple sets - faster than all at once
     for (set_it in 1:nSets)  {
+      # save test statistics      
+      statsMat <- matrix(data=NA, nrow=setSize, ncol=nDims)
 
       # generate coefficient matrix
-      coefMat <- set_beta(sigLocsMat = sigLocsMat, set_it = set_it, setSize = setSize,
+      coefMat <- set_beta(sigLocsMat = sigLocsMat, set_it = set_it, setSize = setSize, 
                        betaMin=betaMin, betaMax=betaMax)
 
-      # two dimensional mediation case data generation for k=1 dimension
-      tempG <- sapply(X=margprob, FUN=rbinom, n=n, size=2)
-      adjG <- sweep(tempG, MARGIN=2, STATS=apply(tempG, 2, mean), FUN="-")
-      tempAlpha <- coefMat[, 1]
-      tempM <- sweep(tempG, MARGIN=2, STATS=tempAlpha, FUN="*") + matrix(data = rnorm(n=n*nrow(coefMat)), nrow=n, ncol=nrow(coefMat))
-      adjM <- sweep(tempM, MARGIN=2, STATS=apply(tempM, 2, mean), FUN="-")
-      sigSqHat <- apply(adjM, 2, myvar_fun)
+      # loop through each dimension
+      for (dimension_it in 1:nDims) {
+        tempG <- sapply(X=margprob, FUN=rbinom, n=n, size=2)
+        tempCoef <- coefMat[, dimension_it]
 
-      # calculate test statistics  for k=1
-      statsMat <- matrix(data=NA, nrow=setSize, ncol=2)
-      tempNum <- apply(adjG * adjM, 2, sum)
-      tempDenom <- sqrt(apply(adjG^2, 2, sum) * sigSqHat)
-      statsMat[, 1] <- tempNum / tempDenom
+        # outcome
+        tempEta <- sweep(tempG, MARGIN=2, STATS=tempCoef, FUN="*") + matrix(data=beta0, nrow=nrow(tempG), ncol=ncol(tempG))
+        tempMu <- rje::expit(as.numeric(tempEta))
+        tempY <- rbinom(n=length(tempMu), size=1, prob=tempMu)
+        # put back in matrix form
+        yMat <- matrix(data=tempY, nrow=nrow(tempEta), ncol=ncol(tempEta), byrow=FALSE)
 
-      # mediation data generation for k=2 dimension 
-      tempBeta <- coefMat[, 2]
-      tempEta <- sweep(tempM, MARGIN=2, STATS=tempBeta, FUN="*") + matrix(data=beta0, nrow=nrow(tempM), ncol=ncol(tempM))
-      tempMu <- rje::expit(as.numeric(tempEta))
-      tempY <- rbinom(n=length(tempMu), size=1, prob=tempMu)
-      yMat <- matrix(data=tempY, nrow=nrow(tempEta), ncol=ncol(tempEta), byrow=FALSE)
-
-      # calculate test statistics for k=2 
-      for (test_it in 1:ncol(yMat)) {
-        tempMod <- glm(yMat[, test_it] ~ tempG[, test_it] + tempM[, test_it], family=binomial)
-        statsMat[test_it, 2] <- summary(tempMod)$coefficients[3, 3]
+        # loop through each SNP
+        for (test_it in 1:ncol(yMat)) {
+          tempMod <- glm(yMat[, test_it] ~ tempG[, test_it], family=binomial)
+          statsMat[test_it, dimension_it] <- summary(tempMod)$coefficients[2, 3]
+        }
+        cat("simulated dimension ", dimension_it, "\n")
       }
 
       # record data
@@ -139,20 +134,20 @@ for (sim_it in 1:nSims) {
       endIdx <- set_it * setSize
       allZ[startIdx:endIdx, ] <- statsMat
       allBeta[startIdx:endIdx, ] <- coefMat
-
+   
       # checkpoint 
       if(set_it%%1 == 0) {cat(set_it)}
     } # done generating data
 
     # save it
     if (saveData) { 
-      write.table(allZ, paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
-      write.table(allBeta, paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+      write.table(allZ, paste0(testStatsName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+      write.table(allBeta, paste0(betaName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     } 
   }
 
   # number of signals and causal SNPs
-  causalVec <- as.numeric(allBeta[, 1] != 0 & allBeta[, 2] != 0)
+  causalVec <- as.numeric(apply(allBeta, 1, prod) != 0) 
   powerRes$nCausal[sim_it] <- sum(causalVec)
   powerRes$pi0aTrue[sim_it] <- length(which(allBeta[, 1] != 0))
   powerRes$pi0bTrue[sim_it] <- length(which(allBeta[, 2] != 0))
@@ -170,13 +165,7 @@ for (sim_it in 1:nSims) {
   }
   # p-value matrix
   allP <- 1- pchisq(as.matrix(allZ)^2, df=1)
-  
-  # mix up the signs of Z
-  mult1 <- rep(1, nrow(allZ)) - 2 * rbinom(n=nrow(allZ), size=1, prob=0.5)
-  mult2 <- rep(1, nrow(allZ)) - 2 * rbinom(n=nrow(allZ), size=1, prob=0.5)
-  allZ[, 1] <- abs(allZ[, 1]) * mult1
-  allZ[, 2] <- abs(allZ[, 2]) * mult2
-
+ 
   # hold the results
   totOut <- data.frame(X1 = allP[, 1], X2 = allP[, 2], origIdx = 1:nrow(allP), causal=causalVec) %>%
           mutate(pmax = pmax(X1, X2))
@@ -194,10 +183,10 @@ for (sim_it in 1:nSims) {
       # calculate power and fdp for HDMT
       powerRes$fdpHDMT[sim_it] <- length(which(totOut$hdmtRes < qvalue & totOut$causal == 0)) /  length(which(totOut$hdmtRes < qvalue))
       powerRes$powerHDMT[sim_it] <- length(which(totOut$hdmtRes < qvalue & totOut$causal == 1)) / sum(causalVec)
-      powerRes$nRejHDMT[sim_it] <- length(which(totOut$hdmtRes < qvalue))
+      powerRes$nRejHDMT[sim_it] <- length(which(totOut$hdmtRes < qvalue)) 
     } else {totOut <- totOut %>% mutate(hdmtRes = NA)}
   } else {totOut <- totOut %>% mutate(hdmtRes = NA)}
-
+  
   # DACT
   if (class(nullprop)[1] != "list") {
     nullprop <- NULL
@@ -212,7 +201,7 @@ for (sim_it in 1:nSims) {
         arrange(DACTp) %>%
         mutate(rankedIdxP = 1:nrow(.)) %>%
         mutate(km = 1:nrow(.)/ nrow(.)) %>%
-        mutate(RHS = km * qvalue)
+        mutate(RHS = km * qvalue) 
       rejected <- which(DACTdf$DACTp <= DACTdf$RHS)
       if (length(rejected) == 0) {
         maxIdx <- 0
@@ -230,9 +219,9 @@ for (sim_it in 1:nSims) {
   } else {totOut <-  totOut %>% mutate(DACTp = NA, DACTrej = NA)}
 
   # old method - kernel
-  if (doKernel) {
-    oldResKernel <- emp_bayes_framework(summary_tab = allZ, kernel = TRUE, joint=FALSE, ind = TRUE,
-                                        dfFit = 7, Hdist_epsilon=10^(-2), checkpoint=TRUE)
+  if (doKernel) { 
+    oldResKernel <- emp_bayes_framework(summary_tab = allZ, kernel = TRUE, joint=FALSE, ind = TRUE, 
+                                        dfFit = 7, Hdist_epsilon=10^(-1), checkpoint=TRUE)
     if (class(oldResKernel)[1] == "list") {
       totOut <- totOut %>% mutate(kernelLfdr = oldResKernel$lfdrVec) %>%
         arrange(kernelLfdr) %>%
@@ -240,72 +229,67 @@ for (sim_it in 1:nSims) {
         arrange(origIdx)
       powerRes$fdpKernel[sim_it] <- length(which(totOut$kernelAvg < qvalue & totOut$causal == 0)) / length(which(totOut$kernelAvg < qvalue))
       powerRes$powerKernel[sim_it] <- length(which(totOut$kernelAvg < qvalue & totOut$causal == 1)) / sum(causalVec)
-      powerRes$inconKernel[sim_it] <- length(check_incongruous(zMatrix = allZ, lfdrVec = oldResKernel$lfdrVec))
       powerRes$nRejKernel[sim_it] <- length(which(totOut$kernelAvg < qvalue)) 
     } else {
     totOut <- totOut %>% mutate(kernelLfdr = NA, kernelAvg=NA)
     }
   } else {totOut <- totOut %>% mutate(kernelLfdr = NA, kernelAvg=NA)}
-
+  
   # old method - 7 df
-  if (do7df) {
-    oldRes7df <- emp_bayes_framework(summary_tab = allZ, kernel = FALSE, joint=FALSE, ind = TRUE,
-                                      dfFit = 7, Hdist_epsilon=10^(-2), checkpoint=TRUE)
+  if (do7df) { 
+    oldRes7df <- emp_bayes_framework(summary_tab = allZ, kernel = FALSE, joint=FALSE, ind = TRUE, 
+                                      dfFit = 7, Hdist_epsilon=10^(-1), checkpoint=TRUE)
     if (class(oldRes7df)[1] == "list") {
       totOut <- totOut %>% mutate(df7Lfdr = oldRes7df$lfdrVec) %>%
         arrange(df7Lfdr) %>%
-        mutate(df7Avg = cummean(df7Lfdr)) %>%
+        mutate(df7Avg = cummean(df7Lfdr)) %>% 
         # don't forget to set it back to original index for further additions!!
         arrange(origIdx)
       powerRes$fdp7df[sim_it] <- length(which(totOut$df7Avg < qvalue & totOut$causal == 0)) /  length(which(totOut$df7Avg < qvalue))
       powerRes$power7df[sim_it] <- length(which(totOut$df7Avg < qvalue & totOut$causal == 1)) / sum(causalVec)
-      powerRes$incon7df[sim_it] <- length(check_incongruous(zMatrix = allZ, lfdrVec = oldRes7df$lfdrVec))
-      powerRes$nRej7df[sim_it] <- length(which(totOut$df7Avg < qvalue)) 
+      powerRes$nRej7df[sim_it] <- length(which(totOut$df7Avg < qvalue))
     } else {
-    totOut <- totOut %>% mutate(df7Lfdr = NA, df7Avg=NA)
-    }
+      totOut <- totOut %>% mutate(df7Lfdr = NA, df7Avg=NA)
+    } 
   } else {totOut <- totOut %>% mutate(df7Lfdr = NA, df7Avg=NA)}
-
+  
   # old method - 50 df
   if (do50df) {
-    oldRes50df <- emp_bayes_framework(summary_tab = allZ, kernel = FALSE, joint=FALSE, ind = TRUE,
-                                      dfFit = 50, Hdist_epsilon=10^(-2), checkpoint=TRUE)
+    oldRes50df <- emp_bayes_framework(summary_tab = allZ, kernel = FALSE, joint=FALSE, ind = TRUE, 
+                                      dfFit = 50, Hdist_epsilon=10^(-1), checkpoint=TRUE)
     if (class(oldRes50df)[1] == "list") {
       totOut <- totOut %>% mutate(df50Lfdr = oldRes50df$lfdrVec) %>%
         arrange(df50Lfdr) %>%
-        mutate(df50Avg = cummean(df50Lfdr)) %>%
+        mutate(df50Avg = cummean(df50Lfdr)) %>% 
         # don't forget to set it back to original index for further additions!!
         arrange(origIdx)
       powerRes$fdp50df[sim_it] <- length(which(totOut$df50Avg < qvalue & totOut$causal == 0)) /  length(which(totOut$df50Avg < qvalue))
       powerRes$power50df[sim_it] <- length(which(totOut$df50Avg < qvalue & totOut$causal == 1)) / sum(causalVec)
-      powerRes$incon50df[sim_it] <- length(check_incongruous(zMatrix = allZ, lfdrVec = oldRes50df$lfdrVec))
       powerRes$nRej50df[sim_it] <- length(which(totOut$df50Avg < qvalue)) 
     } else {
       totOut <- totOut %>% mutate(df50Lfdr = NA, df50Avg=NA)
     }
   } else {totOut <- totOut %>% mutate(df50Lfdr = NA, df50Avg=NA)}
-
+  
   # new method
   if (doNew) {
     initPiList <- list(c(0.82), c(0.02, 0.02), c(0.02, 0.02), c(0.1))
     initMuList <- list(matrix(data=0, nrow=2, ncol=1), matrix(data=c(0, 3, 0, 6), nrow=2),
                        matrix(data=c(3, 0, 6, 0), nrow=2), matrix(data=c(8, 8), nrow=2))
-    newRes <- symm_fit_ind_EM(testStats = allZ, initMuList = initMuList, initPiList = initPiList, eps=10^(-5))
+    newRes <- symm_fit_ind_EM(testStats = allZ, initMuList = initMuList, initPiList = initPiList, eps=10^(-1))
     # record
     totOut <- totOut %>% mutate(newLfdr = newRes$lfdrResults) %>%
       arrange(newLfdr) %>%
-      mutate(newAvg = cummean(newLfdr)) %>%
+      mutate(newAvg = cummean(newLfdr)) %>% 
       # don't forget to set it back to original index for further additions!!
       arrange(origIdx)
     powerRes$fdpNew[sim_it] <- length(which(totOut$newAvg < qvalue & totOut$causal == 0)) /  length(which(totOut$newAvg < qvalue))
     powerRes$powerNew[sim_it] <- length(which(totOut$newAvg < qvalue & totOut$causal == 1)) / sum(causalVec)
-    powerRes$inconNew[sim_it] <- length(check_incongruous(zMatrix = allZ, lfdrVec = newRes$lfdrResults))
     powerRes$nRejNew[sim_it] <- length(which(totOut$newAvg < qvalue)) 
   }
   cat('\n Done with ', sim_it, '\n')
 }
 
-# save
 write.table(powerRes, outName, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 

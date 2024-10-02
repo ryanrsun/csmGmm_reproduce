@@ -1,45 +1,52 @@
 # Collect results and plot Supp Figure 10
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig10/plot_sfig10.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig10/plot_sfig10.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig10/origOutput"
-names10aq1 <- paste0("sim_n1k_j100k_ind5d_changeeff_powerS1_aID", 1:2000, ".txt")
-names10aq2 <- paste0("sim_n1k_j100k_ind5d_changeeff_powerS2_aID", 1:2000, ".txt")
-names10aq3 <- paste0("sim_n1k_j100k_ind5d_changeeff_powerS3_aID", 1:2000, ".txt")
-names10aq4 <- paste0("sim_n1k_j100k_ind5d_changeeff_powerS4_aID", 1:2000, ".txt")
-names10aq5 <- paste0("sim_n1k_j100k_ind5d_changeeff_powerS5_aID", 1:2000, ".txt")
-names10aq6 <- paste0("sim_n1k_j100k_ind5d_changeeff_powerS6_aID", 1:2000, ".txt")
-names10aq7 <- paste0("sim_n1k_j100k_ind5d_changeeff_powerS7_aID", 1:2000, ".txt")
-names10aq8 <- paste0("sim_n1k_j100k_ind5d_changeeff_powerS8_aID", 1:2000, ".txt")
-names10aq9 <- paste0("sim_n1k_j100k_ind5d_changeeff_powerS9_aID", 1:2000, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig10", "output/")
+outName <- paste0(outputDir, "/SuppFig1A_aID", aID, ".txt")
+names10aq1 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS1_aID", 1:2000, ".txt")
+names10aq2 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS2_aID", 1:2000, ".txt")
+names10aq3 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS3_aID", 1:2000, ".txt")
+names10aq4 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS4_aID", 1:2000, ".txt")
+names10aq5 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS5_aID", 1:2000, ".txt")
+names10aq6 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS6_aID", 1:2000, ".txt")
+names10aq7 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS7_aID", 1:2000, ".txt")
+names10aq8 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS8_aID", 1:2000, ".txt")
+names10aq9 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS9_aID", 1:2000, ".txt")
 names10aList <- list(names10aq1, names10aq2, names10aq3, names10aq4, names10aq5, names10aq6,
                     names10aq7, names10aq8, names10aq9)
-names10bq1 <- paste0("sim_n1k_j100k_ind6d_changeeff_powerS1_aID", 1:2000, ".txt")
-names10bq2 <- paste0("sim_n1k_j100k_ind6d_changeeff_powerS2_aID", 1:2000, ".txt")
-names10bq3 <- paste0("sim_n1k_j100k_ind6d_changeeff_powerS3_aID", 1:2000, ".txt")
-names10bq4 <- paste0("sim_n1k_j100k_ind6d_changeeff_powerS4_aID", 1:2000, ".txt")
-names10bq5 <- paste0("sim_n1k_j100k_ind6d_changeeff_powerS5_aID", 1:2000, ".txt")
-names10bq6 <- paste0("sim_n1k_j100k_ind6d_changeeff_powerS6_aID", 1:2000, ".txt")
-names10bq7 <- paste0("sim_n1k_j100k_ind6d_changeeff_powerS7_aID", 1:2000, ".txt")
-names10bq8 <- paste0("sim_n1k_j100k_ind6d_changeeff_powerS8_aID", 1:2000, ".txt")
-names10bq9 <- paste0("sim_n1k_j100k_ind6d_changeeff_powerS9_aID", 1:2000, ".txt")
+names10bq1 <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff_powerS1_aID", 1:2000, ".txt")
+names10bq2 <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff_powerS2_aID", 1:2000, ".txt")
+names10bq3 <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff_powerS3_aID", 1:2000, ".txt")
+names10bq4 <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff_powerS4_aID", 1:2000, ".txt")
+names10bq5 <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff_powerS5_aID", 1:2000, ".txt")
+names10bq6 <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff_powerS6_aID", 1:2000, ".txt")
+names10bq7 <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff_powerS7_aID", 1:2000, ".txt")
+names10bq8 <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff_powerS8_aID", 1:2000, ".txt")
+names10bq9 <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff_powerS9_aID", 1:2000, ".txt")
 names10bList <- list(names10bq1, names10bq2, names10bq3, names10bq4, names10bq5, names10bq6,
                     names10bq7, names10bq8, names10bq9)
 
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res10a <- c()
 for (file_it in 1:length(names10aq1)) {
   for (q_it in 1:9) {
@@ -50,7 +57,6 @@ for (file_it in 1:length(names10aq1)) {
   }
 }
 
-setwd(outputDir)
 res10b <- c()
 for (file_it in 1:length(names10bq1)) {
   for (q_it in 1:9) {
@@ -62,15 +68,14 @@ for (file_it in 1:length(names10bq1)) {
 }
 
 # summarize
-setwd(outputDir)
 for (q_it in 1:9) {
   tempResa <- res10a %>% filter(q == q_it)
   tempSummarya <- summarize_raw(tempResa)
-  write.table(tempSummarya, paste0("Fig10a_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+  write.table(tempSummarya, paste0(outputDir, "Fig10a_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
   tempResb <- res10b %>% filter(q == q_it)
   tempSummaryb <- summarize_raw(tempResb)
-  write.table(tempSummaryb, paste0("Fig10b_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+  write.table(tempSummaryb, paste0(outputDir, "Fig10b_power", q_it, "_summary.txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
 }
 
 #------------------------------------------------#
@@ -85,19 +90,16 @@ mycols <- gg_color_hue(6)
 mycols[4] <- "black"
 mycols[5] <- "blue"
 
-
-
 # 5d power
 # load all the files needed for corrected power
-setwd(outputDir)
-ind5d_changeeff <- fread("med2d_changeeff_correctpi_5d.txt") %>%
+ind5d_changeeff <- fread(paste0(outputDir, "Fig10a_power1_summary.txt")) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method))
 ind5d_changeeff_fixq <- fread("Fig10a_power1_summary.txt", data.table=F) %>%
   mutate(qval=0.01)
 for (q_it in 2:9) {
-  tempFile <- fread(paste0("Fig10a_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
+  tempFile <- fread(paste0(outputDir, "Fig10a_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
   ind5d_changeeff_fixq <- rbind(ind5d_changeeff_fixq, tempFile)
 }
 ind5d_changeeff_fixq <- ind5d_changeeff_fixq %>% select(-Incongruous) %>%
@@ -149,7 +151,6 @@ ind5d_changeeff_correctedPowPlot <- ggplot(data=ind5d_changeeff_correctedPow %>%
   theme(legend.title = element_text(size=22), legend.text = element_text(size=20)) +
   theme(legend.key.size = unit(3,"line"))
 ind5d_changeeff_correctedPowPlot
-
 
 
 # 6d power
@@ -227,8 +228,7 @@ ind56d_power_legend <- get_legend(ind6d_changeeff_correctedPowPlot +  theme(lege
                                                                   legend.justification="center",
                                                                   legend.box.just="bottom"))
 plot_grid(ind56d_power_plot, ind56d_power_legend, ncol=1, rel_heights=c(1, 0.15))
-setwd(outputDir)
-ggsave('ind56d_power.pdf', width=20, height=12)
+#ggsave('ind56d_power.pdf', width=20, height=12)
 
 
 

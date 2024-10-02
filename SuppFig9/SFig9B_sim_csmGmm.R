@@ -8,31 +8,29 @@ library(dplyr)
 library(magrittr)
 library(devtools)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig9/output"
-outName <- paste0("sim_n1k_j100k_ind5d_changepi0_new_aID", aID, ".txt")
+outputDir <- here::here("SuppFig9", "output")
+outName <- paste0(outputDir, "/sim_n1k_j100k_ind5d_changepi0_new_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
 loadData <- TRUE
 saveData <- FALSE
 # the name will be [testStatsName]_[betaStart]_S[Snum]_aID[aID].txt
-testStatsName <- "allZ_changepi0"
-betaName <- "allBeta_changepi0"
-#-------------------------------------------------------------------#
+testStatsName <- here::here(outputDir, "allZ_changepi0")
+betaName <- here::here(outputDir, "allBeta_changepi0")
 
 # parameters
 doHDMT <- FALSE
@@ -89,7 +87,6 @@ for (sim_it in 1:nSims) {
 
   # load or save data
   if (loadData) {
-    setwd(outputDir)
     allZ <- fread(paste0(testStatsName, "_S", Snum, "_aID", aID,  ".txt"), data.table=F)
     allBeta <- fread(paste0(betaName, "_S", Snum, "_aID", aID, ".txt"), data.table=F)
   } else {
@@ -141,7 +138,6 @@ for (sim_it in 1:nSims) {
 
     # save it
     if (saveData) { 
-      setwd(outputDir)
       write.table(allZ, paste0(testStatsName, "_S", Snum, "_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
       write.table(allBeta, paste0(betaName, "_S", Snum, "_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     } 
@@ -301,7 +297,6 @@ for (sim_it in 1:nSims) {
   cat('\n Done with ', sim_it, '\n')
 }
 
-setwd(outputDir)
 write.table(powerRes, outName, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 
