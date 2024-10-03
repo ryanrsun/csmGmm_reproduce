@@ -2,9 +2,9 @@
 
 # Using the here package to manage file paths. If an error is thrown, please
 # set the working directory to the folder that holds this Rscript, e.g.
-# setwd("/path/to/csmGmm_reproduce/SuppFig9/SuppFig9C_sim_csmGmm.R") or set the path after the -cwd flag
+# setwd("/path/to/csmGmm_reproduce/SuppFig9/SFig9C_sim_csmGmm.R") or set the path after the -cwd flag
 # in the .lsf file, and then run again.
-here::i_am("SuppFig9/SuppFig9C_sim_csmGmm.R")
+here::i_am("SuppFig9/SFig9C_sim_csmGmm.R")
 
 # load libraries
 library(mvtnorm)
