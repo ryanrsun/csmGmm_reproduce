@@ -104,7 +104,7 @@ FigS4a_fixq <- FigS4a_fixq %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = factor(Method, levels=c("csmGmm", "DACT", "Kernel", "locfdr7df",
                                           "locfdr50df", "HDMT"))) %>%
-  rbind(., fread("Fig3a_summary.txt") %>% mutate(q = 0.1) %>% 
+  rbind(., fread(here::here("Fig3/output/Fig3a_summary.txt")) %>% mutate(q = 0.1) %>% 
         mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
         mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
         mutate(Method = ifelse(Method == "df50", "locfdr50df", Method))) 
@@ -157,11 +157,11 @@ FigS4b_fixq <- FigS4b_fixq %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = factor(Method, levels=c("csmGmm", "DACT", "Kernel", "locfdr7df",
                                           "locfdr50df", "HDMT"))) %>%
-  rbind(., fread("Fig3b_summary.txt") %>% mutate(q = 0.1) %>%
+  rbind(., fread(here::here("Fig3/output/Fig3b_summary.txt")) %>% mutate(q = 0.1) %>%
         mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
         mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
         mutate(Method = ifelse(Method == "df50", "locfdr50df", Method))) %>%
-  filter(minEff1 <= 0.08)
+    filter(minEff1 <= 0.08)
  
 # correct the power
 FigS4b_correctedPow <- FigS4b_fixq %>% filter(q == 0.1) %>%
@@ -220,7 +220,6 @@ FigS4c_plot <- ggplot(data=FigS4c_data, aes(x=minEff1, y=Incongruous, group=Meth
   theme(legend.title = element_text(size=20), legend.text = element_text(size=18))
 
 #Supp Fig S4d
-setwd(outputDir)
 FigS4d_data <- fread(here::here("Fig3/output/Fig3b_summary.txt"), data.table=F)  %>%
   filter(Method != "DACT" & Method != "HDMT") %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
