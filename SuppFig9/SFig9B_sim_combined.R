@@ -32,8 +32,8 @@ outName <- paste0(outputDir, "/sim_n1k_j100k_ind5d_changepi0_combined_aID", aID,
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
-loadData <- FALSE
-saveData <- TRUE
+loadData <- TRUE
+saveData <- FALSE
 # the name will be [testStatsName]_[betaStart]_S[Snum]_aID[aID].txt
 testStatsName <- here::here(outputDir, "allZ_changepi0")
 betaName <- here::here(outputDir, "allBeta_changepi0")
