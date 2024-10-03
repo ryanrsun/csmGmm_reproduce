@@ -170,7 +170,7 @@ Sfig2d_fixq_correctedPow <- Sfig2d_fixq_correctedPow %>%
   filter(minEff1 <= 0.08)
 
 # plot ind2d changeeff corrected power
-Sfig2d_plot <- ggplot(data=Sfig2d_fixq_correctedPow,
+SFig2d_plot <- ggplot(data=Sfig2d_fixq_correctedPow,
                                         aes(x=minEff1, y=actualPower, group=Method)) +
   geom_line(aes(linetype = Method, color=Method), lwd=1.2) +
   ylab("Power (at q=0.05)") +
