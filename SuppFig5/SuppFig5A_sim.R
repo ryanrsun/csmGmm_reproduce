@@ -1,5 +1,9 @@
 # Supp Fig 5A
 
+# Note that we cannot share the real data, so we have generated fake data to show
+# how this script works. If the fake data is replaced with the real data, then 
+# our results will be reproduced.
+
 # Using the here package to manage file paths. If an error is thrown, please
 # set the working directory to the folder that holds this Rscript, e.g.
 # setwd("/path/to/csmGmm_reproduce/SuppFig5/SuppFig5A_sim.R") or set the path after the -cwd flag
@@ -26,12 +30,12 @@ toBeSourced <- list.files(codePath, "\\.R$")
 purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
-outputDir <- here::here("SuppFig1", "output")
+outputDir <- here::here("SuppFig5", "output")
 outName <- paste0(outputDir, "/SFig5A_aID", aID, ".txt")
 
 # real genotypes location and names
 genotypeDir <- here::here("data") 
-genotypeNames <-rep("cleanG_set1_dataset1.txt", 2000)
+genotypeNames <- paste0(genotypeDir, rep("/cleanG_set1_dataset1.txt", 2000))
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
@@ -117,7 +121,6 @@ for (sim_it in 1:nSims) {
       if (set_it%%setsPerFile == 1) {
         if (set_it > 1) {rm(genoFile)}
         genoFileNum <- ceiling(set_it / setsPerFile)
-        setwd(genotypeDir)
         genoFile <- fread(genotypeNames[genoFileNum], nrows=nDims*n, header=F) %>% as.matrix(.)
       }
 

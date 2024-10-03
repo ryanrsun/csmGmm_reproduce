@@ -28,15 +28,15 @@ toBeSourced <- list.files(codePath, "\\.R$")
 purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
-outputDir <- here::here("SuppFig4", "output")
-outName <- paste0(outputDir, "/Power_correctionS4A_S", Snum, "_aID", aID, ".txt")
+outputDir <- here::here("SuppFig4", "output/")
+outName <- paste0(outputDir, "Power_correctionS4A_S", Snum, "_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
 loadData <- FALSE
 saveData <- TRUE
-testStatsName <- here::here(outputDir, "Power_correctionS4A_S", Snum, "_allZ")
-betaName <- here::here(outputDir, "Power_correctionS4A_S", Snum, "_allBeta")
+testStatsName <- paste0(outputDir, "Power_correctionS4A_S", Snum, "_allZ")
+betaName <- paste0(outputDir, "Power_correctionS4A_S", Snum, "_allBeta")
 
 # parameters
 doHDMT <- TRUE
