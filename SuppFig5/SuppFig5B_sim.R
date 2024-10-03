@@ -29,7 +29,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 outputDir <- here::here("SuppFig5", "output")
 outName <- paste0(outputDir, "/SFig5B_aID", aID, ".txt")
 genotypeDir <- here::here("data")
-genotypeNames <- rep("cleanG_set1_dataset1.txt", 2000)
+genotypeNames <- paste0(genotypeDir, rep("/cleanG_set1_dataset1.txt", 2000))
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
@@ -118,7 +118,6 @@ for (sim_it in 1:nSims) {
       if (set_it%%setsPerFile == 1) {
         if (set_it > 1) {rm(genoFile)}
         genoFileNum <- ceiling(set_it / setsPerFile)
-        setwd(genotypeDir)
         genoFile <- fread(genotypeNames[genoFileNum], nrows=nDims*n, header=F) %>% as.matrix(.)
       }
 
