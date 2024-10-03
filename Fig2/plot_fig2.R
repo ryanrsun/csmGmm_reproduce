@@ -138,7 +138,7 @@ Fig2a_correctedPow <- Fig2a_correctedPow %>%
   mutate(actualPower = ifelse(Method %in% c("HDMT", "csmGmm"), Power, actualPower)) 
 
 # plot
-fig2a_plot <- ggplot(data=Fig2a_correctedPow,
+Fig2a_plot <- ggplot(data=Fig2a_correctedPow,
              aes(x=minEff1, y=actualPower, group=Method)) +
   geom_line(aes(linetype = Method, color=Method),lwd=1.2) +
   xlab("Min Effect Magnitude") + ylab("Power (2D Mediation)") +
@@ -229,7 +229,7 @@ Fig2c_plot <- ggplot(data=summary1c %>%
 
 # Fig 2D
 summary1d <- fread(here::here("Fig1", "output", "Fig1d_summary.txt"))
-Fig2c_plot <- ggplot(data=summary1d  %>% 
+Fig2d_plot <- ggplot(data=summary1d  %>% 
         mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
         mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
         mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
