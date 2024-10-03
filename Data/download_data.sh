@@ -9,3 +9,5 @@ wget "https://www.dropbox.com/scl/fi/ftrbybngfat6y0fe3q1lc/scc_lung_addchr1.csv?
 wget "https://www.dropbox.com/scl/fi/l6dk45obfgh8uxxl3f67q/synthDat.txt?rlkey=3mzrf7a8oogcz30itp3voih6r&st=k0w364ka&dl=1" -O synthDat.txt
 
 wget "https://www.dropbox.com/scl/fi/kbnmmsr82ybah3bg0l4kk/eqtl_results.zip?rlkey=rurppk5d80dxihge2emrzr17i&st=pp8owbdp&dl=1" -O eqtl_results.zip      
+
+Wget "https://www.dropbox.com/scl/fi/o6ts52z7sl37umxsq99k7/cleanG_set1_dataset1.txt?rlkey=hu6j5oav6deq0uh0dfkcog904&st=uf9v96sz&dl=1" -O cleanG_set1_dataset1.txt 
