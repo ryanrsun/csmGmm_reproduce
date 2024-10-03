@@ -28,7 +28,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 # set output directory 
 outputDir <- here::here("SuppFig5", "output")
 outName <- paste0(outputDir, "/SFig5B_aID", aID, ".txt")
-genotypeDir <- here::here("data")
+genotypeDir <- here::here("Data")
 genotypeNames <- paste0(genotypeDir, rep("/cleanG_set1_dataset1.txt", 2000))
 
 # option to save or load intermediate data to save time,
