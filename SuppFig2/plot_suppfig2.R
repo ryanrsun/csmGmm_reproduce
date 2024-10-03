@@ -82,7 +82,7 @@ SFig2b_plot <- ggplot(data=SFig2b_dat, aes(x=minEff1, y=FDP, group=Method)) +
 SFig2c_fixq <- fread(here::here(outputDir, "Fig2a_power1_summary.txt"), data.table=F) %>%
   mutate(qval=0.01)
 for (q_it in 2:5) {
-  tempFile <- fread(paste0("Fig2a_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
+  tempFile <- fread(paste0(outputDir, "/Fig2a_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
   SFig2c_fixq <- rbind(SFig2c_fixq, tempFile)
 }
 SFig2c_fixq <- SFig2c_fixq %>%  
@@ -133,7 +133,7 @@ SFig2c_plot <- ggplot(data=SFig2c_correctedPos,
 Sfig2d_fixq <- fread(here::here(outputDir, "Fig2b_power1_summary.txt"), data.table=F) %>%
   mutate(qval=0.01)
 for (q_it in 2:5) {
-  tempFile <- fread(paste0("Fig2b_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
+  tempFile <- fread(paste0(outputDir, "/Fig2b_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
   Sfig2d_fixq <- rbind(Sfig2d_fixq, tempFile)
 }
 Sfig2d_fixq <- Sfig2d_fixq %>%
