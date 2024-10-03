@@ -13,7 +13,6 @@ library(dplyr)
 library(data.table)
 library(devtools)
 
-
 # source the .R scripts from the SupportingCode/ folder 
 codePath <- c(here::here("SupportingCode"))
 toBeSourced <- list.files(codePath, "\\.R$")

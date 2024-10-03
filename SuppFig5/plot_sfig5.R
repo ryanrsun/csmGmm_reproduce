@@ -20,8 +20,8 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("SuppFig5", "output")
-names5a <- here::here(outputDir, "sim_n1k_j100k_linreal_changeeff_raiseAlt_aID", 1:880, ".txt")
-names5b <- here::here(outputDir, "sim_n1k_j100k_linreal_changepi0_raiseAlt_aID", 1:320, ".txt")
+names5a <- here::here(outputDir, "SFig5A_aID", 1:880, ".txt")
+names5b <- here::here(outputDir, "SFig5B_aID", 1:320, ".txt")
 
 # read raw output files
 res5a <- c()

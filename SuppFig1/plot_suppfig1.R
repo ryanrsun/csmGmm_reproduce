@@ -19,11 +19,11 @@ toBeSourced <- list.files(codePath, "\\.R$")
 purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 outputDir <- here::here("SuppFig1/output/")
-snames1a <- paste0(outputDir, "sim_n1k_j100k_med2d_changeeff_flipz_noalt_aID", 1:800, ".txt")
-snames1b <- paste0(outputDir, "sim_n1k_j100k_med2d_raisealt_changepi0_flipz_noalt_aID", 1:320, ".txt")
+snames1a <- paste0(outputDir, "SuppFig1A_aID", 1:800, ".txt")
+snames1b <- paste0(outputDir, "SuppFig1B_aID", 1:320, ".txt")
 snames1c <- paste0(outputDir, "SuppFig1C_aID", 1:800, ".txt")
 snames1d <- paste0(outputDir, "SuppFig1D_aID", 1:320, ".txt")
-#-----------------------------------------#
+
 
 # colors
 gg_color_hue <- function(n) {
