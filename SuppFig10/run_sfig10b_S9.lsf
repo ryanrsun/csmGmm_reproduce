@@ -2,7 +2,7 @@
 #BSUB -W 3:01
 #BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig10/errDir/sfig10bs9_log%I.out
 #BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig10/errDir/sfig10bs9_%I.err
-#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/
 #BSUB -q medium
 #BSUB -u rsun3@mdanderson.org
 #BSUB -n 1

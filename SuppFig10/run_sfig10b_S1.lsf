@@ -1,7 +1,7 @@
 #BSUB -J sfig10bs1[101-102]
 #BSUB -W 3:01
-#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig10/errDir/sfig10bs1_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig10/errDir/sfig10bs1_%I.err
+#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig10/errDir/sfig10bs1_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig10/errDir/sfig10bs1_%I.err
 #BSUB –cwd /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/
 #BSUB -q medium
 #BSUB -u rsun3@mdanderson.org
