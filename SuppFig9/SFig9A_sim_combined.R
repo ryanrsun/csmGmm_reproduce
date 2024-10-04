@@ -73,7 +73,8 @@ for (s_it in 0:max(hMat$s)) {
   numRows <- length(which(hMat$s == s_it))
   number <- c(number, rep(sProp[s_it + 1] * nSNPs / numRows, numRows))
 }
-hMat <- hMat %>% mutate(number = number)
+hMat <- hMat %>% mutate(number = number) %>%
+  mutate(number = round(number))
 
 # record results here
 powerRes <- data.frame(nCausal=rep(NA, nSims),  minEff1=betaMin[1],
@@ -273,9 +274,13 @@ for (sim_it in 1:nSims) {
   
   # new method
   if (doNew) {
-    initPiList <- list(c(0.82), c(0.02, 0.02), c(0.02, 0.02), c(0.1))
-    initMuList <- list(matrix(data=0, nrow=2, ncol=1), matrix(data=c(0, 3, 0, 6), nrow=2),
-                       matrix(data=c(3, 0, 6, 0), nrow=2), matrix(data=c(8, 8), nrow=2))
+    initPiList <- list(c(0.82))
+    for (i in 2:(2^nDims)) {initPiList[[i]] <- 0.18 / (2^nDims - 1)}
+    # the symm_fit_ind.R code will add the appropriate 0s to initMuList
+    initMuList <- list(matrix(data=rep(0, nDims), nrow=nDims, ncol=1))
+    for (i in 2:(2^nDims)) {
+      initMuList[[i]] <- matrix(data=rep(3, nDims), nrow=nDims, ncol=1)
+    }
     newRes <- symm_fit_ind_EM(testStats = allZ, initMuList = initMuList, initPiList = initPiList, eps=10^(-1))
     # record
     totOut <- totOut %>% mutate(newLfdr = newRes$lfdrResults) %>%
