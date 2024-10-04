@@ -91,8 +91,8 @@ for (sim_it in 1:nSims) {
 
   # load or save data
   if (loadData) {
-    allZ <- fread(paste0(testStatsName, "_", betaStart, "_S1", "_aID", aID, ".txt"), data.table=F)
-    allBeta <- fread(paste0(betaName, "_", betaStart, "_S1", "_aID", aID, ".txt"), data.table=F)
+    allZ <- fread(paste0(testStatsName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), data.table=F)
+    allBeta <- fread(paste0(betaName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), data.table=F)
   } else {
     # hold test statistics and signals
     allZ <- matrix(data=NA, nrow=nSNPs, ncol=nDims)

@@ -92,8 +92,8 @@ for (sim_it in 1:nSims) {
 
   # load or save data
   if (loadData) {
-    allZ <- fread(paste0(testStatsName, "_", betaStart, "_S1_aID", aID, ".txt"), data.table=F)
-    allBeta <- fread(paste0(betaName, "_", betaStart, "_S1_aID", aID, ".txt"), data.table=F)
+    allZ <- fread(paste0(testStatsName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), data.table=F)
+    allBeta <- fread(paste0(betaName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), data.table=F)
   } else {
     # hold test statistics and signals
     allZ <- matrix(data=NA, nrow=nSNPs, ncol=nDims)
@@ -143,8 +143,8 @@ for (sim_it in 1:nSims) {
 
     # save it
     if (saveData) { 
-      write.table(allZ, paste0(testStatsName, "_", betaStart, "_S1_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
-      write.table(allBeta, paste0(betaName, "_", betaStart, "_S1_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+      write.table(allZ, paste0(testStatsName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+      write.table(allBeta, paste0(betaName, "_", betaStart, "_S", Snum, "_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     } 
   }
 
