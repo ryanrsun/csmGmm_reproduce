@@ -2,8 +2,9 @@
 
 # Using the here package to manage file paths. If an error is thrown, please
 # set the working directory to the folder that holds this Rscript, e.g.
-# setwd("/path/to/csmGmm_reproduce/SuppFig1/SuppFig1A_sim.R") or set the path after the -cwd flag
+# setwd("/path/to/csmGmm_reproduce/SuppFig10/SuppFig10B_sim.R") or set the path after the -cwd flag
 # in the .lsf file, and then run again.
+
 here::i_am("SuppFig10/SFig10B_sim_combined.R")
 
 # load libraries
@@ -28,7 +29,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("SuppFig10", "output")
-outName <- paste0(outputDir, "/sim_n1k_j100k_ind5d_changeeff_powerS", Snum, "_aID", aID, ".txt")
+outName <- paste0(outputDir, "/sim_n1k_j100k_ind6d_changeeff_powerS", Snum, "_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
