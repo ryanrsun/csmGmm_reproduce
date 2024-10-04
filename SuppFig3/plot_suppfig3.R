@@ -21,7 +21,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 # set output directory 
 outputDir <- here::here("SuppFig3", "output")
 fnames3a <- paste0(outputDir, "/SuppFig3A_aID", 221:620, ".txt")
-fnames3b <- paste0(outputDir, "/SuppFig3B_aID", 1:1600, ".txt")
+fnames3b <- paste0(outputDir, "/SuppFig3B_aID", 1:160, ".txt")
 
 # colors
 gg_color_hue <- function(n) {
