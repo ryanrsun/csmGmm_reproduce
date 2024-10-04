@@ -70,7 +70,8 @@ for (s_it in 0:max(hMat$s)) {
   numRows <- length(which(hMat$s == s_it))
   number <- c(number, rep(sProp[s_it + 1] * nSNPs / numRows, numRows))
 }
-hMat <- hMat %>% mutate(number = number)
+hMat <- hMat %>% mutate(number = number) %>%
+  mutate(number = round(number))
 
 # record results here
 powerRes <- data.frame(nCausal=rep(NA, nSims),  minEff1=betaMin[1],
