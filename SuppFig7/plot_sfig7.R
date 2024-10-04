@@ -91,7 +91,6 @@ SFig7c_plot <- ggplot(data=SFig7a_data %>% mutate(Power = ifelse(Method %in% c("
 
 
 # S7b
-setwd(outputDir)
 SFig7b_data <- fread(paste0(outputDir, "SFig7b_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   filter(Method != "DACT") %>%
