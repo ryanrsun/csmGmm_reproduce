@@ -1,0 +1,14 @@
+#BSUB -J SFig16B[101-102]
+#BSUB -W 3:00
+#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig15/errDir/SFig16B_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig15/errDir/SFig16B_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/
+#BSUB -q short
+#BSUB -u rsun3@mdanderson.org
+#BSUB -n 1
+#BSUB -M 3
+#BSUB -R rusage[mem=3]
+
+# run 1-160
+module load R/4.2.1
+Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig15/SuppFig16B_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig15/errDir/SFig16B_$LSB_JOBINDEX.out
