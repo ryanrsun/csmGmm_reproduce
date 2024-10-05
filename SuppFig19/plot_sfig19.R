@@ -20,8 +20,8 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("SuppFig19", "output")
-names19a <- paste0(outputDir, "sim_n1k_j100k_bincor_changepi0_cor5_large_aID", 1:160, ".txt")
-names19b <- paste0(outputDir, "sim_n1k_j100k_bincor_changepi0_cor8_large_aID", 1:160, ".txt")
+names19a <- paste0(outputDir, "SFig19A_aID101", 1:160, ".txt")
+names19b <- paste0(outputDir, "SFig19B_aID101", 1:160, ".txt")
 #-----------------------------------------#
 
 # read raw output files
