@@ -1,24 +1,30 @@
 # Collect results and plot Supp Figure 17
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig17/plot_sfig17.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig17/plot_sfig17.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig17/output"
-names17a <- paste0("Fig17A_aID", 1:600, ".txt")
-names17b <- paste0("Fig17B_aID", 1:300, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig17", "output")
+names17a <- paste0(outputDir, "Fig17A_aID", 1:600, ".txt")
+names17b <- paste0(outputDir, "Fig17B_aID", 1:300, ".txt")
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res17a <- c()
 for (file_it in 1:length(names17a)) {
     tempRes <- tryCatch(fread(names17a[file_it]), error=function(e) e)
@@ -41,9 +47,8 @@ summary17a <- summarize_raw(res17a)
 summary17b <- summarize_raw(res17b)
 
 # save summaries
-setwd(outputDir)
-write.table(summary17a, "bincor_changeeff_asym120diff.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary17b, "rep2d_changeeff_asym120diff.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary17a, paste0(outputDir, "bincor_changeeff_asym120diff.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary17b, paste0(outputDir, "rep2d_changeeff_asym120diff.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -59,7 +64,7 @@ mycols[5] <- "blue"
 
 # read 17a
 setwd(outputDir)
-bincor_asym120diff <- fread("bincor_changeeff_asym120diff.txt", data.table=F) %>%
+bincor_asym120diff <- fread(paste0(outputDir, "bincor_changeeff_asym120diff.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -100,7 +105,7 @@ bincor_asym120diff_power_plot
 
 # read 17c
 setwd(outputDir)
-rep2d_asym120diff <- fread("rep2d_changeeff_asym120diff.txt", data.table=F) %>%
+rep2d_asym120diff <- fread(paste0(outputDir, "rep2d_changeeff_asym120diff.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%

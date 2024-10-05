@@ -1,8 +1,8 @@
 #BSUB -J SFig15B[101-102]
 #BSUB -W 3:00
-#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig15/errDir/SFig15B_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig15/errDir/SFig15B_%I.err
-#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig15/errDir/SFig15B_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig15/errDir/SFig15B_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/
 #BSUB -q short
 #BSUB -u rsun3@mdanderson.org
 #BSUB -n 1
@@ -11,4 +11,4 @@
 
 # run 1-500
 module load R/4.2.1
-Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig15/SuppFig15B_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig15/errDir/SFig15B_$LSB_JOBINDEX.out
+Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig15/SuppFig15B_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig15/errDir/SFig15B_$LSB_JOBINDEX.out

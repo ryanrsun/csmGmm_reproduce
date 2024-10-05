@@ -1,24 +1,30 @@
 # Collect results and plot Supp Figure 19
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig19/plot_sfig19.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig19/plot_sfig19.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig19/origOutput"
-names19a <- paste0("sim_n1k_j100k_bincor_changepi0_cor5_large_aID", 1:160, ".txt")
-names19b <- paste0("sim_n1k_j100k_bincor_changepi0_cor8_large_aID", 1:160, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig19", "output")
+names19a <- paste0(outputDir, "sim_n1k_j100k_bincor_changepi0_cor5_large_aID", 1:160, ".txt")
+names19b <- paste0(outputDir, "sim_n1k_j100k_bincor_changepi0_cor8_large_aID", 1:160, ".txt")
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res19a <- c()
 for (file_it in 1:length(names19a)) {
   tempRes <- tryCatch(fread(names19a[file_it]), error=function(e) e)
@@ -43,9 +49,8 @@ summary19b <- summarize_raw(res19b, cor=T)
 #summary19b <- summarize_raw(res19b)
 
 # save summaries
-setwd(outputDir)
-write.table(summary19a, "bincor_changepi0_cor5_large.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary19b, "bincor_changepi0_cor8_large.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary19a, paste0(outputDir, "bincor_changepi0_cor5_large.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary19b, paste0(outputDir, "bincor_changepi0_cor8_large.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -60,8 +65,7 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # read S fig 19a
-setwd(outputDir)
-bincor_changepi0_5 <- fread("bincor_changepi0_cor5_large.txt", data.table=F) %>%
+bincor_changepi0_5 <- fread(paste0(outputDir, "bincor_changepi0_cor5_large.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>% mutate(Method = ifelse(Method == "New", "c-csmGmm", Method)) %>%
@@ -103,7 +107,7 @@ bincor_changepi0_5_power_plot
 
 # read s fig 19b
 setwd(outputDir)
-bincor_changepi0_8 <- fread("bincor_changepi0_cor8_large.txt", data.table=F) %>%
+bincor_changepi0_8 <- fread(paste0(outputDir, "bincor_changepi0_cor8_large.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -155,7 +159,6 @@ morecore_changeepi0_fdp_legend <- get_legend(bincor_changepi0_5_fdp_plot +  them
                                                                                  legend.justification="center",
                                                                                  legend.box.just="bottom"))
 plot_grid(morecore_changeepi0_fdp_plot, morecore_changeepi0_fdp_legend, ncol=1, rel_heights=c(1, 0.15))
-setwd(outputDir)
 ggsave('morecor_changepi0.pdf', width=20, height=12)
 
 

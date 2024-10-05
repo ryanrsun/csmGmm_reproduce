@@ -1,26 +1,32 @@
 # Collect results and plot Supp Figure 15 and 16
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig15/plot_sfig15_16.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig15/plot_sfig15_16.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig15/origOutput"
-names15a <- paste0("sim_n1k_j100k_med2d_changepi0_asym120diff_aID", 1:160, ".txt")
-names15b <- paste0("sim_n1k_j100k_ind2d_changeeff_asym120diff_full_aID", 1:400, ".txt")
-names16a <- paste0("sim_n1k_j100k_med2d_changepi0_asym150diff_aID", 1:160, ".txt")
-names16b <- paste0("sim_n1k_j100k_med2d_changepi0_asym200diff_aID", 1:160, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig15", "output/")
+names15a <- paste0(outputDir, "SFig15A_aID", 1:160, ".txt")
+names15b <- paste0(outputDir, "SFig15B_aID", 1:400, ".txt")
+names16a <- paste0(outputDir, "sim_n1k_j100k_med2d_changepi0_asym150diff_aID", 1:160, ".txt")
+names16b <- paste0(outputDir, "sim_n1k_j100k_med2d_changepi0_asym200diff_aID", 1:160, ".txt")
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res15a <- c()
 for (file_it in 1:length(names15a)) {
   tempRes <- tryCatch(fread(names15a[file_it]), error=function(e) e)
@@ -63,11 +69,10 @@ summary16a <- summarize_raw(res16a)
 summary16b <- summarize_raw(res16b)
 
 # save summaries
-setwd(outputDir)
-write.table(summary15a, "ind2d_changepi0_asym120diff_full.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary15b, "ind2d_changeeff_asym120diff_full.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary16a, "ind2d_changepi0_asym150diff_full.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary16b, "ind2d_changepi0_asym200diff_full.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary15a, paste0(outputDir, "ind2d_changepi0_asym120diff_full.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary15b, paste0(outputDir, "ind2d_changeeff_asym120diff_full.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary16a, paste0(outputDir, "ind2d_changepi0_asym150diff_full.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary16b, paste0(outputDir, "ind2d_changepi0_asym200diff_full.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -83,7 +88,7 @@ mycols[5] <- "blue"
 
 
 # S Fig 15a
-changepi0_120 <- fread("ind2d_changepi0_asym120diff_full.txt") %>%
+changepi0_120 <- fread(paste0(outputDir, "ind2d_changepi0_asym120diff_full.txt")) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -109,7 +114,7 @@ changepi0_120_fdp_plot
 
 # S Fig 15b
 setwd(outputDir)
-changeeff_120 <- fread("ind2d_changeeff_asym120diff_full.txt") %>%
+changeeff_120 <- fread(paste0(outputDir, "ind2d_changeeff_asym120diff_full.txt")) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -180,8 +185,7 @@ ggsave('asymmetric_ind120.pdf', width=18, height=12)
 #---------------------------------------------------------#
 
 # load S Fig 16a
-setwd(outputDir)
-changepi0_150 <- fread("ind2d_changepi0_asym150diff_full.txt") %>%
+changepi0_150 <- fread(paste0(outputDir, "ind2d_changepi0_asym150diff_full.txt")) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -228,7 +232,6 @@ changepi150_legend <- get_legend(changepi0_150_fdp_plot +  theme(legend.directio
                                                             legend.box.just="bottom"))
 #true3_largeProp_legend <- plot_grid(mbl_true3_largeProp_legend1, mbl_true3_largeProp_legend2, ncol=2)
 plot_grid(changepi150_plot, changepi150_legend, ncol=1, rel_heights=c(1, 0.1))
-setwd(outputDir)
 ggsave('asymmetric_changepi150.pdf', width=18, height=10)
 
 
