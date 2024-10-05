@@ -179,7 +179,6 @@ sfig15_legend <- get_legend(changepi0_120_fdp_plot +  theme(legend.direction="ho
                                                                                 legend.box.just="bottom"))
 
 plot_grid(sfig15_plot, sfig15_legend, ncol=1, rel_heights=c(1, 0.1))
-setwd(outputDir)
 ggsave('asymmetric_ind120.pdf', width=18, height=12)
 
 #---------------------------------------------------------#
