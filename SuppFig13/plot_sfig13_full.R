@@ -1,23 +1,29 @@
 # Collect results and plot Supp Figure 13
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig13/plot_sfig13_full.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig13/plot_sfig13_full.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig12/origOutput"
-#-----------------------------------------#
 
-# read data
-setwd(outputDir)
-ind2d_changeeff_maf01 <- fread("med2d_changeeff_maf01.txt", data.table=F) %>%
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig12", "output/")
+
+# first panel
+ind2d_changeeff_maf01 <- fread(paste0(outputDir, "med2d_changeeff_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -26,8 +32,7 @@ ind2d_changeeff_maf01 <- fread("med2d_changeeff_maf01.txt", data.table=F) %>%
                                           "locfdr50df", "HDMT")))
 
 # read data
-setwd(outputDir)
-ind2d_changepi0_maf01 <- fread("med2d_changepi0_maf01.txt", data.table=F) %>%
+ind2d_changepi0_maf01 <- fread(paste0(outputDir, "med2d_changepi0_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -38,8 +43,7 @@ ind2d_changepi0_maf01 <- fread("med2d_changepi0_maf01.txt", data.table=F) %>%
   filter(minEff1 <= 0.08)
 
 # read data
-setwd(outputDir)
-ind2d_changeeff_maf10 <- fread("SFig12c_maf10_summary.txt", data.table=F) %>%
+ind2d_changeeff_maf10 <- fread(paste0(outputDir, "SFig12c_maf10_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -48,8 +52,7 @@ ind2d_changeeff_maf10 <- fread("SFig12c_maf10_summary.txt", data.table=F) %>%
                                           "locfdr50df", "HDMT")))
 
 # read data
-setwd(outputDir)
-ind2d_changepi0_maf10 <- fread("SFig12d_maf10_summary.txt", data.table=F) %>%
+ind2d_changepi0_maf10 <- fread(paste0(outputDir, "SFig12d_maf10_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -201,7 +204,6 @@ ind_changeeff_power_incon_maf01_legend <- get_legend(ind2d_changeeff_pow_maf01_p
                                                                                   legend.box.just="bottom"))
 plot_grid(ind2d_power_incon_maf01_plot, ind_changeeff_power_incon_maf01_legend, ncol=1, rel_heights=c(1, 0.1))
 
-setwd(outputDir)
 ggsave("sfig13_full.pdf", width=20, height=24)
 
 
