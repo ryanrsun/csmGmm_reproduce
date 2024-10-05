@@ -5,20 +5,18 @@ library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
 # change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig11/origOutput"
-newFiles <- paste0("sim_n1k_j100k_ind7d_hard_changeeff_new_aID", 1:2000, ".txt")
-df7Files <- paste0("sim_n1k_j100k_ind7d_hard_changeeff_7df_aID", 1:2000, ".txt")
-df50Files <- paste0("sim_n1k_j100k_ind7d_hard_changeeff_50df_aID", 1:2000, ".txt")
-kernelFiles <- paste0("sim_n1k_j100k_ind7d_hard_changeeff_kernel_aID", 1:2000, ".txt")
-
-#-----------------------------------------#
+outputDir <- here::here("SuppFig11/output/")
+newFiles <- paste0(outputDir, "sim_n1k_j100k_ind7d_hard_changeeff_new_aID", 1:2000, ".txt")
+df7Files <- paste0(outputDir, "sim_n1k_j100k_ind7d_hard_changeeff_7df_aID", 1:2000, ".txt")
+df50Files <- paste0(outputDir, "sim_n1k_j100k_ind7d_hard_changeeff_50df_aID", 1:2000, ".txt")
+kernelFiles <- paste0(outputDir, "sim_n1k_j100k_ind7d_hard_changeeff_kernel_aID", 1:2000, ".txt")
 
 fullResNew <- c()
 fullRes7df <- c()
@@ -26,7 +24,6 @@ fullRes50df <- c()
 fullResKernel <- c()
 
 # read raw output files
-setwd(outputDir)
 for (file_it in 2:max(length(newFiles), length(df7Files), length(df50Files), length(kernelFiles))) {
   if (length(newFiles) >= file_it) {
     tempResNew <- tryCatch(fread(newFiles[file_it]), error=function(e) e)
@@ -54,7 +51,6 @@ for (file_it in 2:max(length(newFiles), length(df7Files), length(df50Files), len
   }
 }
   
-
 outDF <- c()
 effSizes <- sort(unique(fullResNew$minEff1))
 for (eff_it in 1:length(effSizes)) {
@@ -114,6 +110,5 @@ ind7d_changeeff_fdp_plot <- ggplot(data=ind7d_changeeff, aes(x=minEff1, y=FDP, g
   theme(legend.key.size = unit(3,"line"))
 ind7d_changeeff_fdp_plot
 
-setwd(outputDir)
 ggsave("ind7d_changeeff_fdp.pdf")
 
