@@ -1,8 +1,8 @@
-#BSUB -J Fig1A[1-160]
+#BSUB -J Fig12B[101-102]
 #BSUB -W 3:00
-#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig12/errDir/SFig12B_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig12/errDir/SFig12B_%I.err
-#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig12/errDir/SFig12B_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig12/errDir/SFig12B_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/
 #BSUB -q short
 #BSUB -u rsun3@mdanderson.org
 #BSUB -n 1
@@ -11,4 +11,4 @@
 
 # run 1-160
 module load R/4.2.1
-Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig12/SuppFig12B_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig12/errDir/SFig12B_$LSB_JOBINDEX.out
+Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig12/SuppFig12B_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig12/errDir/SFig12B_$LSB_JOBINDEX.out
