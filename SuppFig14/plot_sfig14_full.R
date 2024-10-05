@@ -1,32 +1,38 @@
 # Collect results and plot Supp Figure 14
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig14/plot_sfig14_full.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig14/plot_sfig14_full.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig14/output2"
-names14a <- paste0("SFig14A_aID", 1:2500, ".txt")
-names14b <- paste0("SFig14B_aID", 1:800, ".txt")
-names14c <- paste0("SFig14C_aID", 1:2000, ".txt")
-names14d <- paste0("SFig14D_aID", 1:1000, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-names14a_maf10 <- paste0("SFig14A1_aID", 1:2500, ".txt")
-names14b_maf10 <- paste0("SFig14B1_aID", 1:800, ".txt")
-names14c_maf10 <- paste0("SFig14C1_aID", 1:2000, ".txt")
-names14d_maf10 <- paste0("SFig14D1_aID", 1:1000, ".txt")
+# set output directory 
+outputDir <- here::here("SuppFig14", "output/")
+names14a <- paste0(outputDir, "SFig14A_aID", 1:2500, ".txt")
+names14b <- paste0(outputDir, "SFig14B_aID", 1:800, ".txt")
+names14c <- paste0(outputDir, "SFig14C_aID", 1:2000, ".txt")
+names14d <- paste0(outputDir, "SFig14D_aID", 1:1000, ".txt")
+
+names14a_maf10 <- paste0(outputDir, "SFig14A1_aID", 1:2500, ".txt")
+names14b_maf10 <- paste0(outputDir, "SFig14B1_aID", 1:800, ".txt")
+names14c_maf10 <- paste0(outputDir, "SFig14C1_aID", 1:2000, ".txt")
+names14d_maf10 <- paste0(outputDir, "SFig14D1_aID", 1:1000, ".txt")
 #-----------------------------------------#
 
 
 # read raw output files
-setwd(outputDir)
 res14a <- c()
 for (file_it in 1:length(names14a)) {
   tempRes <- tryCatch(fread(names14a[file_it]), error=function(e) e)
@@ -69,17 +75,15 @@ summary14c <- summarize_raw(res14c)
 summary14d <- summarize_raw(res14d)
 
 # save summaries
-setwd(outputDir)
-write.table(summary14a, "ind3d_changeeff_maf01.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary14b, "ind3d_changepi0_maf01.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary14c, "bincor_changeeff_maf01.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary14d, "rep2d_changeeff_maf01.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary14a, paste0(outputDir, "ind3d_changeeff_maf01.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary14b, paste0(outputDir, "ind3d_changepi0_maf01.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary14c, paste0(outputDir, "bincor_changeeff_maf01.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary14d, paste0(outputDir, "rep2d_changeeff_maf01.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 
 # MAF 10%
 # read raw output files
-setwd(outputDir)
 res14a <- c()
 for (file_it in 1:length(names14a_maf10)) {
   tempRes <- tryCatch(fread(names14a_maf10[file_it]), error=function(e) e)
@@ -122,11 +126,10 @@ summary14c <- summarize_raw(res14c)
 summary14d <- summarize_raw(res14d)
 
 # save summaries
-setwd(outputDir)
-write.table(summary14a, "ind3d_changeeff_maf10.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary14b, "ind3d_changepi0_maf10.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary14c, "bincor_changeeff_maf10.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary14d, "rep2d_changeeff_maf10.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary14a, paste0(outputDir, "ind3d_changeeff_maf10.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary14b, paste0(outputDir, "ind3d_changepi0_maf10.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary14c, paste0(outputDir, "bincor_changeeff_maf10.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary14d, paste0(outputDir, "rep2d_changeeff_maf10.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 
 #------------------------------------------------#
@@ -143,8 +146,7 @@ mycols[5] <- "blue"
 
 
 # S Fig 14A
-setwd(outputDir)
-ind3d_changeeff_maf01 <- fread("ind3d_changeeff_maf01.txt", data.table=F) %>%
+ind3d_changeeff_maf01 <- fread(paste(outputDir, "ind3d_changeeff_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -170,8 +172,7 @@ ind3d_changeeff_fdp_maf01_plot <- ggplot(data=ind3d_changeeff_maf01, aes(x=minEf
 ind3d_changeeff_fdp_maf01_plot
 
 # S Fig 14B
-setwd(outputDir)
-ind3d_changepi0_maf01 <- fread("ind3d_changepi0_maf01.txt", data.table=F) %>%
+ind3d_changepi0_maf01 <- fread(paste0(outputDir, "ind3d_changepi0_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -197,8 +198,7 @@ ind3d_changepi0_fdp_maf01_plot <- ggplot(data=ind3d_changepi0_maf01, aes(x=minEf
 ind3d_changepi0_fdp_maf01_plot
 
 # S Fig 14C
-setwd(outputDir)
-bincor_changeeff_maf01 <- fread("bincor_changeeff_maf01.txt", data.table=F) %>%
+bincor_changeeff_maf01 <- fread(paste0(outputDir, "bincor_changeeff_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -222,8 +222,7 @@ bincor_changeeff_fdp_maf01_plot <- ggplot(data=bincor_changeeff_maf01, aes(x=min
 bincor_changeeff_fdp_maf01_plot
 
 # s fig 14 d
-setwd(outputDir)
-rep2d_changeeff_maf01 <- fread("rep2d_changeeff_maf01.txt", data.table=F) %>%
+rep2d_changeeff_maf01 <- fread(paste0(outputDir, "rep2d_changeeff_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -253,8 +252,7 @@ rep2d_changeeff_fdp_maf01_plot
 #-----------------------------------------------------------#
 # Now MAF 10%
 # S Fig 14A
-setwd(outputDir)
-ind3d_changeeff_maf10 <- fread("ind3d_changeeff_maf10.txt", data.table=F) %>%
+ind3d_changeeff_maf10 <- fread(paste0(outputDir, "ind3d_changeeff_maf10.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -279,8 +277,7 @@ ind3d_changeeff_fdp_maf10_plot <- ggplot(data=ind3d_changeeff_maf10, aes(x=minEf
   theme(legend.key.size = unit(3,"line"))
 
 # S Fig 14B
-setwd(outputDir)
-ind3d_changepi0_maf10 <- fread("ind3d_changepi0_maf10.txt", data.table=F) %>%
+ind3d_changepi0_maf10 <- fread(paste0(outputDir, "ind3d_changepi0_maf10.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -304,8 +301,7 @@ ind3d_changepi0_fdp_maf10_plot <- ggplot(data=ind3d_changepi0_maf10, aes(x=minEf
   theme(legend.key.size = unit(3,"line"))
 
 # S Fig 14C
-setwd(outputDir)
-bincor_changeeff_maf10 <- fread("bincor_changeeff_maf10.txt", data.table=F) %>%
+bincor_changeeff_maf10 <- fread(paste0(outputDir, "bincor_changeeff_maf10.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -327,8 +323,7 @@ bincor_changeeff_fdp_maf10_plot <- ggplot(data=bincor_changeeff_maf10, aes(x=min
   theme(legend.key.size = unit(3,"line"))
 
 # s fig 14 d
-setwd(outputDir)
-rep2d_changeeff_maf10 <- fread("rep2d_changeeff_maf10.txt", data.table=F) %>%
+rep2d_changeeff_maf10 <- fread(paste0(outputDir, "rep2d_changeeff_maf10.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -368,8 +363,8 @@ ind3d_maf01_legend <- get_legend(bincor_changeeff_fdp_maf01_plot +  theme(legend
                                                               legend.justification="center",
                                                               legend.box.just="bottom"))
 plot_grid(ind3d_maf01_plot, ind3d_maf01_legend, ncol=1, rel_heights=c(1, 0.1))
-setwd(outputDir)
-ggsave('SFig14_full.pdf', width=18, height=20)
+
+#ggsave('SFig14_full.pdf', width=18, height=20)
 
 
 
