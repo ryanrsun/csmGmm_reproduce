@@ -88,6 +88,15 @@ for (eff_it in 1:length(effSizes)) {
   outDF <- rbind(outDF, summaryOut)
 }
 
+# define colors
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
+mycols <- gg_color_hue(6)
+mycols[4] <- "black"
+mycols[5] <- "blue"
+
 # plot
 ind7d_changeeff <- outDF  %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
