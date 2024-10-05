@@ -20,7 +20,6 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("SuppFig10", "output/")
-outName <- paste0(outputDir, "/SuppFig1A_aID", aID, ".txt")
 names10aq1 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS1_aID", 1:2000, ".txt")
 names10aq2 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS2_aID", 1:2000, ".txt")
 names10aq3 <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff_powerS3_aID", 1:2000, ".txt")
@@ -96,7 +95,7 @@ ind5d_changeeff <- fread(paste0(outputDir, "Fig10a_power1_summary.txt")) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method))
-ind5d_changeeff_fixq <- fread("Fig10a_power1_summary.txt", data.table=F) %>%
+ind5d_changeeff_fixq <- fread(paste0(outputDir, "Fig10a_power1_summary.txt"), data.table=F) %>%
   mutate(qval=0.01)
 for (q_it in 2:9) {
   tempFile <- fread(paste0(outputDir, "Fig10a_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
@@ -155,15 +154,14 @@ ind5d_changeeff_correctedPowPlot
 
 # 6d power
 # load all the files needed for corrected power
-setwd(outputDir)
-ind6d_changeeff <- fread("med2d_changeeff_ind6d_v2.txt", data.table=F) %>%
+ind6d_changeeff <- fread(paste0(outputDir, "med2d_changeeff_ind6d_v2.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method))
-ind6d_changeeff_fixq <- fread("Fig10b_power1_summary.txt", data.table=F) %>%
+ind6d_changeeff_fixq <- fread(paste0(outputDir, "Fig10b_power1_summary.txt"), data.table=F) %>%
   mutate(qval=0.01)
 for (q_it in 2:9) {
-  tempFile <- fread(paste0("Fig10b_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
+  tempFile <- fread(paste0(outputDir, "Fig10b_power", q_it, "_summary.txt"), data.table=F) %>% mutate(qval = q_it * 0.01)
   ind6d_changeeff_fixq <- rbind(ind6d_changeeff_fixq, tempFile)
 }
 ind6d_changeeff_fixq <- ind6d_changeeff_fixq %>%
