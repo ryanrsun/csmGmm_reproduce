@@ -1,30 +1,35 @@
 # Collect results and plot Supp Figure 12
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig12/plot_sfig12_full.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig12/plot_sfig12_full.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig12/origOutput"
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig12", "output/")
 # MAF 1%
-names12a <- paste0("sim_n1k_j100k_med2d_changeeff_noalt_maf01_aID", 801:1400, ".txt")
-names12b <- paste0("SFig12B_aID", 1:160, ".txt")
-names12c <- paste0("sim_n1k_j100k_med2d_changeeff_raisealt_maf01_aID", 801:1400, ".txt")
-names12d <- paste0("sim_n1k_j100k_med2d_raisealt_changepi0_maf01_aID", 1:160, ".txt")
+names12a <- paste0(outputDir, "SFig12A_aID", 801:1400, ".txt")
+names12b <- paste0(outputDir, "SFig12B_aID", 1:160, ".txt")
+names12c <- paste0(outputDir, "SFig12C_aID", 801:1400, ".txt")
+names12d <- paste0(outputDir, "SFig12D_aID", 1:160, ".txt")
 # MAF 10%
-names12a_maf10 <- paste0("SFig12A1_aID", 1:500, ".txt")
-names12b_maf10 <- paste0("SFig12B1_aID", 1:160, ".txt")
-names12c_maf10 <- paste0("SFig12C1_aID", 1:500, ".txt")
-names12d_maf10 <- paste0("SFig12D1_aID", 1:160, ".txt")
-
-#-----------------------------------------#
+names12a_maf10 <- paste0(outputDir, "SFig12A1_aID", 1:500, ".txt")
+names12b_maf10 <- paste0(outputDir, "SFig12B1_aID", 1:160, ".txt")
+names12c_maf10 <- paste0(outputDir, "SFig12C1_aID", 1:500, ".txt")
+names12d_maf10 <- paste0(outputDir, "SFig12D1_aID", 1:160, ".txt")
 
 # read raw output files
 setwd(outputDir)
@@ -44,8 +49,6 @@ for (file_it in 1:length(names12b)) {
   tempList <- list(res12b, tempRes)
   res12b <- rbindlist(tempList)
 }
-
-
 
 # Read 12c
 res12c <- c()
@@ -72,18 +75,16 @@ summary12c <- summarize_raw(res12c)
 summary12d <- summarize_raw(res12d)
 
 # save summaries
-setwd(outputDir)
-write.table(summary12a, "med2d_changeeff_noAlt_maf01.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary12b, "med2d_changepi0_noAlt_maf01.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary12c, "med2d_changeeff_maf01.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary12d, "med2d_changepi0_maf01.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary12a, paste0(outputDir, "med2d_changeeff_noAlt_maf01.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary12b, paste0(outputDir, "med2d_changepi0_noAlt_maf01.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary12c, paste0(outputDir, "med2d_changeeff_maf01.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary12d, paste0(outputDir, "med2d_changepi0_maf01.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 
 #-------------------------------------------------#
 # now for MAF=0.1
 
 # read raw output files
-setwd(outputDir)
 res12a <- c()
 for (file_it in 1:length(names12a_maf10)) {
   tempRes <- tryCatch(fread(names12a_maf10[file_it]), error=function(e) e)
@@ -128,11 +129,10 @@ summary12c <- summarize_raw(res12c)
 summary12d <- summarize_raw(res12d)
 
 # save summaries
-setwd(outputDir)
-write.table(summary12a, "SFig12a_maf10_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary12b, "SFig12b_maf10_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary12c, "SFig12c_maf10_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary12d, "SFig12d_maf10_summary.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary12a, paste0(outputDir, "SFig12a_maf10_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary12b, paste0(outputDir, "SFig12b_maf10_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary12c, paste0(outputDir, "SFig12c_maf10_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary12d, paste0(outputDir, "SFig12d_maf10_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -148,8 +148,7 @@ mycols[5] <- "blue"
 
 
 # S Fig 12A
-setwd(outputDir)
-ind2d_noalt_changeeff_maf01 <- fread("med2d_changeeff_noAlt_maf01.txt", data.table=F) %>%
+ind2d_noalt_changeeff_maf01 <- fread(paste0(outputDir, "med2d_changeeff_noAlt_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -177,7 +176,7 @@ ind2d_changeeff_noalt_maf01_plot
 
 # S Fig 12B
 setwd(outputDir)
-ind2d_noalt_changepi0_maf01 <- fread("med2d_changepi0_noAlt_maf01.txt", data.table=F) %>%
+ind2d_noalt_changepi0_maf01 <- fread(paste0(outputDir, "med2d_changepi0_noAlt_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -202,10 +201,8 @@ ind2d_changepi0_noalt_maf01_plot <-ggplot(data=ind2d_noalt_changepi0_maf01, aes(
   theme(legend.key.size = unit(3,"line"))
 ind2d_changepi0_noalt_maf01_plot
 
-
 # S Fig 12C
-setwd(outputDir)
-ind2d_changeeff_maf01 <- fread("med2d_changeeff_maf01.txt", data.table=F) %>%
+ind2d_changeeff_maf01 <- fread(paste0(outputDir, "med2d_changeeff_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -231,8 +228,7 @@ ind2d_changeeff_fdp_maf01_plot <- ggplot(data=ind2d_changeeff_maf01, aes(x=minEf
 ind2d_changeeff_fdp_maf01_plot
 
 # s fig 12 d
-setwd(outputDir)
-ind2d_changepi0_maf01 <- fread("med2d_changepi0_maf01.txt", data.table=F) %>%
+ind2d_changepi0_maf01 <- fread(paste0(outputDir, "med2d_changepi0_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -262,8 +258,7 @@ ind2d_changepi0_fdp_maf01_plot
 # MAF10%
 
 # S Fig 12A
-setwd(outputDir)
-ind2d_noalt_changeeff_maf10 <- fread("SFig12a_maf10_summary.txt", data.table=F) %>%
+ind2d_noalt_changeeff_maf10 <- fread(paste0(outputDir, "SFig12a_maf10_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -288,8 +283,7 @@ ind2d_changeeff_noalt_maf10_plot <- ggplot(data=ind2d_noalt_changeeff_maf10, aes
   theme(legend.key.size = unit(3,"line"))
 
 # S Fig 12B
-setwd(outputDir)
-ind2d_noalt_changepi0_maf10 <- fread("SFig12b_maf10_summary.txt", data.table=F) %>%
+ind2d_noalt_changepi0_maf10 <- fread(paste0(outputDir, "SFig12b_maf10_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -314,8 +308,7 @@ ind2d_changepi0_noalt_maf10_plot <-ggplot(data=ind2d_noalt_changepi0_maf10, aes(
   theme(legend.key.size = unit(3,"line"))
 
 # S Fig 12C
-setwd(outputDir)
-ind2d_changeeff_maf10 <- fread("SFig12c_maf10_summary.txt", data.table=F) %>%
+ind2d_changeeff_maf10 <- fread(paste0(outputDir, "SFig12c_maf10_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -340,8 +333,7 @@ ind2d_changeeff_fdp_maf10_plot <- ggplot(data=ind2d_changeeff_maf10, aes(x=minEf
   theme(legend.key.size = unit(3,"line"))
 
 # s fig 12 d
-setwd(outputDir)
-ind2d_changepi0_maf10 <- fread("SFig12d_maf10_summary.txt", data.table=F) %>%
+ind2d_changepi0_maf10 <- fread(paste0(outputDir, "SFig12d_maf10_summary.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -381,7 +373,6 @@ ind2d_fdp_maf01_legend <- get_legend(ind2d_changeeff_noalt_maf01_plot +  theme(l
                                                                    legend.box.just="bottom"))
 plot_grid(ind2d_fdp_maf01_plot, ind2d_fdp_maf01_legend, ncol=1, rel_heights=c(1, 0.15))
 
-setwd(outputDir)
 ggsave("sfig12_full.pdf", width=20, height=24)
 
 
