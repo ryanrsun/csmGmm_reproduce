@@ -27,7 +27,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("SuppFig12", "output")
-outName <- paste0(outputDir, "/SFig12D_aID", Snum, "_aID", aID, ".txt")
+outName <- paste0(outputDir, "/SFig12D_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
