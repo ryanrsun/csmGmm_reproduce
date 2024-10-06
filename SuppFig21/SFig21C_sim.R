@@ -1,5 +1,11 @@
 # For Supp Figure 21C
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig21/SFig21C_sim.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig21/SFig21C_sim.R")
+
 # load libraries
 library(mvtnorm)
 library(data.table)
@@ -7,16 +13,29 @@ library(bindata)
 library(dplyr)
 library(devtools)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
+
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig21", "output")
+outName <- paste0(outputDir, "/sim_n1k_j100k_ind5d_changeeff_powerS", Snum, "_aID", aID, ".txt")
+
+# option to save or load intermediate data to save time,
+# set as FALSE for first run and then TRUE thereafter
+loadData <- FALSE
+saveData <- TRUE
+# the name will be [testStatsName]_[betaStart]_S[Snum]_aID[aID].txt
+testStatsName <- here::here(outputDir, "allZ")
+betaName <- here::here(outputDir, "allBeta")
 
 #------------------------------------------------------------------#
 # parameters to be changed
