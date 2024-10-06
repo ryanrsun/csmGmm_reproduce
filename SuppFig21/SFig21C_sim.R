@@ -27,29 +27,15 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("SuppFig21", "output")
-outName <- paste0(outputDir, "/sim_n1k_j100k_ind5d_changeeff_powerS", Snum, "_aID", aID, ".txt")
+outName <- paste0(outputDir, "/SFig21C_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
 loadData <- FALSE
 saveData <- TRUE
 # the name will be [testStatsName]_[betaStart]_S[Snum]_aID[aID].txt
-testStatsName <- here::here(outputDir, "allZ")
-betaName <- here::here(outputDir, "allBeta")
-
-#------------------------------------------------------------------#
-# parameters to be changed
-# set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig21/output"
-outName <- paste0("SFig21C_aID", aID, ".txt")
-
-# option to save or load intermediate data to save time,
-# set as FALSE for first run and then TRUE thereafter
-loadData <- FALSE
-saveData <- FALSE
-testStatsName <- "SFig21C_allZ"
-betaName <- "SFig21C_allBeta"
-#-------------------------------------------------------------------#
+testStatsName <- here::here(outputDir, "SFig21C_allZ")
+betaName <- here::here(outputDir, "SFig21C_allBeta")
 
 # parameters
 doHDMT <- TRUE
@@ -102,7 +88,6 @@ for (sim_it in 1:nSims) {
 
   # load or save data
   if (loadData) {
-    setwd(outputDir)
     allZ <- fread(paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
     allBeta <- fread(paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
   } else {
@@ -159,7 +144,6 @@ for (sim_it in 1:nSims) {
 
     # save it
     if (saveData) { 
-      setwd(outputDir)
       write.table(allZ, paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
       write.table(allBeta, paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     } 
@@ -313,7 +297,6 @@ for (sim_it in 1:nSims) {
   cat('\n Done with ', sim_it, '\n')
 }
 
-setwd(outputDir)
 write.table(powerRes, outName, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 
