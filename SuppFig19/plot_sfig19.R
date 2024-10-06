@@ -106,7 +106,6 @@ bincor_changepi0_5_power_plot <- ggplot(data=bincor_changepi0_5 %>% filter(Metho
 bincor_changepi0_5_power_plot
 
 # read s fig 19b
-setwd(outputDir)
 bincor_changepi0_8 <- fread(paste0(outputDir, "bincor_changepi0_cor8_large.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
