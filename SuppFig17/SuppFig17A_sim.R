@@ -34,8 +34,8 @@ outName <- paste0(outputDir, "/Fig17A_aID", aID, ".txt")
 # set as FALSE for first run and then TRUE thereafter
 loadData <- FALSE
 saveData <- TRUE
-testStatsName <- here::here(outputDir, "Fig17A_allZ")
-betaName <- here::here(outputDir, "Fig17A_allBeta")
+testStatsName <- here::here(outputDir, "SFig17A_allZ")
+betaName <- here::here(outputDir, "SFig17A_allBeta")
 
 # parameters
 outcomeCor <- 0.1
