@@ -175,7 +175,6 @@ ind2d_changeeff_noalt_maf01_plot
 
 
 # S Fig 12B
-setwd(outputDir)
 ind2d_noalt_changepi0_maf01 <- fread(paste0(outputDir, "med2d_changepi0_noAlt_maf01.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
