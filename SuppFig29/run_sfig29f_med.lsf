@@ -11,4 +11,4 @@
 
 # run 1-400
 module load R/4.2.1
-Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig29/SFig29F_sim_med.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig29/errDir/SFig29F_med_$LSB_JOBINDEX.out
+Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig29/SFig29E_sim_med.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig29/errDir/SFig29F_med_$LSB_JOBINDEX.out
