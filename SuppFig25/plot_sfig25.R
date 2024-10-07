@@ -1,28 +1,32 @@
 # Collect results and plot Supp Figure 25
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig25/plot_sfig25.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig25/plot_sfig25.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig25/origOutput"
-names25f1 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use1_changeeff_aID", 1:500, ".txt")
-names25f2 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use2_changeeff_aID", 1:500, ".txt")
-names25f3 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use3_changeeff_aID", 1:500, ".txt")
-names25f4 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use4_changeeff_aID", 1:500, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig25", "output/")
+names25f1 <- paste0("SFig25A_aID", 1:500, "_fit1.txt")
+names25f2 <- paste0("SFig25A_aID", 1:500, "_fit2.txt")
+names25f3 <- paste0("SFig25A_aID", 1:500, "_fit3.txt")
+names25f4 <- paste0("SFig25A_aID", 1:500, "_fit4.txt")
 names25fr <- paste0("SFig25A_aID", 1:500, "_fitreg.txt")
 
-#-----------------------------------------#
-
 # read raw output files
-setwd(outputDir)
 res25f1 <- c()
 for (file_it in 1:length(names25f1)) {
   tempRes <- tryCatch(fread(names25f1[file_it]), error=function(e) e)
@@ -75,13 +79,11 @@ summary25f4 <- summarize_raw(res25f4)
 summary25fr <- summarize_raw(res25fr)
 
 # save summaries
-setwd(outputDir)
-write.table(summary25f1, "med2d_changeeff_mbltrue3_use1_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary25f2, "med2d_changeeff_mbltrue3_use2_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary25f3, "med2d_changeeff_mbltrue3_use3_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary25f4, "med2d_changeeff_mbltrue3_use4_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary25fr, "med2d_changeeff_mbltrue3_use1_double_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-
+write.table(summary25f1, paste0(outputDir, "med2d_changeeff_mbltrue3_use1_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary25f2, paste0(outputDir, "med2d_changeeff_mbltrue3_use2_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary25f3, paste0(outputDir, "med2d_changeeff_mbltrue3_use3_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary25f4, paste0(outputDir, "med2d_changeeff_mbltrue3_use4_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary25fr, paste0(outputDir, "med2d_changeeff_mbltrue3_use1_double_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -96,18 +98,17 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # read data
-setwd(outputDir)
-true3_use1_largeProp <- fread("med2d_changeeff_mbltrue3_use1_largeProp.txt") %>%
+true3_use1_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use1_largeProp.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New1")
-true3_double_largeProp <- fread("med2d_changeeff_mbltrue3_use1_double_largeProp.txt") %>%
+true3_double_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use1_double_largeProp.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "NewD")
-true3_use2_largeProp <- fread("med2d_changeeff_mbltrue3_use2_largeProp.txt") %>%
+true3_use2_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use2_largeProp.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New2")
-true3_use3_largeProp <- fread("med2d_changeeff_mbltrue3_use3_largeProp.txt")
-true3_use4_largeProp <- fread("med2d_changeeff_mbltrue3_use4_largeProp.txt") %>%
+true3_use3_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use3_largeProp.txt"))
+true3_use4_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use4_largeProp.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New4")
 
@@ -169,8 +170,6 @@ true3_largeProp_csm_power_plot <- ggplot(data=true3_largeProp_csm, aes(x=minEff1
 true3_largeProp_csm_power_plot
 
 
-#----------------------------------------------------------#
-
 # s fig 25 c
 true3_largeProp_others_fdp_plot <- ggplot(data=true3_largeProp_others, aes(x=minEff1, y=FDP, group=Method)) +
   geom_line(aes(linetype = Method, color=Method),lwd=1.2) +
@@ -216,8 +215,7 @@ mbl_true3_largeProp_legend2 <- get_legend(true3_largeProp_others_fdp_plot +  the
                                                                                 legend.justification="center",
                                                                                 legend.box.just="bottom"))
 plot_grid(mbl_true3_largeProp_plot, mbl_true3_largeProp_legend1, mbl_true3_largeProp_legend2, ncol=1, rel_heights=c(1, 0.1, 0.1))
-setwd(outputDir)
-ggsave('mbl_true3_largeprop.pdf', width=18, height=12)
+#ggsave('mbl_true3_largeprop.pdf', width=18, height=12)
 
 
 
