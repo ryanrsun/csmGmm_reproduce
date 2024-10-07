@@ -55,8 +55,8 @@ nSims <- 2
 margprob <- rep(0.1, setSize)
 simsPerEffSize <- 50
 effSizeMult <- ceiling(aID / simsPerEffSize)
-betaMin <- c(0.35, 0.35, 0.35)
-betaMax <- c(0.35, 0.35, 0.35)
+betaMin <- c(0.5, 0.5, 0.5)
+betaMax <- c(0.5, 0.5, 0.5)
 beta0 <- -1
 
 # determines how many signals there are
