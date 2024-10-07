@@ -1,26 +1,30 @@
 # Collect results and plot Supp Figure 28
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig28/plot_sfig28.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig28/plot_sfig28.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig28/origOutput"
-names28f1 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use1_low_aID", 1:500, ".txt")
-names28f2 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use1_orig_aID", 1:500, ".txt")
-names28f3 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use1_high_aID", 1:500, ".txt")
-names28fr <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use1_2pct_double_init_aID", 1:500, ".txt")
-#-----------------------------------------#
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig28", "output/")
+names28f1 <- paste0("SFig28A_", 1:500, "_fitlow.txt")
+names28f2 <- paste0("SFig28A_", 1:500, "_fitmed.txt")
+names28f3 <- paste0("SFig28A_", 1:500, "_fithigh.txt")
 
 # read raw output files
-setwd(outputDir)
 res28f1 <- c()
 for (file_it in 1:length(names28f1)) {
   tempRes <- tryCatch(fread(names28f1[file_it]), error=function(e) e)
@@ -47,28 +51,15 @@ for (file_it in 1:length(names28f3)) {
   res28f3 <- rbindlist(tempList)
 }
 
-# Read 28fr
-res28fr <- c()
-for (file_it in 1:length(names28fr)) {
-  tempRes <- tryCatch(fread(names28fr[file_it]), error=function(e) e)
-  if (class(tempRes)[1] == "simpleError") {next}
-  tempList <- list(res28fr, tempRes %>% mutate(nRejDACT=NA, nRejHDMT=NA, nRejKernel=NA, nRej7df=NA, nRej50df=NA))
-  res28fr <- rbindlist(tempList)
-}
-
 # summarize
 summary28f1 <- summarize_raw(res28f1)
 summary28f2 <- summarize_raw(res28f2)
 summary28f3 <- summarize_raw(res28f3)
-summary28fr <- summarize_raw(res28fr)
 
 # save summaries
-setwd(outputDir)
-write.table(summary28f1, "med2d_changeeff_true3_use1_low.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary28f2, "med2d_changeeff_true3_use1_orig.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary28f3, "med2d_changeeff_true3_use1_high.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary28fr, "med2d_changeeff_mbltrue3_use1_2pct_double_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-
+write.table(summary28f1, paste0(outputDir, "med2d_changeeff_true3_use1_low.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary28f2, paste0(outputDir, "med2d_changeeff_true3_use1_orig.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary28f3, paste0(outputDir, "med2d_changeeff_true3_use1_high.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -83,20 +74,19 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # read data
-setwd(outputDir)
-med2d_changeeff_true3_use1_high <- fread("med2d_changeeff_true3_use1_high.txt", data.table=F) %>%
+med2d_changeeff_true3_use1_high <- fread(paste0(outputDir, "med2d_changeeff_true3_use1_high.txt"), data.table=F) %>%
   filter(Method == "New") %>%
   mutate(Method = "csmGmm-1-high") %>%
   select(minEff1, Method, Power, FDP)
-med2d_changeeff_true3_use1_low <- fread("med2d_changeeff_true3_use1_low.txt", data.table=F) %>%
+med2d_changeeff_true3_use1_low <- fread(paste0(outputDir, "med2d_changeeff_true3_use1_low.txt"), data.table=F) %>%
   filter(Method == "New")  %>%
   mutate(Method = "csmGmm-1-low") %>%
   select(minEff1, Method, Power, FDP)
-med2d_changeeff_true3_use1_orig <- fread("med2d_changeeff_true3_use1_orig.txt", data.table=F) %>%
+med2d_changeeff_true3_use1_orig <- fread(paste0(outputDir, "med2d_changeeff_true3_use1_orig.txt"), data.table=F) %>%
   filter(Method == "New")  %>%
   mutate(Method = "csmGmm-1-med") %>%
   select(minEff1, Method, Power, FDP)
-med2d_changeeff_true3_use1_standard <- fread("med2d_changeeff_mbltrue3_use1_2pct_double_init.txt") %>%
+med2d_changeeff_true3_use1_standard <- fread(paste0(here::here("SuppFig24", "output"), "med2d_changeeff_mbltrue3_use1_2pct_double_init.txt")) %>%
   filter(Method == "New")  %>%
   mutate(Method = "csmGmm-Standard") %>%
   select(minEff1, Method, Power, FDP)
@@ -123,8 +113,7 @@ ind2d_changeeff_true3_OM_plot <- ggplot(data=med2d_changeeff_true3_OM, aes(x=min
 ind2d_changeeff_true3_OM_plot
 
 # save
-setwd(outputDir)
-ggsave("med2d_changeeff_onemix.pdf", width=12, height=6)
+#ggsave("med2d_changeeff_onemix.pdf", width=12, height=6)
 
 
 
