@@ -1,26 +1,32 @@
 # Collect results and plot Supp Figure 21
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig21/plot_sfig21.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig21/plot_sfig21.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig21/origOutput"
-names21a <- paste0("sim_n1k_j100k_med2d_changeeff_noalt_noAss_aID", 1:400, ".txt")
-names21b <- paste0("sim_n1k_j100k_med2d_changepi0_noalt_noAss_aID", 1:160, ".txt")
-names21c <- paste0("sim_n1k_j100k_med2d_changeeff_noAss_aID", 1:400, ".txt")
-names21d <- paste0("sim_n1k_j100k_med2d_changepi0_noAss_aID", 1:160, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig21", "output/")
+names21a <- paste0(outputDir, "SFig21B_aID", 1:400, ".txt")
+names21b <- paste0(outputDir, "SFig21B_aID", 1:160, ".txt")
+names21c <- paste0(outputDir, "SFig21B_aID", 1:400, ".txt")
+names21d <- paste0(outputDir, "SFig21B_aID", 1:160, ".txt")
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res21a <- c()
 for (file_it in 1:length(names21a)) {
   tempRes <- tryCatch(fread(names21a[file_it]), error=function(e) e)
@@ -63,11 +69,10 @@ summary21c <- summarize_raw(res21c)
 summary21d <- summarize_raw(res21d)
 
 # save summaries
-setwd(outputDir)
-write.table(summary21a, "med2d_changeeff_noalt_noAssumption.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary21b, "med2d_changepi0_noalt_noAssumption.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary21c, "med2d_changeeff_noAssumption.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary21d, "med2d_changepi0_noAssumption.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary21a, paste0(outputDir, "med2d_changeeff_noalt_noAssumption.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary21b, paste0(outputDir, "med2d_changepi0_noalt_noAssumption.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary21c, paste0(outputDir, "med2d_changeeff_noAssumption.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary21d, paste0(outputDir, "med2d_changepi0_noAssumption.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -83,8 +88,7 @@ mycols[5] <- "blue"
 
 # SFig 21a
 # no effect change eff
-setwd(outputDir)
-ind2d_noalt_changeeff_noAss <- fread("med2d_changeeff_noalt_noAssumption.txt", data.table=F) %>%
+ind2d_noalt_changeeff_noAss <- fread(paste0(outputDir, "med2d_changeeff_noalt_noAssumption.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -109,8 +113,7 @@ ind2d_changeeff_noalt_fdp_noAss_plot
 
 
 # S Fig 21b
-setwd(outputDir)
-ind2d_noalt_changepi0_noAss <- fread("med2d_changepi0_noalt_noAssumption.txt", data.table=F) %>%
+ind2d_noalt_changepi0_noAss <- fread(paste0(outputDir, "med2d_changepi0_noalt_noAssumption.txt"), data.table=F) %>%
   filter(Method != "DACTb" & Method != "DACTorig" & Method != "HDMTorig") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -137,8 +140,7 @@ ind2d_changepi0_noalt_fdp_noAss_plot
 
 
 # S Fig 21 c
-setwd(outputDir)
-ind2d_changeeff_noAss <- fread("med2d_changeeff_noAssumption.txt", data.table=F) %>%
+ind2d_changeeff_noAss <- fread(paste0(outputDir, "med2d_changeeff_noAssumption.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -165,8 +167,7 @@ ind2d_changeeff_fdp_noAss_plot
 
 
 # S Fig 21 d
-setwd(outputDir)
-ind2d_changepi0_noAss <- fread("med2d_changepi0_noAssumption.txt", data.table=F) %>%
+ind2d_changepi0_noAss <- fread(paste0(outputDir, "med2d_changepi0_noAssumption.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -203,8 +204,7 @@ ind2d_fdp_noAss_legend <- get_legend(ind2d_changeeff_noalt_fdp_noAss_plot +  the
                                                                                legend.justification="center",
                                                                                legend.box.just="bottom"))
 plot_grid(ind2d_fdp_noAss_plot, ind2d_fdp_noAss_legend, ncol=1, rel_heights=c(1, 0.15))
-setwd(outputDir)
-ggsave('ind2d_noalt_noAssumption.pdf', width=20, height=12)
+#ggsave('ind2d_noalt_noAssumption.pdf', width=20, height=12)
 
 
 #--------------------------------------------------------------------------------------------#
@@ -279,7 +279,6 @@ ind_changeeff_power_incon_noAss_legend <- get_legend(ind2d_changeeff_pow_noAss_p
                                                                                              legend.justification="center",
                                                                                              legend.box.just="bottom"))
 plot_grid(ind2d_power_incon_noAss_plot, ind_changeeff_power_incon_noAss_legend, ncol=1, rel_heights=c(1, 0.1))
-setwd(outputDir)
-ggsave('ind2d_power_incon_noAss.pdf', width=18, height=12)
+#ggsave('ind2d_power_incon_noAss.pdf', width=18, height=12)
 
 
