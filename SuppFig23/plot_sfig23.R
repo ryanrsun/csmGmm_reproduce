@@ -117,7 +117,6 @@ ind3d_changeeff_fdp_noAss_plot
 
 
 # s fig 23 b
-setwd(outputDir)
 ind3d_changepi0_noAss <- fread(paste0(outputDir, "ind3d_changepi0_noAssumption.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   filter(Method != "DACT") %>%
@@ -145,7 +144,6 @@ ind3d_changepi0_fdp_noAss_plot
 
 
 # s fig 23 c
-setwd(outputDir)
 bincor_changeeff_noAssumption <- fread(paste0(outputDir, "cor2d_changeeff_noAssumption_final.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   #filter(Method != "New") %>%
@@ -170,7 +168,6 @@ bincor_changeeff_fdp_noAss_plot <- ggplot(data=bincor_changeeff_noAssumption, ae
 bincor_changeeff_fdp_noAss_plot
 
 # s fig 23 d
-setwd(outputDir)
 rep2d_changeeff_noAss <- fread(paste0(outputDir, "rep2d_changeeff_noAssumption.txt"), data.table=F) %>%
   #filter(Method != "DACTb" & Method != "DACT" & Method != "HDMT") %>%
   filter(Method != "DACTb") %>%
