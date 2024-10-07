@@ -1,27 +1,32 @@
 # Collect results and plot Supp Figure 23
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig11/SFig11_sim_df7.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig23/plot_sfig23.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig23/origOutput"
-names23a <- paste0("sim_n1k_j100k_ind3d_changeeff_noAss_aID", 1:400, ".txt")
-names23b <- paste0("sim_n1k_j100k_ind3d_changepi0_noAss_aID", 1:160, ".txt")
-#names23c <- paste0("sim_n1k_j100k_bincor_changeeff_noass_aID", 1:400, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig23", "output")
+names23a <- paste0("SFig23A_aID", 1:400, ".txt")
+names23b <- paste0("SFig23B_aID", 1:160, ".txt")
 names23c <- paste0("SFig23C_aID", 1:400, ".txt")
-names23d <- paste0("sim_n1k_j100k_rep2d_changeeff_noAss_aID", 1:400, ".txt")
+names23d <- paste0("SFig23D_aID", 1:400, ".txt")
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res23a <- c()
 for (file_it in 1:length(names23a)) {
   tempRes <- tryCatch(fread(names23a[file_it]), error=function(e) e)
@@ -64,11 +69,10 @@ summary23c <- summarize_raw(res23c)
 summary23d <- summarize_raw(res23d)
 
 # save summaries
-setwd(outputDir)
-write.table(summary23a, "ind3d_changeeff_noAssumption.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary23b, "ind3d_changepi0_noAssumption.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary23c, "cor2d_changeeff_noAssumption_final.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary23d, "rep2d_changeeff_noAssumption.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary23a, paste0(outputDir, "ind3d_changeeff_noAssumption.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary23b, paste0(outputDir, "ind3d_changepi0_noAssumption.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary23c, paste0(outputDir, "cor2d_changeeff_noAssumption_final.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary23d, paste0(outputDir, "rep2d_changeeff_noAssumption.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -84,8 +88,7 @@ mycols[5] <- "blue"
 
 
 # s fig 23 a
-setwd(outputDir)
-ind3d_changeeff_noAss <- fread("ind3d_changeeff_noAssumption.txt", data.table=F) %>%
+ind3d_changeeff_noAss <- fread(paste0(outputDir, "ind3d_changeeff_noAssumption.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   filter(Method != "DACT") %>%
   filter(Method != "HDMT") %>%
@@ -115,7 +118,7 @@ ind3d_changeeff_fdp_noAss_plot
 
 # s fig 23 b
 setwd(outputDir)
-ind3d_changepi0_noAss <- fread("ind3d_changepi0_noAssumption.txt", data.table=F) %>%
+ind3d_changepi0_noAss <- fread(paste0(outputDir, "ind3d_changepi0_noAssumption.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   filter(Method != "DACT") %>%
   filter(Method != "HDMT") %>%
@@ -143,7 +146,7 @@ ind3d_changepi0_fdp_noAss_plot
 
 # s fig 23 c
 setwd(outputDir)
-bincor_changeeff_noAssumption <- fread("cor2d_changeeff_noAssumption_final.txt", data.table=F) %>%
+bincor_changeeff_noAssumption <- fread(paste0(outputDir, "cor2d_changeeff_noAssumption_final.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   #filter(Method != "New") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
@@ -168,7 +171,7 @@ bincor_changeeff_fdp_noAss_plot
 
 # s fig 23 d
 setwd(outputDir)
-rep2d_changeeff_noAss <- fread("rep2d_changeeff_noAssumption.txt", data.table=F) %>%
+rep2d_changeeff_noAss <- fread(paste0(outputDir, "rep2d_changeeff_noAssumption.txt"), data.table=F) %>%
   #filter(Method != "DACTb" & Method != "DACT" & Method != "HDMT") %>%
   filter(Method != "DACTb") %>%
   filter(Method != "DACT") %>%
@@ -205,8 +208,7 @@ ind3d_noAss_legend <- get_legend(ind3d_changeeff_fdp_noAss_plot +  theme(legend.
                                                                          legend.justification="center",
                                                                          legend.box.just="bottom"))
 plot_grid(ind3d_noAss_plot, ind3d_noAss_legend, ncol=1, rel_heights=c(1, 0.1))
-setwd(outputDir)
-ggsave('ind3d_correp_noAssumption.pdf', width=18, height=12)
+#ggsave('ind3d_correp_noAssumption.pdf', width=18, height=12)
 
 
 

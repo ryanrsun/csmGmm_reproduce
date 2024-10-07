@@ -1,5 +1,11 @@
 # For Supp Figure 23B
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig23/SFig23B_sim.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig23/SFig23B_sim.R")
+
 # load libraries
 library(mvtnorm)
 library(data.table)
@@ -9,30 +15,27 @@ library(magrittr)
 library(rje)
 library(devtools)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
-# set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig23/output"
-outName <- paste0("SFig23B_aID", aID, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-# option to save or load intermediate data to save time,
-# set as FALSE for first run and then TRUE thereafter
+# set output directory 
+outputDir <- here::here("SuppFig23", "output")
+outName <- paste0(outputDir, "/SFig23B_aID", aID, ".txt")
+
+# option to save or load intermediate data to save time
 loadData <- FALSE
-saveData <- FALSE
-testStatsName <- "SFig23B_allZ"
-betaName <- "SFig23B_allBeta"
-#-------------------------------------------------------------------#
+saveData <- TRUE
+testStatsName <- here::here(outputDir, "Fig23B_allZ")
+betaName <- here::here(outputDir, "SFig23B_allBeta")
 
 # parameters
 doHDMT <- TRUE
@@ -90,7 +93,6 @@ for (sim_it in 1:nSims) {
 
   # load or save data
   if (loadData) {
-    setwd(outputDir)
     allZ <- fread(paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
     allBeta <- fread(paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
   } else { 
@@ -158,7 +160,6 @@ for (sim_it in 1:nSims) {
 
     # save it
     if (saveData) { 
-      setwd(outputDir)
       write.table(allZ, paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
       write.table(allBeta, paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     }
@@ -272,7 +273,6 @@ for (sim_it in 1:nSims) {
   cat('\n \n \n \n \n \n \n \n \n \n \n')
 }
 
-setwd(outputDir)
 write.table(powerRes, outName, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 

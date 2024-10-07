@@ -1,28 +1,34 @@
 # Collect results and plot Supp Figure 24
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig24/plot_sfig24.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig24/plot_sfig24.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig24/origOutput"
-names24f1 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use1_2pct_init_aID", 1:300, ".txt")
-names24f2 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use2_2pct_init_aID", 1:300, ".txt")
-names24f3 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use3_2pct_init_aID", 1:300, ".txt")
-names24f4 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use4_2pct_init_aID", 1:300, ".txt")
-names24fr <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue3_use1_2pct_double_init_aID", 1:300, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig24", "output/")
+names24f1 <- paste0("SFig24A_aID", 1:300, "_fit1.txt")
+names24f2 <- paste0("SFig24A_aID", 1:300, "_fit2.txt")
+names24f3 <- paste0("SFig24A_aID", 1:300, "_fit3.txt")
+names24f4 <- paste0("SFig24A_aID", 1:300, "_fit4.txt")
+names24fr <- paste0("SFig24A_aID", 1:300, "_fitreg.txt")
 
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res24f1 <- c()
 for (file_it in 1:length(names24f1)) {
   tempRes <- tryCatch(fread(names24f1[file_it]), error=function(e) e)
@@ -67,7 +73,6 @@ for (file_it in 1:length(names24fr)) {
   res24fr <- rbindlist(tempList)
 }
 
-
 # summarize
 summary24f1 <- summarize_raw(res24f1)
 summary24f2 <- summarize_raw(res24f2)
@@ -76,12 +81,11 @@ summary24f4 <- summarize_raw(res24f4)
 summary24fr <- summarize_raw(res24fr)
 
 # save summaries
-setwd(outputDir)
-write.table(summary24f1, "med2d_changeeff_mbltrue3_use1_2pct_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary24f2, "med2d_changeeff_mbltrue3_use2_2pct_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary24f3, "med2d_changeeff_mbltrue3_use3_2pct_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary24f4, "med2d_changeeff_mbltrue3_use4_2pct_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary24fr, "med2d_changeeff_mbltrue3_use1_2pct_double_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary24f1, paste0(outputDir, "med2d_changeeff_mbltrue3_use1_2pct_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary24f2, paste0(outputDir, "med2d_changeeff_mbltrue3_use2_2pct_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary24f3, paste0(outputDir, "med2d_changeeff_mbltrue3_use3_2pct_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary24f4, paste0(outputDir, "med2d_changeeff_mbltrue3_use4_2pct_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary24fr, paste0(outputDir, "med2d_changeeff_mbltrue3_use1_2pct_double_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 
 #------------------------------------------------#
@@ -97,18 +101,17 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # read data
-setwd(outputDir)
-true3_use1_2pct <- fread("med2d_changeeff_mbltrue3_use1_2pct_init.txt") %>%
+true3_use1_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use1_2pct_init.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New1")
-true3_double_2pct <- fread("med2d_changeeff_mbltrue3_use1_2pct_double_init.txt") 
-true3_use2_2pct <- fread("med2d_changeeff_mbltrue3_use2_2pct_init.txt") %>%
+true3_double_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use1_2pct_double_init.txt")) 
+true3_use2_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use2_2pct_init.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New2")
-true3_use3_2pct <- fread("med2d_changeeff_mbltrue3_use3_2pct_init.txt") %>%
+true3_use3_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use3_2pct_init.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New3")
-true3_use4_2pct <- fread("med2d_changeeff_mbltrue3_use4_2pct_init.txt") %>%
+true3_use4_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue3_use4_2pct_init.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New4")
 
@@ -216,7 +219,6 @@ mbl_true3_2pct_legend2 <- get_legend(true3_2pct_others_fdp_plot +  theme(legend.
                                                                                    legend.box.just="bottom"))
 #true3_largeProp_legend <- plot_grid(mbl_true3_largeProp_legend1, mbl_true3_largeProp_legend2, ncol=2)
 plot_grid(mbl_true3_2pct_plot, mbl_true3_2pct_legend1, mbl_true3_2pct_legend2, ncol=1, rel_heights=c(1, 0.1, 0.1))
-setwd(outputDir)
 ggsave('mbl_true3_2pct.pdf', width=18, height=12)
 
 
