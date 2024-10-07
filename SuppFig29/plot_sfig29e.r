@@ -1,23 +1,29 @@
 # Collect results and plot Supp Figure 29
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig29/plot_sfig29e.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig29/plot_sfig29e.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig29/output"
-names29f1 <- paste0("SFig29E_aID", 1:1000, "_fithigh.txt")
-names29f3 <- paste0("SFig29E_aID", 1:1000, "_fitlow.txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig29", "output/")
+names29f1 <- paste0(outputDir, "SFig29E_aID", 1:1000, "_fithigh.txt")
+names29f3 <- paste0(outputDir, "SFig29E_aID", 1:1000, "_fitlow.txt")
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res29f1 <- c()
 for (file_it in 1:length(names29f1)) {
   tempRes <- tryCatch(fread(names29f1[file_it]), error=function(e) e)
@@ -42,10 +48,8 @@ summary29f1 <- summarize_raw(res29f1)
 summary29f3 <- summarize_raw(res29f3)
 
 # save summaries
-setwd(outputDir)
-write.table(summary29f1, "med_mbl5_onemix_high.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary29f3, "med_mbl5_onemix_low.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-
+write.table(summary29f1, paste0(outputDir, "med_mbl5_onemix_high.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary29f3, paste0(outputDir, "med_mbl5_onemix_low.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #------------------------------------------------#
 # plotting starts
@@ -61,20 +65,19 @@ mycols[5] <- "blue"
 
 
 # read data
-setwd(outputDir)
-med2d_mbl5_use1_high <- fread("med_mbl5_onemix_high.txt", data.table=F) %>%
+med2d_mbl5_use1_high <- fread(paste0(outputDir, "med_mbl5_onemix_high.txt"), data.table=F) %>%
   filter(Method == "New") %>%
   mutate(Method = "csmGmm-1-high") %>%
   select(minEff1, Method, Power, FDP)
-med2d_mbl5_use1_low <- fread("med_mbl5_onemix_low.txt", data.table=F) %>%
+med2d_mbl5_use1_low <- fread(paste0(outputDir, "med_mbl5_onemix_low.txt"), data.table=F) %>%
   filter(Method == "New")  %>%
   mutate(Method = "csmGmm-1-low") %>%
   select(minEff1, Method, Power, FDP)
-med2d_mbl5_use1_orig <- fread("med2d_changeeff_mbltrue5_use1_2pct_init.txt", data.table=F) %>%
+med2d_mbl5_use1_orig <- fread(here::here("SuppFig26/output/med2d_changeeff_mbltrue5_use1_2pct_init.txt"), data.table=F) %>%
   filter(Method == "New")  %>%
   mutate(Method = "csmGmm-1-med") %>%
   select(minEff1, Method, Power, FDP)
-med2d_mbl5_standard <- fread("med2d_changeeff_mbltrue5_use1_2pct_double_init.txt", data.table=F) %>%
+med2d_mbl5_standard <- fread(here::here("SuppFig26/output/med2d_changeeff_mbltrue5_use1_2pct_double_init.txt"), data.table=F) %>%
   filter(Method == "New")  %>%
   mutate(Method = "csmGmm-standard") %>%
   select(minEff1, Method, Power, FDP)
@@ -100,7 +103,6 @@ med2d_mbl5_OM_plot <- ggplot(data=med2d_mbl5_OM, aes(x=minEff1, y=FDP, group=Met
 med2d_mbl5_OM_plot
 
 # save
-setwd(outputDir)
 ggsave("med2d_mbl5_onemix.pdf", width=12, height=6)
 
 
