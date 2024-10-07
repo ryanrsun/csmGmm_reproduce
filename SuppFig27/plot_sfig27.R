@@ -1,28 +1,32 @@
 # Collect results and plot Supp Figure 27
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig27/plot_sfig27.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig27/plot_sfig27.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig25/origOutput"
-names27f1 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue5_use1_changeeff_aID", 1:500, ".txt")
-names27f2 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue5_use3_changeeff_aID", 1:500, ".txt")
-names27f3 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue5_use5_changeeff_aID", 1:500, ".txt")
-names27f4 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue5_use7_changeeff_aID", 1:500, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig27", "output/")
+names27f1 <- paste0("SFig27A_aID", 1:500, "_fit1.txt")
+names27f2 <- paste0("SFig27A_aID", 1:500, "_fit3.txt")
+names27f3 <- paste0("SFig27A_aID", 1:500, "_fit5.txt")
+names27f4 <- paste0("SFig27A_aID", 1:500, "_fit7.txt")
 names27fr <- paste0("SFig27A_aID", 1:500, "_fitreg.txt")
 
-#-----------------------------------------#
-
 # read raw output files
-setwd(outputDir)
 res27f1 <- c()
 for (file_it in 1:length(names27f1)) {
   tempRes <- tryCatch(fread(names27f1[file_it]), error=function(e) e)
@@ -76,11 +80,11 @@ summary27fr <- summarize_raw(res27fr)
 
 # save summaries
 setwd(outputDir)
-write.table(summary27f1, "med2d_changeeff_mbltrue5_use1_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary27f2, "med2d_changeeff_mbltrue5_use3_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary27f3, "med2d_changeeff_mbltrue5_use5_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary27f4, "med2d_changeeff_mbltrue5_use7_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary27fr, "med2d_changeeff_mbltrue5_use1_double_largeProp.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary27f1, paste0(outputDir, "med2d_changeeff_mbltrue5_use1_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary27f2, paste0(outputDir, "med2d_changeeff_mbltrue5_use3_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary27f3, paste0(outputDir, "med2d_changeeff_mbltrue5_use5_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary27f4, paste0(outputDir, "med2d_changeeff_mbltrue5_use7_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary27fr, paste0(outputDir, "med2d_changeeff_mbltrue5_use1_double_largeProp.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 
 #------------------------------------------------#
@@ -97,18 +101,17 @@ mycols[5] <- "blue"
 
 
 # read data
-setwd(outputDir)
-true5_use1_largeProp <- fread("med2d_changeeff_mbltrue5_use1_largeProp.txt") %>%
+true5_use1_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use1_largeProp.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New1")
-true5_double_largeProp <- fread("med2d_changeeff_mbltrue5_use1_double_largeProp.txt") %>%
+true5_double_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use1_double_largeProp.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "NewD")
-true5_use3_largeProp <- fread("med2d_changeeff_mbltrue5_use3_largeProp.txt") %>%
+true5_use3_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use3_largeProp.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New3")
-true5_use5_largeProp <- fread("med2d_changeeff_mbltrue5_use5_largeProp.txt")
-true5_use7_largeProp <- fread("med2d_changeeff_mbltrue5_use7_largeProp.txt") %>%
+true5_use5_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use5_largeProp.txt"))
+true5_use7_largeProp <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use7_largeProp.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New7")
 
@@ -215,10 +218,8 @@ mbl_true5_largeProp_legend1 <- get_legend(true5_largeProp_csm_fdp_plot +  theme(
 mbl_true5_largeProp_legend2 <- get_legend(true5_largeProp_others_fdp_plot +  theme(legend.direction="horizontal",
                                                                                    legend.justification="center",
                                                                                    legend.box.just="bottom"))
-#true3_largeProp_legend <- plot_grid(mbl_true3_largeProp_legend1, mbl_true3_largeProp_legend2, ncol=2)
 plot_grid(mbl_true5_largeProp_plot, mbl_true5_largeProp_legend1, mbl_true5_largeProp_legend2, ncol=1, rel_heights=c(1, 0.1, 0.1))
-setwd(outputDir)
-ggsave('mbl_true5_largeprop.pdf', width=18, height=12)
+#ggsave('mbl_true5_largeprop.pdf', width=18, height=12)
 
 
 

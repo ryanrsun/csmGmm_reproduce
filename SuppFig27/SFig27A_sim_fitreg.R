@@ -1,5 +1,11 @@
 # For Supp Figure 27A
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig27SFig27A_sim_fitreg.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig27/SuppFig27SFig27A_sim_fitreg.R")
+
 # load libraries
 library(mvtnorm)
 library(data.table)
@@ -7,30 +13,27 @@ library(bindata)
 library(dplyr)
 library(devtools)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
-# set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig27/output"
-outName <- paste0("SFig27A_aID", aID, "_fitreg.txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-# option to save or load intermediate data to save time,
-# set as FALSE for first run and then TRUE thereafter
+# set output directory 
+outputDir <- here::here("SuppFig24", "output")
+outName <- paste0(outputDir, "/SFig24A_aID", aID, "_fitreg.txt")
+
+# option to save or load intermediate data to save time
 loadData <- FALSE
-saveData <- FALSE
-testStatsName <- "SFig27A_allZ"
-betaName <- "SFig27A_allBeta"
-#-------------------------------------------------------------------#
+saveData <- TRUE
+testStatsName <- here::here(outputDir, "SFig24Afr_allZ")
+betaName <- here::here(outputDir, "SFig24Afr_allBeta")
 
 # parameters
 doHDMT <- FALSE
@@ -192,8 +195,6 @@ set_beta_mbl <- function(sigLocsMat, set_it, setSize, randomBeta, betaOptsNon=NU
   return(betaMat)
 }
 
-
-
 # record results here
 powerRes <- data.frame(nCausal=rep(NA, nSims),  minEff1=betaOptsNon[1,1],
                        seed=NA, pi0aTrue=NA, pi0bTrue=NA,
@@ -209,7 +210,6 @@ for (sim_it in 1:nSims) {
 
   # load or save data
   if (loadData) {
-    setwd(outputDir)
     allZ <- fread(paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
     allBeta <- fread(paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), data.table=F)
   } else {
@@ -265,7 +265,6 @@ for (sim_it in 1:nSims) {
 
     # save it
     if (saveData) { 
-      setwd(outputDir)
       write.table(allZ, paste0(testStatsName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
       write.table(allBeta, paste0(betaName, "_aID", aID, "_sim", sim_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     } 
@@ -419,7 +418,6 @@ for (sim_it in 1:nSims) {
   cat('\n Done with ', sim_it, '\n')
 }
 
-setwd(outputDir)
 write.table(powerRes, outName, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 
