@@ -1,28 +1,33 @@
 # Collect results and plot Supp Figure 26
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig26/plot_sfig26.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig26/plot_sfig26.R")
+
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
 library(devtools)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig24/origOutput"
-names26f1 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue5_use1_2pct_init_aID", 1:300, ".txt")
-names26f2 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue5_use3_2pct_init_aID", 1:300, ".txt")
-names26f3 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue5_use5_2pct_init_aID", 1:300, ".txt")
-names26f4 <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue5_use7_2pct_init_aID", 1:300, ".txt")
-names26fr <- paste0("sim_n1k_j100k_med2d_changeeff_mbltrue5_use1_2pct_double_init_aID", 1:300, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-#-----------------------------------------#
+# set output directory 
+outputDir <- here::here("SuppFig26", "output/")
+names26f1 <- paste0(outputDir, "SFig26A_aID", 1:300, "_fit1.txt")
+names26f2 <- paste0(outputDir, "SFig26A_aID", 1:300, "_fit3.txt")
+names26f3 <- paste0(outputDir, "SFig26A_aID", 1:300, "_fit5.txt")
+names26f4 <- paste0(outputDir, "SFig26A_aID", 1:300, "_fit7.txt")
+names26fr <- paste0(outputDir, "SFig26A_aID", 1:300, "_fitreg.txt")
 
 # read raw output files
-setwd(outputDir)
 res26f1 <- c()
 for (file_it in 1:length(names26f1)) {
   tempRes <- tryCatch(fread(names26f1[file_it]), error=function(e) e)
@@ -76,12 +81,11 @@ summary26f4 <- summarize_raw(res26f4)
 summary26fr <- summarize_raw(res26fr)
 
 # save summaries
-setwd(outputDir)
-write.table(summary26f1, "med2d_changeeff_mbltrue5_use1_2pct_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary26f2, "med2d_changeeff_mbltrue5_use3_2pct_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary26f3, "med2d_changeeff_mbltrue5_use5_2pct_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary26f4, "med2d_changeeff_mbltrue5_use7_2pct_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary26fr, "med2d_changeeff_mbltrue5_use1_2pct_double_init.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary26f1, paste0(outputDir, "med2d_changeeff_mbltrue5_use1_2pct_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary26f2, paste0(outputDir, "med2d_changeeff_mbltrue5_use3_2pct_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary26f3, paste0(outputDir, "med2d_changeeff_mbltrue5_use5_2pct_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary26f4, paste0(outputDir, "med2d_changeeff_mbltrue5_use7_2pct_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary26fr, paste0(outputDir, "med2d_changeeff_mbltrue5_use1_2pct_double_init.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 
 #------------------------------------------------#
@@ -99,17 +103,17 @@ mycols[5] <- "blue"
 
 # read files
 setwd(outputDir)
-true5_use1_2pct <- fread("med2d_changeeff_mbltrue5_use1_2pct_init.txt") %>%
+true5_use1_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use1_2pct_init.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New1")
-true5_double_2pct <- fread("med2d_changeeff_mbltrue5_use1_2pct_double_init.txt") 
-true5_use3_2pct <- fread("med2d_changeeff_mbltrue5_use3_2pct_init.txt") %>%
+true5_double_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use1_2pct_double_init.txt"))
+true5_use3_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use3_2pct_init.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New3")
-true5_use5_2pct <- fread("med2d_changeeff_mbltrue5_use5_2pct_init.txt") %>%
+true5_use5_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use5_2pct_init.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New5")
-true5_use7_2pct <- fread("med2d_changeeff_mbltrue5_use7_2pct_init.txt") %>%
+true5_use7_2pct <- fread(paste0(outputDir, "med2d_changeeff_mbltrue5_use7_2pct_init.txt")) %>%
   filter(Method == "New") %>%
   mutate(Method = "New7")
 
@@ -216,8 +220,7 @@ mbl_true5_2pct_legend2 <- get_legend(true5_2pct_others_fdp_plot +  theme(legend.
                                                                          legend.justification="center",
                                                                          legend.box.just="bottom"))
 plot_grid(mbl_true5_2pct_plot, mbl_true5_2pct_legend1, mbl_true5_2pct_legend2, ncol=1, rel_heights=c(1, 0.1, 0.1))
-setwd(outputDir)
-ggsave('mbl_true5_2pct.pdf', width=18, height=12)
+#ggsave('mbl_true5_2pct.pdf', width=18, height=12)
 
 
 
