@@ -32,22 +32,6 @@ outName <- paste0(outputDir, "/SFig24A_aID", aID, "_fit2.txt")
 # option to save or load intermediate data to save time
 loadData <- FALSE
 saveData <- TRUE
-testStatsName <- here::here(outputDir, "SFig24A_allZ")
-betaName <- here::here(outputDir, "SFig24A_allBeta")
-
-
-# source the .R scripts from the SupportingCode/ folder 
-codePath <- c(here::here("SupportingCode"))
-toBeSourced <- list.files(codePath, "\\.R$")
-purrr::map(paste0(codePath, "/", toBeSourced), source)
-
-# set output directory 
-outputDir <- here::here("SuppFig24", "output")
-outName <- paste0(outputDir, "/SFig24A_aID", aID, "_fit2.txt")
-
-# option to save or load intermediate data to save time
-loadData <- FALSE
-saveData <- TRUE
 testStatsName <- here::here(outputDir, "SFig24Af2_allZ")
 betaName <- here::here(outputDir, "SFig24Af2_allBeta")
 
