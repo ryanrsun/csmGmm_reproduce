@@ -1,12 +1,15 @@
 # do pleiotropy and replication studies
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppTab2/analysis_timing.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppTab2/analysis_timing.R")
+
 library(data.table)
 library(dplyr)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # which study to do
 args <- commandArgs(trailingOnly=TRUE)
@@ -14,11 +17,9 @@ num <- as.numeric(args[1])
 aID <- as.numeric(args[2])
 
 # open data
-setwd("/rsrch3/home/biostatistics/rsun3/summaryStats")
-cleanUKB <- fread("bmi_with_overall.txt") 
-
-# output 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppTab2/output"
+outputDir <- here::here("SuppTab2", "output/")
+dataDir <- here::here("data/")
+cleanUKB <- fread(here::here("data/bmi_with_overall.txt"))
 
 # convergence of EM
 oldEps <- 0.01
@@ -41,23 +42,19 @@ if (aID == 1) {
   testDat <- cleanUKB %>% select(Zoverall, Zbmi, pOverall, pBMI)
 } else if (aID == 6) {
   # Replication - sqc LC, UKB LC
-  setwd("/rsrch3/home/biostatistics/rsun3/summaryStats")
-  cleanUKB <- fread("replication_with_lcoverall.txt")
+  cleanUKB <- fread(paste0(dataDir, "replication_with_lcoverall.txt"))
   testDat <- cleanUKB %>% select(Zlc_ilcco, Zlcukb, p_LC_ilcco, pLCukb)
 } else if (aID == 7) {
   # Replication - overall LC, UKB LC
-  setwd("/rsrch3/home/biostatistics/rsun3/summaryStats")
-  cleanUKB <- fread("replication_with_lcoverall.txt")
+  cleanUKB <- fread(paste0(dataDir, "replication_with_lcoverall.txt"))
   testDat <- cleanUKB %>% select(Zoverall, Zlcukb, pOverall, pLCukb)
 } else if (aID == 8) {
   # Replication - CAD, UKB CAD
-  setwd("/rsrch3/home/biostatistics/rsun3/summaryStats")
-  cleanUKB <- fread("cad_for_replication.txt")
+  cleanUKB <- fread(paste0(dataDir, "cad_for_replication.txt"))
   testDat <- cleanUKB %>% select(Zcad_cardio, Zcadukb, p_CAD_cardio, pCADukb)
 } else if (aID == 9) {
   # Replication - BMI, UKB BMI
-  setwd("/rsrch3/home/biostatistics/rsun3/summaryStats")
-  cleanUKB <- fread("bmi_for_replication.txt")
+  cleanUKB <- fread(paste0(dataDir, "bmi_for_replication.txt"))
   testDat <- cleanUKB %>% select(Zgiant, ZBMIukb, pGIANT, pBMIukb)
 } else if (aID == 10) {
   # Correlation - LC UKB, CAD UKB
@@ -153,8 +150,7 @@ endTime <- proc.time()[[3]]
 diffTime <- endTime - startTime
 
 # save
-setwd(outputDir)
-write.table(diffTime, paste0("analysis_timing_num_", num, "_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=F) 
+write.table(diffTime, paste0(outputDir, "analysis_timing_num_", num, "_aID", aID, ".txt"), append=F, quote=F, row.names=F, col.names=F) 
 
 
 
