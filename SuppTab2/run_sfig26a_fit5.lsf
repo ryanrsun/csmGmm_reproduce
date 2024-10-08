@@ -1,14 +1,14 @@
-#BSUB -J SFig26A_f5[1-100]
+#BSUB -J SFig26A_f5[1-2]
 #BSUB -W 3:00
-#BSUB -o /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppTab2/errDir/SFig26A_f5_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppTab2/errDir/SFig26A_f5_%I.err
-#BSUB –cwd /rsrch3/home/biostatistics/rsun3/ukb/
+#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppTab2/errDir/SFig26A_f5_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppTab2/errDir/SFig26A_f5_%I.err
+#BSUB –cwd /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce
 #BSUB -q short
 #BSUB -u rsun3@mdanderson.org
 #BSUB -n 1
 #BSUB -M 3
 #BSUB -R rusage[mem=3]
 
-# run 1-400
+# run 1-100
 module load R/4.2.1
-Rscript /rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppTab2/SFig26A_timing_fit5.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppTab2/errDir/SFig26A_f5_$LSB_JOBINDEX.out
+Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppTab2/SFig26A_timing_fit5.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppTab2/errDir/SFig26A_f5_$LSB_JOBINDEX.out
