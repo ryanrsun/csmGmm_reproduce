@@ -1,4 +1,11 @@
 # Supp Fig 34
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig34/plot_sfig34.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig34/plot_sfig34.R")
+
 library(dplyr)
 library(magrittr)
 library(data.table)
@@ -6,10 +13,6 @@ library(ggplot2)
 library(cowplot)
 library(data.table)
 library(xtable)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # 1 is CAD and BMI
 # 2 is ILCCO overall and Cardiogram CAD
@@ -18,11 +21,7 @@ sapply(file.sources,source,.GlobalEnv)
 # 5 is replication CAD
 # 6 is three way ILCCO overall, Cardiogram CAD, UKB BMI
 
-#------------------------------------------------------------------#
-# parameters to be changed
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
-#------------------------------------------------------------------#
-
+outputDir <- here::here("Fig4", "output/")
 
 # for colors
 gg_color_hue <- function(n) {
@@ -76,10 +75,9 @@ plotManhattan <- function(plotRes, chrCounts, colValues, shapeValues, ylimits, l
 
 
 # add position information to data
-setwd(outputDir)
-s2 <- fread("reject_bmi_with_overall_neg5_reject_aID2.txt")
-s4 <- fread("reject_bmi_with_overall_neg5_reject_aID4.txt")
-s5 <- fread("reject_bmi_with_overall_neg5_reject_aID5.txt")
+s2 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_aID2.txt"))
+s4 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_aID4.txt"))
+s5 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_aID5.txt"))
 s2new <- s2 %>% filter(rejNew == 1) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(chars = nchar(chrpos)) %>%
@@ -155,8 +153,7 @@ manPlotRep3
 application_plot <- plot_grid(manPlotRep1, manPlotRep2, manPlotRep3,
                               labels=c("A", "B", "C"), nrow=3, label_size=24)
 application_plot
-setwd(outputDir)
-ggsave("Fig4b_decon.pdf", width=9, height=12)
+#ggsave("Fig4b_decon.pdf", width=9, height=12)
 
 
 

@@ -1,23 +1,29 @@
 # Collect results and plot Supp Figure 31
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig31/plot_sfig31.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig31/plot_sfig31.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig31/origOutput"
-names31a <- paste0("sim_n1k_j100k_med2d_changeeff_maxP_aID", 1:400, ".txt")
-names31b <- paste0("sim_n1k_j100k_med2d_changepi0_maxP_aID", 1:160, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig14", "output/")
+names31a <- paste0(outputDir, "SFig31A_aID", 1:400, ".txt")
+names31b <- paste0(outputDir, "SFig31B_aID", 1:160, ".txt")
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res31a <- c()
 for (file_it in 1:length(names31a)) {
   tempRes <- tryCatch(fread(names31a[file_it]), error=function(e) e)
@@ -40,9 +46,8 @@ summary31a <- summarize_raw(res31a, maxP=T)
 summary31b <- summarize_raw(res31b, maxP=T)
 
 # save summaries
-setwd(outputDir)
-write.table(summary31a, "med2d_changeeff_maxP.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary31b, "med2d_changepi0_maxP.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary31a, paste0(outputDir, "med2d_changeeff_maxP.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary31b, paste0(outputDir, "med2d_changepi0_maxP.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 
 #------------------------------------------------#
@@ -59,8 +64,7 @@ mycols[5] <- "blue"
 
 
 # maxP change eff
-setwd(outputDir)
-maxP_med2d_changeeff <- fread("med2d_changeeff_maxP.txt", data.table=F) %>%
+maxP_med2d_changeeff <- fread(paste0(outputDir, "med2d_changeeff_maxP.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -104,7 +108,7 @@ maxP_med2d_changeeff_power_plot
 
 
 # maxP changepi0
-maxP_med2d_changepi0 <- fread("med2d_changepi0_maxP.txt", data.table=F) %>%
+maxP_med2d_changepi0 <- fread(paste0(outputDir, "med2d_changepi0_maxP.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -158,8 +162,7 @@ maxP_legend <- get_legend(maxP_med2d_changeeff_fdp_plot +  theme(legend.directio
                                                                legend.justification="center",
                                                                legend.box.just="bottom"))
 plot_grid(maxP_plot, maxP_legend, ncol=1, rel_heights=c(1, 0.15))
-setwd(outputDir)
-ggsave('maxp.pdf', width=20, height=12)
+#ggsave('maxp.pdf', width=20, height=12)
 
 
 

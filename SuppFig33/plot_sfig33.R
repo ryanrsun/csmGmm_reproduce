@@ -1,22 +1,29 @@
 # Collect results and plot Supp Figure 33
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig33/plot_sfig33.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig33/plot_sfig33.R")
+
 library(ggplot2)
 library(cowplot)
 library(ggformula)
 library(dplyr)
 library(data.table)
-setwd('/rsrch3/home/biostatistics/rsun3/github/ancillaryFunctions')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#-----------------------------------------#
-# change to where the output files are stored
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig33/output"
-names33a <- paste0("SFig33A_aID", 1:400, ".txt")
-names33b <- paste0("SFig33B_aID", 1:160, ".txt")
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppFig33", "output")
+names33a <- paste0(outputDir, "SFig33A_aID", 1:400, ".txt")
+names33b <- paste0(outputDir, "SFig33B_aID", 1:160, ".txt")
 #-----------------------------------------#
 
 # read raw output files
-setwd(outputDir)
 res33a <- c()
 for (file_it in 1:length(names33a)) {
   tempRes <- tryCatch(fread(names33a[file_it]), error=function(e) e)
@@ -40,9 +47,8 @@ summary33a <- summarize_raw(res33a)
 summary33b <- summarize_raw(res33b)
 
 # save summaries
-setwd(outputDir)
-write.table(summary33a, "med2d_changeeff_fullLik.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary33b, "med2d_changepi0_fullLik.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary33a, paste0(outputDir, "med2d_changeeff_fullLik.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary33b, paste0(outputDir, "med2d_changepi0_fullLik.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 
 #------------------------------------------------#
@@ -60,8 +66,7 @@ mycols[5] <- "blue"
 
 
 # full likelihood change eff
-setwd(outputDir)
-ind2d_changeeff_fullLik <- fread("med2d_changeeff_fullLik.txt", data.table=F) %>%
+ind2d_changeeff_fullLik <- fread(paste0(outputDir, "med2d_changeeff_fullLik.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "DACT", "Full", Method)) %>% 
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -108,8 +113,7 @@ ind2d_changeeff_fullLik_power_plot
 
 #-------------------------------------------------------------------------------------------#
 # full likelihood change pi0
-setwd(outputDir)
-ind2d_changepi0_fullLik <- fread("med2d_changepi0_fullLik.txt", data.table=F) %>%
+ind2d_changepi0_fullLik <- fread(paste0(outputDir, "med2d_changepi0_fullLik.txt"), data.table=F) %>%
   mutate(Method = ifelse(Method == "DACT", "Full", Method)) %>% 
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -162,8 +166,7 @@ ind2d_fulllik_legend <- get_legend(ind2d_changeeff_fullLik_fdp_plot +  theme(leg
                                                                    legend.justification="center",
                                                                    legend.box.just="bottom"))
 plot_grid(ind2d_fulllik_plot, ind2d_fulllik_legend, ncol=1, rel_heights=c(1, 0.15))
-setwd(outputDir)
-ggsave('ind2d_fulllik_fixedeff.pdf', width=20, height=12)
+#ggsave('ind2d_fulllik_fixedeff.pdf', width=20, height=12)
 
 
 

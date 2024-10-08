@@ -1,5 +1,11 @@
 # For Supp Figure 33B
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig33/SFig33B_sim.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig33/SFig33B_sim.R")
+
 # load libraries
 library(mvtnorm)
 library(data.table)
@@ -18,19 +24,21 @@ args <- commandArgs(trailingOnly=TRUE)
 aID <- as.numeric(args[1])
 Snum <- as.numeric(args[2])
 
-#------------------------------------------------------------------#
-# parameters to be changed
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
 # set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppFig33/output"
-outName <- paste0("SFig33B_aID", aID, ".txt")
+outputDir <- here::here("SuppFig33", "output")
+outName <- paste0(outputDir, "/SFig33B_aID", aID, ".txt")
 
 # option to save or load intermediate data to save time,
 # set as FALSE for first run and then TRUE thereafter
 loadData <- FALSE
-saveData <- FALSE
-testStatsName <- "SFig33B_allZ"
-betaName <- "SFig33B_allBeta"
-#-------------------------------------------------------------------#
+saveData <- TRUE
+testStatsName <- here::here(outputDir, "SFig33B_allZ")
+betaName <- here::here(outputDir, "SFig33B_allBeta")
 
 # parameters
 doHDMT <- TRUE
@@ -262,7 +270,6 @@ for (sim_it in 1:nSims) {
 
 }
 
-setwd(outputDir)
 write.table(powerRes, outName, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 

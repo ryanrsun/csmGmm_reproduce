@@ -6,10 +6,6 @@ library(ggplot2)
 library(cowplot)
 library(data.table)
 library(xtable)
-devtools::install_github("ryanrsun/csmGmm")
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
 # 1 is CAD and BMI
 # 2 is ILCCO overall and Cardiogram CAD
@@ -18,11 +14,7 @@ sapply(file.sources,source,.GlobalEnv)
 # 5 is replication CAD
 # 6 is three way ILCCO overall, Cardiogram CAD, UKB BMI
 
-#------------------------------------------------------------------#
-# parameters to be changed
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
-#------------------------------------------------------------------#
-
+outputDir <- here::here("Fig4", "output/")
 
 # for colors
 gg_color_hue <- function(n) {
@@ -76,10 +68,9 @@ plotManhattan <- function(plotRes, chrCounts, colValues, shapeValues, ylimits, l
 
 
 # add position information to data
-setwd(outputDir)
-s7 <- fread("reject_bmi_with_overall_neg5_reject_aID7.txt")
-s8 <- fread("reject_bmi_with_overall_neg5_reject_aID8.txt")
-s9 <- fread("reject_bmi_with_overall_neg5_reject_aID9.txt")
+s7 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_aID7.txt"))
+s8 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_aID8.txt"))
+s9 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_aID9.txt"))
 s7new <- s7 %>% filter(rejNew == 1) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(chars = nchar(chrpos)) %>%
@@ -103,8 +94,7 @@ s9new <- s9 %>% filter(rejNew == 1) %>%
   mutate(BP = substr(chrpos, colonPos + 1, chars))
 
 # for plotting axes
-setwd(outputDir)
-allZ <- fread("bmi_with_overall.txt") %>%
+allZ <- fread(paste0(here::here("data", "bmi_with_overall.txt"))) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(colonPos = gregexpr(":", chrpos)) %>%
   mutate(colonPos = as.numeric(colonPos)) %>%
@@ -117,8 +107,6 @@ for (chr_it in 1:22) {
   maxPos <- max(tempDat$BP)
   chrCounts[chr_it + 1] <- maxPos
 }
-
-
 
 # data for manhattan plot - correlated pleiotropy
 manDataCor <- rbind(s7new %>% select(Chr, BP, chrpos, newLfdr) %>% mutate(cat = "LC,CAD"),
@@ -134,11 +122,7 @@ manPlotCor <- plotManhattan(plotRes = manDataCor, chrCounts, colValues=gg_color_
                             shapeValues=c(8,16,17), ylimits=c(0, 8), legName="Pleiotropy \n(Within UKB)")
 manPlotCor
 
-
-# save
-setwd(outputDir)
-ggsave("s8_withinukb.pdf", width=18, height=12)
-
+#ggsave("s8_withinukb.pdf", width=18, height=12)
 
 
 
