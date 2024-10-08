@@ -1,20 +1,27 @@
+# summarize timing experiments
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppTab2/summarize_timing.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppTab2/summarize_timing.R")
+
 library(dplyr)
 library(data.table)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
 
-#--------------------------------------------------#
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/SuppTab2/output"
-#--------------------------------------------------#
+# source the .R scripts from the SupportingCode/ folder 
+codePath <- c(here::here("SupportingCode"))
+toBeSourced <- list.files(codePath, "\\.R$")
+purrr::map(paste0(codePath, "/", toBeSourced), source)
+
+# set output directory 
+outputDir <- here::here("SuppTab2", "output/")
 
 # pleiotropy 2d analysis
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("analysis_timing_num_", 1:100, "_aID1.txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "analysis_timing_num_", 1:100, "_aID1.txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
@@ -26,9 +33,8 @@ dim(fullRes)
 pleio2dAnal <- mean(unlist(fullRes))
 
 # pleiotropy 3d analysis
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("analysis_timing_num_", 1:100, "_aID14.txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "analysis_timing_num_", 1:100, "_aID14.txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
@@ -40,9 +46,8 @@ dim(fullRes)
 pleio3dAnal <- mean(unlist(fullRes))
 
 # replication 2d analysis
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("analysis_timing_num_", 1:100, "_aID8.txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "analysis_timing_num_", 1:100, "_aID8.txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
@@ -54,9 +59,8 @@ dim(fullRes)
 rep2dAnal <- mean(unlist(fullRes))
 
 # correlated 2d analysis
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("Fig3C_timing_aID", 1:100, ".txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "Fig3C_timing_aID", 1:100, ".txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
@@ -68,9 +72,8 @@ dim(fullRes)
 cor2dAnal <- mean(unlist(fullRes))
 
 # med 2d simulation fit 1
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("SFig26A_aID", 1:100, "_fit1_timing.txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "SFig26A_aID", 1:100, "_fit1_timing.txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
@@ -82,9 +85,8 @@ dim(fullRes)
 med2dSim_fit1 <- mean(unlist(fullRes$diffTime))
 
 # med 2d simulation fit 3
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("SFig26A_aID", 1:100, "_fit3_timing.txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "SFig26A_aID", 1:100, "_fit3_timing.txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
@@ -97,9 +99,8 @@ med2dSim_fit3 <- mean(unlist(fullRes$diffTime))
 
 
 # med 2d simulation fit 5
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("SFig26A_aID", 1:100, "_fit5_timing.txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "SFig26A_aID", 1:100, "_fit5_timing.txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
@@ -111,9 +112,8 @@ dim(fullRes)
 med2dSim_fit5 <- mean(unlist(fullRes$diffTime))
 
 # med 2d simulation fit 7
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("SFig26A_aID", 1:100, "_fit7_timing.txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "SFig26A_aID", 1:100, "_fit7_timing.txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
@@ -125,9 +125,8 @@ dim(fullRes)
 med2dSim_fit7 <- mean(unlist(fullRes$diffTime))
 
 # rep 2d simulation 
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("Fig3D_timing_aID", 1:100, ".txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "Fig3D_timing_aID", 1:100, ".txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
@@ -140,9 +139,8 @@ rep2dSim <- mean(unlist(fullRes$diffTime))
 
 
 # cor2d simulation 
-setwd(outputDir)
-allFiles <- list.files()
-expFiles <- paste0("Fig3C_timing_aID", 1:100, ".txt")
+allFiles <- list.files(outputDir)
+expFiles <- paste0(outputDir, "Fig3C_timing_aID", 1:100, ".txt")
 foundFiles <- allFiles[which(allFiles %in% expFiles)]
 fullRes <- fread(foundFiles[1])
 for (file_it in 2:length(foundFiles)) {
