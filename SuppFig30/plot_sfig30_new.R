@@ -32,7 +32,6 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # read data
-setwd(outputDir)
 med2d_mbl5_use1_high <- fread(paste0(outputDir, "med_mbl5_onemix_high.txt"), data.table=F) %>%
   filter(Method == "New") %>%
   mutate(Method = "csmGmm-1-high") %>%
