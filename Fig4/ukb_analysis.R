@@ -14,6 +14,11 @@ library(ks)
 library(csmGmm)
 library(here)
 
+# record input - controls seed, parameters, etc.
+args <- commandArgs(trailingOnly=TRUE)
+aID <- as.numeric(args[1])
+Snum <- as.numeric(args[2])
+
 # source the .R scripts from the SupportingCode/ folder 
 codePath <- c(here::here("SupportingCode"))
 toBeSourced <- list.files(codePath, "\\.R$")
