@@ -1,3 +1,5 @@
+# calculate_eqtl_stats_synthetic.R
+
 # For each of the 18 sentinel SNPs identified by ILCCO, test if it is
 # associated with the expressions of a group of genes at the other 17 loci in lung.
 
@@ -6,7 +8,7 @@
 # results in the paper. However, if the user possesses the original GTEx data, using it
 # will reproduce our findings.
 
-# We have placed the original output of this step in the Data/ folder. Using that output
+# We have placed the original output (summary statistics) of this step in the Data/ folder. Using that output
 # will reproduce our findings.
 
 # Using the here package to manage file paths. If an error is thrown, please
@@ -37,8 +39,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output and data directories
 outputDir <- here::here("Fig4", "output")
-dataDir <- here::here("data")
-
+dataDir <- here::here("Data")
 
 # the TWAS part of the mediation data (see DATA folder)
 twasLoc <- here::here(dataDir, "scc_lung_addchr1.csv") 
@@ -51,18 +52,6 @@ synthLoc <- geneInfoLoc <- here::here(dataDir, "synthDat.txt")
 
 # original=1 means we have the real data
 original <- 0
-
-# these next lines only matter if you have the original data, which we are not providing
-# location of the GTEx_v7 folder
-rootDir <- "/rsrch3/home/biostatistics/rsun3/GTEx_v7/"
-# location of genotype data
-genoLoc <- paste0(rootDir, "GenotypeFiles/phg000830.v1.GTEx_WGS.genotype-calls-vcf.c1/GTEx_Analysis_2016-01-15_v7_WholeGenomeSeq_635Ind_PASS_AB02_GQ20_HETX_MISS15_PLINKQC_SNPs_maf.gds")
-# location of expression raw data
-exprLoc <- paste0(rootDir, "ExpressionFiles/phe000020.v1.GTEx_RNAseq.expression-data-matrixfmt.c1/GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_Lung_Gene.txt")
-# location of expression metadata
-metaLoc <- paste0(rootDir, "ExpressionFiles/phe000020.v1.GTEx_RNAseq.expression-data-matrixfmt.c1/GTEx_Data_20160115_v7_RNAseq_RNASeQCv1.1.8_metrics.tsv")
-# location of covariate data
-covarLoc <- paste0(rootDir, "Covariates/Lung.v7.covariates.txt")
 
 # some parameters for analysis
 sentinelWindow <- 5000
