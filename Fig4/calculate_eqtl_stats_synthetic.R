@@ -48,7 +48,7 @@ twasLoc <- here::here(dataDir, "scc_lung_addchr1.csv")
 geneInfoLoc <- here::here(dataDir, "ensembl_refgene_hg19_20180109.rda")  
 
 # where is the synthetic data expression data (see DATA folder)
-synthLoc <- geneInfoLoc <- here::here(dataDir, "synthDat.txt")  
+synthLoc <- here::here(dataDir, "synthDat.txt")  
 
 # original=1 means we have the real data
 original <- 0
