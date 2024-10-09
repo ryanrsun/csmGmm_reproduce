@@ -24,7 +24,7 @@ outputDir <- here::here("Fig4", "output")
 fnameRoot <- paste0(outputDir, "/Fig4_data_aID", aID, ".txt")
 
 # where is the data
-summaryStatDir <- here::here("data")
+summaryStatDir <- here::here("Data")
 
 # controls convergence of EM algorithms
 oldEps <- 0.01
