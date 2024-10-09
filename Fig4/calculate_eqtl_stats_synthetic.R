@@ -289,11 +289,6 @@ if (original) {
 load(file=geneInfoLoc)
 geneRanges <-  data.table(ensembl_refgene_hg19_20180109)
 
-# gene expressions we want
-exprNames <- read.csv(twasLoc) %>%
-  select(gene_name) %>%
-  unlist(.)
-
 # loop through the 18 loci given in Table 2 of McKay et al.
 tab2DF <- data.frame(RS = c("rs71658797", "rs6920364", "rs11780471", "rs11571833", 
                             "rs66759488", "rs55781567", "rs56113850", "rs13080835",
@@ -321,6 +316,11 @@ for (snp_locus_it in 1:length(locusToDo)) {
   # clean and merge expression, genotypes, covariates
   if (original) { 
 
+    # gene expressions we want
+    exprNames <- read.csv(twasLoc) %>%
+      select(gene_name) %>%
+      unlist(.)
+    
     # clean data 
     lungCleaned <- clean_and_subset(exprGeneNames = exprNames, tissue = "Lung", genoData = genoData, 
                                   snpsToGet = snpsToGet, covarDF = covarDF, 
