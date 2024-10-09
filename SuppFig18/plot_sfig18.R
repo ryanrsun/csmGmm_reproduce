@@ -19,7 +19,7 @@ toBeSourced <- list.files(codePath, "\\.R$")
 purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
-outputDir <- here::here("SuppFig18", "output")
+outputDir <- here::here("SuppFig18", "output/")
 names18a <- paste0(outputDir, "SFig18A_aID", 201:700, ".txt")
 names18b <- paste0(outputDir, "SFig18B_aID", 201:700, ".txt")
 

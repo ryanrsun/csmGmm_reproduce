@@ -20,11 +20,11 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("SuppFig25", "output/")
-names25f1 <- paste0("SFig25A_aID", 1:500, "_fit1.txt")
-names25f2 <- paste0("SFig25A_aID", 1:500, "_fit2.txt")
-names25f3 <- paste0("SFig25A_aID", 1:500, "_fit3.txt")
-names25f4 <- paste0("SFig25A_aID", 1:500, "_fit4.txt")
-names25fr <- paste0("SFig25A_aID", 1:500, "_fitreg.txt")
+names25f1 <- paste0(outputDir, "SFig25A_aID", 1:500, "_fit1.txt")
+names25f2 <- paste0(outputDir, "SFig25A_aID", 1:500, "_fit2.txt")
+names25f3 <- paste0(outputDir, "SFig25A_aID", 1:500, "_fit3.txt")
+names25f4 <- paste0(outputDir, "SFig25A_aID", 1:500, "_fit4.txt")
+names25fr <- paste0(outputDir, "SFig25A_aID", 1:500, "_fitreg.txt")
 
 # read raw output files
 res25f1 <- c()
