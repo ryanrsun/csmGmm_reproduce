@@ -30,10 +30,6 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 outputDir <- here::here("Fig4", "output")
 outRoot <- paste0(outputDir, "/med_analysis_aID", aID)
 
-# set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/test/output"
-outRoot <- paste0("med_analysis_aID", aID)
-
 # additional data needed
 twasFname <- here::here("data/scc_lung_addchr1.csv")
 
