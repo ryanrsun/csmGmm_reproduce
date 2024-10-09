@@ -31,7 +31,7 @@ outputDir <- here::here("Fig4", "output")
 outRoot <- paste0(outputDir, "/med_analysis_aID", aID)
 
 # additional data needed
-twasFname <- here::here("data/scc_lung_addchr1.csv")
+twasFname <- here::here("Data/scc_lung_addchr1.csv")
 
 # convergence of EM
 oldEps <- 0.01
