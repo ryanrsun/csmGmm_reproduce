@@ -9,6 +9,6 @@
 #BSUB -M 4
 #BSUB -R rusage[mem=4]
 
-# run 221-620
+# run 201-620
 module load R/4.2.1
 Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig3/SuppFig3A_sim.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/SuppFig3/errDir/SFig3A_$LSB_JOBINDEX.out
