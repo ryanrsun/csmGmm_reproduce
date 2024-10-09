@@ -26,7 +26,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("Fig4", "output")
-fnameRoot <- paste0(outputDir, "/Fig4_data_aID", aID, ".txt")
+fnameRoot <- paste0(outputDir, "/Fig4_data_aID", aID)
 
 # where is the data
 summaryStatDir <- here::here("Data")
@@ -124,7 +124,7 @@ if (!replication & !threeway & !cor) {
     hdmtOut <- rep(NA, nrow(testDat))
   } 
   # save
-  write.table(hdmtOut, here::here(fnameRoot, "_hdmt.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(hdmtOut, paste0(fnameRoot, "_hdmt.txt"), append=F, quote=F, row.names=F, col.names=T)
 
   # sped up version of DACT - negligible differences but much faster
   if (class(nullprop)[1] != "list") {
@@ -139,7 +139,7 @@ if (!replication & !threeway & !cor) {
   }
 
   # save
-  write.table(DACTfreqp, here::here(fnameRoot, "_DACTp.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(DACTfreqp, paste0(fnameRoot, "_DACTp.txt"), append=F, quote=F, row.names=F, col.names=T)
 
 } 
 
@@ -153,7 +153,7 @@ if (!cor) {
     kernelLfdr <- oldResKernel$lfdrVec
   }
   # save
-  write.table(kernelLfdr, hre::here(fnameRoot, "_kernel.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(kernelLfdr, paste0(fnameRoot, "_kernel.txt"), append=F, quote=F, row.names=F, col.names=T)
 }
 
 # run 7 df
@@ -166,7 +166,7 @@ if (!cor) {
       df7Lfdr <- oldRes7df$lfdrVec
   }
   # save
-  write.table(df7Lfdr, here::here(fnameRoot, "_df7.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(df7Lfdr, paste0(fnameRoot, "_df7.txt"), append=F, quote=F, row.names=F, col.names=T)
 }
 
 # run 50 df
@@ -179,7 +179,7 @@ if (!cor) {
         df50Lfdr <- oldRes50df$lfdrVec
   }
   # save
-  write.table(df50Lfdr, here::here(fnameRoot, "df50.txt"), append=F, quote=F, row.names=F, col.names=T)
+  write.table(df50Lfdr, paste0(fnameRoot, "_df50.txt"), append=F, quote=F, row.names=F, col.names=T)
 }
 
 # 2D cases pleiotropy
@@ -215,9 +215,9 @@ if (!threeway) {
 }
 
 # save
-write.table(newRes$lfdrResults, here::here(fnameRoot, "_newlfdr.txt"), append=F, quote=F, row.names=F, col.names=T)
-write.table(do.call(cbind, newRes$muInfo), here::here(fnameRoot, "_muInfo.txt"), append=F, quote=F, row.names=F, col.names=T)
-write.table(do.call(cbind, newRes$piInfo), here::here(fnameRoot, "_piInfo.txt"), append=F, quote=F, row.names=F, col.names=T)
+write.table(newRes$lfdrResults, paste0(fnameRoot, "_newlfdr.txt"), append=F, quote=F, row.names=F, col.names=T)
+write.table(do.call(cbind, newRes$muInfo), paste0(fnameRoot, "_muInfo.txt"), append=F, quote=F, row.names=F, col.names=T)
+write.table(do.call(cbind, newRes$piInfo), paste0(fnameRoot, "_piInfo.txt"), append=F, quote=F, row.names=F, col.names=T)
 
 
 
