@@ -18,79 +18,15 @@ names9b <- paste0(outputDir, "sim_n1k_j100k_ind5d_changepi0_combined_aID", 1:800
 names9c <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff2_combined_aID", 1:2000, ".txt")
 names9d <- paste0(outputDir, "sim_n1k_j100k_ind6d_changepi0_combined_aID", 1:800, ".txt")
 
-gg_color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
-  hcl(h = hues, l = 65, c = 100)[1:n]
-}
-mycols <- gg_color_hue(6)
-mycols[4] <- "black"
-mycols[5] <- "blue"
-
-# start reading for s fig 9a
-fullResNew <- c()
-fullRes7df <- c()
-fullRes50df <- c()
-fullResKernel <- c()
-
-for (file_it in 1:length(names9a7)) {
-  tempResNew <- fread(names9ac[file_it])
-  tempListNew <- list(fullResNew, tempResNew)
-  fullResNew <- rbindlist(tempListNew)
-    
-  tempRes7df <- fread(names9a7[file_it])
-  tempList7df <- list(fullRes7df, tempRes7df)
-  fullRes7df <- rbindlist(tempList7df)
-
-  tempRes50df <- fread(names9a50[file_it])
-  tempList50df <- list(fullRes50df, tempRes50df)
-  fullRes50df <- rbindlist(tempList50df)
-
-  tempResKernel <- fread(names9ak[file_it])
-  tempListKernel <- list(fullResKernel, tempResKernel)
-  fullResKernel <- rbindlist(tempListKernel)
+# read data
+res9a <- c()
+for (file_it in 1:length(names9a)) {
+  tempRes <- tryCatch(fread(names9a[file_it]), error=function(e) e)
+  if (class(tempRes)[1] == "simpleError") {next}
+  tempList <- list(res9a, tempRes)
+  res9a <- rbindlist(tempList)
 }
 
-outDF <- c()
-effSizes <- sort(unique(fullResNew$minEff1))
-for (eff_it in 1:length(effSizes)) {
-  tempEff <- effSizes[eff_it]
-  # weird variable naming so we don't have to change a bunch of code 
-  allResNew <- fullResNew %>% filter(minEff1 == tempEff)  %>%
-    as.data.frame(.) %>%
-    mutate(fdpNew = ifelse(nRejNew == 0, 0, fdpNew))
-  allRes7df <- fullRes7df %>% filter(minEff1 == tempEff) %>%
-    as.data.frame(.) %>%
-    mutate(fdp7df = ifelse(nRej7df == 0, 0, fdp7df))
-  allRes50df <- fullRes50df %>% filter(minEff1 == tempEff) %>%
-    as.data.frame(.) %>%
-    mutate(fdp50df = ifelse(nRej50df == 0, 0, fdp50df))
-  allResKernel <- fullResKernel %>% filter(minEff1 == tempEff) %>%
-    as.data.frame(.) %>%
-    mutate(fdpKernel = ifelse(nRejKernel == 0, 0, fdpKernel))
-
-  summaryOut <- data.frame(minEff1 = allResNew$minEff1[1], minEff2 = allResNew$minEff2[1],
-                           Method = c("Kernel", "df7", "df50", "New"))
-  summaryOut$nRej <- c(mean(allResKernel$nRejKernel, na.rm=T), mean(allRes7df$nRej7df, na.rm=T), mean(allRes50df$nRej50df, na.rm=T), mean(allResNew$nRejNew, na.rm=T))
-  summaryOut$Power <- c(mean(allResKernel$powerKernel, na.rm=T),
-                      mean(allRes7df$power7df, na.rm=T), mean(allRes50df$power50df, na.rm=T), mean(allResNew$powerNew, na.rm=T))
-  summaryOut$FDP <- c(mean(allResKernel$fdpKernel, na.rm=T), 
-                    mean(allRes7df$fdp7df, na.rm=T), mean(allRes50df$fdp50df, na.rm=T), mean(allResNew$fdpNew, na.rm=T))
-  summaryOut$pi0a <- c(mean(allResKernel$pi0aKernel, na.rm=T),
-                      mean(allRes7df$pi0aDf7, na.rm=T), mean(allRes50df$pi0aDf50, na.rm=T), mean(allResNew$pi0aNew, na.rm=T))
-  summaryOut$pi0b <- c(mean(allResKernel$pi0bKernel, na.rm=T),
-                                             mean(allRes7df$pi0bDf7, na.rm=T), mean(allRes50df$pi0bDf50, na.rm=T), mean(allResNew$pi0bNew, na.rm=T))                                  
-  summaryOut$pi0aTrue <- rep(1 - mean(allResNew$pi0aTrue, na.rm=T) / (10^5), 4)
-  summaryOut$pi0bTrue <- rep(1 - mean(allResNew$pi0bTrue, na.rm=T) / (10^5), 4)
-  summaryOut$numNA <- c(length(which(is.na(allResKernel$powerKernel))),
-                      length(which(is.na(allRes7df$power7df))), length(which(is.na(allRes50df$power50df))), length(which(is.na(allResNew$powerNew))))          
-
-  outDF <- rbind(outDF, summaryOut)
-} 
-
-# save results 9a
-write.table(outDF, paste0(outputDir, "med2d_changeeff_correctpi_5d.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
-
-# read others
 res9b <- c()
 for (file_it in 1:length(names9b)) {
   tempRes <- tryCatch(fread(names9b[file_it]), error=function(e) e)
@@ -118,22 +54,22 @@ for (file_it in 1:length(names9d)) {
 }
 
 # summarize
+summary9a <- summarize_raw(res9a)
 summary9b <- summarize_raw(res9b)
 summary9c <- summarize_raw(res9c)
 summary9d <- summarize_raw(res9d)
 
 # save
-setwd(outputDir)
-write.table(summary9b, "med2d_changepi0_5d.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary9c, "med2d_changeeff_ind6d_v2.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary9d, "ind6d_changepi0.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary9b, paste0(outputDir, "med2d_changepi0_5d.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary9b, paste0(outputDir, "med2d_changepi0_5d.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary9c, paste0(outputDir, "med2d_changeeff_ind6d_v2.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary9d, paste0(outputDir, "ind6d_changepi0.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 #-------------------------------------------------------#
 # start plotting
 
 # s fig 9a
-setwd(outputDir)
-ind5d_changeeff <- fread("med2d_changeeff_correctpi_5d.txt", data.table=F) %>%
+ind5d_changeeff <- fread(paste0(outputDir, "med2d_changeeff_correctpi_5d.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
