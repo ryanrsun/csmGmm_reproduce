@@ -21,6 +21,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("SuppFig4", "output/")
+outputFig3 <- here::here("Fig3", "output/")
 
 names4aq1 <- paste0(outputDir, "Power_correctionS4A_S1_aID", 1:600, ".txt")
 names4aq2 <- paste0(outputDir, "Power_correctionS4A_S2_aID", 1:600, ".txt")
@@ -104,7 +105,7 @@ FigS4a_fixq <- FigS4a_fixq %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = factor(Method, levels=c("csmGmm", "DACT", "Kernel", "locfdr7df",
                                           "locfdr50df", "HDMT"))) %>%
-  rbind(., fread(here::here("Fig3/output/Fig3a_summary.txt")) %>% mutate(q = 0.1) %>% 
+  rbind(., fread(paste0(outputFig3, "Fig3a_summary.txt")) %>% mutate(q = 0.1) %>% 
         mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
         mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
         mutate(Method = ifelse(Method == "df50", "locfdr50df", Method))) 
@@ -157,7 +158,7 @@ FigS4b_fixq <- FigS4b_fixq %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = factor(Method, levels=c("csmGmm", "DACT", "Kernel", "locfdr7df",
                                           "locfdr50df", "HDMT"))) %>%
-  rbind(., fread(here::here("Fig3/output/Fig3b_summary.txt")) %>% mutate(q = 0.1) %>%
+  rbind(., fread(paste0(outputFig3, "Fig3b_summary.txt")) %>% mutate(q = 0.1) %>%
         mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
         mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
         mutate(Method = ifelse(Method == "df50", "locfdr50df", Method))) %>%
@@ -202,7 +203,7 @@ FigS4b_plot <- ggplot(data=FigS4b_correctedPow,
 
 
 # Supp Fig S4c
-FigS4c_data <- fread(here::here("Fig3/output/Fig3a_summary.txt"), data.table=F) %>%
+FigS4c_data <- fread(paste0(outputFig3, "Fig3a_summary.txt"), data.table=F) %>%
   filter(Method != "DACT" & Method != "HDMT") %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
@@ -220,7 +221,7 @@ FigS4c_plot <- ggplot(data=FigS4c_data, aes(x=minEff1, y=Incongruous, group=Meth
   theme(legend.title = element_text(size=20), legend.text = element_text(size=18))
 
 #Supp Fig S4d
-FigS4d_data <- fread(here::here("Fig3/output/Fig3b_summary.txt"), data.table=F)  %>%
+FigS4d_data <- fread(paste0(outputFig3, "Fig3b_summary.txt"), data.table=F)  %>%
   filter(Method != "DACT" & Method != "HDMT") %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
