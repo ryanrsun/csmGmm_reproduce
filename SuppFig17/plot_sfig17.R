@@ -63,7 +63,6 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # read 17a
-setwd(outputDir)
 bincor_asym120diff <- fread(paste0(outputDir, "bincor_changeeff_asym120diff.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
@@ -104,7 +103,6 @@ bincor_asym120diff_power_plot <- ggplot(data=bincor_asym120diff %>%
 bincor_asym120diff_power_plot
 
 # read 17c
-setwd(outputDir)
 rep2d_asym120diff <- fread(paste0(outputDir, "rep2d_changeeff_asym120diff.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
