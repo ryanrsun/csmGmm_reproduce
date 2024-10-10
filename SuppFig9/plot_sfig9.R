@@ -12,8 +12,8 @@ codePath <- c(here::here("SupportingCode"))
 toBeSourced <- list.files(codePath, "\\.R$")
 purrr::map(paste0(codePath, "/", toBeSourced), source)
 
-outputDir <- here::here("SuppFig9", "output")
-names9a <- paste0(outputDir, "\sim_n1k_j100k_ind5d_changeeff2_combined_aID", 1:2000, ".txt")
+outputDir <- here::here("SuppFig9", "output/")
+names9a <- paste0(outputDir, "sim_n1k_j100k_ind5d_changeeff2_combined_aID", 1:2000, ".txt")
 names9b <- paste0(outputDir, "sim_n1k_j100k_ind5d_changepi0_combined_aID", 1:800, ".txt")
 names9c <- paste0(outputDir, "sim_n1k_j100k_ind6d_changeeff2_combined_aID", 1:2000, ".txt")
 names9d <- paste0(outputDir, "sim_n1k_j100k_ind6d_changepi0_combined_aID", 1:800, ".txt")
@@ -27,7 +27,6 @@ mycols[4] <- "black"
 mycols[5] <- "blue"
 
 # start reading for s fig 9a
-setwd(outputDir)
 fullResNew <- c()
 fullRes7df <- c()
 fullRes50df <- c()
@@ -89,8 +88,7 @@ for (eff_it in 1:length(effSizes)) {
 } 
 
 # save results 9a
-setwd(outputDir)
-write.table(outDF, "med2d_changeeff_correctpi_5d.txt", append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(outDF, paste0(outputDir, "med2d_changeeff_correctpi_5d.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
 # read others
 res9b <- c()
@@ -160,8 +158,7 @@ ind5d_changeeff_fdp_plot <- ggplot(data=ind5d_changeeff, aes(x=minEff1, y=FDP, g
 ind5d_changeeff_fdp_plot
 
 # s fig 9b
-setwd(outputDir)
-ind5d_changepi0 <- fread("med2d_changepi0_5d.txt", data.table=F) %>%
+ind5d_changepi0 <- fread(paste0(outputDir, "med2d_changepi0_5d.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -187,8 +184,7 @@ ind5d_changepi0_fdp_plot
 
 
 # s fig 9c
-setwd(outputDir)
-ind6d_changeeff <- fread("med2d_changeeff_ind6d_v2.txt", data.table=F) %>%
+ind6d_changeeff <- fread(paste0(outputDir, "med2d_changeeff_ind6d_v2.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
   mutate(Method = ifelse(Method == "df50", "locfdr50df", Method)) %>%
@@ -216,7 +212,6 @@ ind6d_changeeff_fdp_plot <- ggplot(data=ind6d_changeeff, aes(x=minEff1, y=FDP, g
 ind6d_changeeff_fdp_plot
 
 # s fig 9d
-setwd(outputDir)
 ind6d_changepi0 <- fread(paste0(outputDir, "ind6d_changepi0.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
