@@ -64,7 +64,6 @@ mycols[5] <- "blue"
 
 #---------------------------------------------------------------------------#
 # read sfig 18 A
-setwd(outputDir)
 bincor_changeeff5 <- fread(paste0(outputDir, "bincor_changeeff_cor5_large.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
@@ -107,7 +106,6 @@ bincor_changeeff5_power_plot
 
 
 # read sfig 18 b
-setwd(outputDir)
 bincor_changeeff8 <- fread(paste0(outputDir, "bincor_changeeff_cor8_large.txt"), data.table=F) %>%
   filter(Method != "DACTb") %>%
   mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
