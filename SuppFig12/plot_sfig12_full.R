@@ -32,7 +32,6 @@ names12c_maf10 <- paste0(outputDir, "SFig12C1_aID", 1:500, ".txt")
 names12d_maf10 <- paste0(outputDir, "SFig12D1_aID", 1:160, ".txt")
 
 # read raw output files
-setwd(outputDir)
 res12a <- c()
 for (file_it in 1:length(names12a)) {
   tempRes <- tryCatch(fread(names12a[file_it]), error=function(e) e)
