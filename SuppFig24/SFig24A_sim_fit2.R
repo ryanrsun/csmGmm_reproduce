@@ -369,7 +369,7 @@ for (sim_it in 1:nSims) {
   
   # new method
   if (doNew) {
-    initPiList <- list(c(0.2), c(0.2/2, 0.2/2), c(0.2/2, 0.2/2), c(0.4/2, 0.4/2))
+    initPiList <- list(c(0.82), c(0.04/2, 0.04/2), c(0.04/2, 0.04/2), c(0.1/2, 0.1/2))
     initMuList <- list(matrix(data=0, nrow=2, ncol=1), matrix(data=c(0, 1, 0, 2), nrow=2),
                      matrix(data=c(1, 0, 2, 0), nrow=2), matrix(data=c(4, 4, 5, 5), nrow=2)) 
     newRes <- symm_fit_ind_EM(testStats = allZ, initMuList = initMuList, initPiList = initPiList, eps=10^(-5))
