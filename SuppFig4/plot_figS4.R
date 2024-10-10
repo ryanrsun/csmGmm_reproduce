@@ -192,7 +192,7 @@ FigS4b_correctedPow <- FigS4b_correctedPow %>%
 FigS4b_plot <- ggplot(data=FigS4b_correctedPow,
              aes(x=minEff1, y=actualPower, group=Method)) +
   geom_line(aes(linetype = Method, color=Method),lwd=1.2) +
-  ylab("Power (2D Mediation)") +
+  ylab("Power (3D Pleiotropy)") +
   scale_color_manual(values=mycols) +
   scale_linetype_manual(values=1:6) +
   xlab(expression(paste(tau[1] ,"= Proportion of (", alpha[j] != 0, ", ", beta[j], "=0) = Proportion of (", alpha[j], "=0", ", ", beta[j] != 0, ")"))) +
