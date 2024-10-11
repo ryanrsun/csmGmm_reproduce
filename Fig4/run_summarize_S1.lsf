@@ -9,6 +9,6 @@
 #BSUB -M 32
 #BSUB -R rusage[mem=32]
 
-# run 1-9
+# run 1-1
 module load R/4.2.1
 Rscript /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig4/summarize_ukb_analysis.R $LSB_JOBINDEX 1 >/rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig4/errDir/summarize_ukb_S1_$LSB_JOBINDEX.out

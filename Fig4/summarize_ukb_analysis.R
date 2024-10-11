@@ -27,7 +27,6 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 # set output directory 
 outputDir <- here::here("Fig4", "output")
 dataDir <- here::here("Data")
-outName <- paste0(outputDir, "/Fig1A_aID", aID, ".txt")
 fnameOut <- paste0(outputDir, "/processed_ukb_data")
 rejectOutRoot <- paste0(outputDir, "/reject_bmi_with_overall_neg5_reject_aID")
 
@@ -204,13 +203,13 @@ for (file_it in 1:9) {
   allResults <- rbind(allResults, tempRes %>% mutate(aID = file_it))
 
   # save rejections
-  write.table(rejectDat, paste0(outputDir, rejectOutRoot, file_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+  write.table(rejectDat, paste0(rejectOutRoot, file_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
   cat(file_it)
 }
 
 # save
-write.table(allResults, paste0(outputDir, fnameOut, "_S", Snum, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+write.table(allResults, paste0(fnameOut, "_S", Snum, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
 
 

@@ -64,7 +64,7 @@ if (aID == 1) {
 } else if (aID == 6) {
   # three way - overall, cad, bmi
   threeway <- TRUE
-  cleanUKB <- fread(here::here(summaryStatDir, "cad_for_replication.txt"))
+  cleanUKB <- fread(here::here(summaryStatDir, "bmi_with_overall.txt"))
   testDat <- cleanUKB %>% select(Zoverall, Zcad, Zbmi, pOverall, p_CAD, pBMI)
 } else if (aID == 7) {
   # Correlation - LC UKB, CAD UKB 
