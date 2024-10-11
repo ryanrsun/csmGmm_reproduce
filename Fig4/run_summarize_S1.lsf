@@ -1,7 +1,7 @@
 #BSUB -J summarizeS1[1-1]
 #BSUB -W 1:00
-#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig4/summarize_ukb_S1_log%I.out
-#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig4/summarize_ukb_S1_%I.err
+#BSUB -o /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig4/errDir/summarize_ukb_S1_log%I.out
+#BSUB -e /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/Fig4/errDir/summarize_ukb_S1_%I.err
 #BSUB –cwd /rsrch3/home/biostatistics/rsun3/test/csmGmm_reproduce/
 #BSUB -q short
 #BSUB -u rsun3@mdanderson.org
