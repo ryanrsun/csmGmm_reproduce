@@ -26,10 +26,10 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("Fig4", "output")
-dataDir <- here::here("data")
+dataDir <- here::here("Data")
 outName <- paste0(outputDir, "/Fig1A_aID", aID, ".txt")
-fnameOut <- here::here(outputDir, "processed_ukb_data")
-rejectOutRoot <- here::here(outputDir, "reject_bmi_with_overall_neg5_reject_aID")
+fnameOut <- here::here(outputDir, "/processed_ukb_data")
+rejectOutRoot <- here::here(outputDir, "/reject_bmi_with_overall_neg5_reject_aID")
 
 # nominal fdr
 if (Snum == 1) {
