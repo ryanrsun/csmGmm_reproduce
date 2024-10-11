@@ -64,7 +64,7 @@ fnameDACT <- paste0(fnameRoot, "_DACTp.txt")
 fnameHDMT <- paste0(fnameRoot, "_hdmt.txt")
 fnameKernel <- paste0(fnameRoot, "_kernel.txt")
 fname7 <- paste0(fnameRoot, "_df7.txt")
-fname50 <- paste0(fnameRoot, "df50.txt")
+fname50 <- paste0(fnameRoot, "_df50.txt")
 fnameNew <- c(paste0(fnameRoot, "_newlfdr.txt"))
 
 selections <- list()
