@@ -73,11 +73,11 @@ med2d_mbl5_use1_low <- fread(paste0(outputDir, "med_mbl5_onemix_low.txt"), data.
   filter(Method == "New")  %>%
   mutate(Method = "csmGmm-1-low") %>%
   select(minEff1, Method, Power, FDP)
-med2d_mbl5_use1_orig <- fread(here::here("SuppFig26/output/med2d_changeeff_mbltrue5_use1_2pct_init.txt"), data.table=F) %>%
+med2d_mbl5_use1_orig <- fread(here::here("SuppFig24/output/med2d_changeeff_mbltrue5_use1_2pct_init.txt"), data.table=F) %>%
   filter(Method == "New")  %>%
   mutate(Method = "csmGmm-1-med") %>%
   select(minEff1, Method, Power, FDP)
-med2d_mbl5_standard <- fread(here::here("SuppFig26/output/med2d_changeeff_mbltrue5_use1_2pct_double_init.txt"), data.table=F) %>%
+med2d_mbl5_standard <- fread(here::here("SuppFig24/output/med2d_changeeff_mbltrue5_use1_2pct_double_init.txt"), data.table=F) %>%
   filter(Method == "New")  %>%
   mutate(Method = "csmGmm-standard") %>%
   select(minEff1, Method, Power, FDP)
