@@ -28,8 +28,8 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 outputDir <- here::here("Fig4", "output")
 dataDir <- here::here("Data")
 outName <- paste0(outputDir, "/Fig1A_aID", aID, ".txt")
-fnameOut <- here::here(outputDir, "/processed_ukb_data")
-rejectOutRoot <- here::here(outputDir, "/reject_bmi_with_overall_neg5_reject_aID")
+fnameOut <- paste0(outputDir, "/processed_ukb_data")
+rejectOutRoot <- paste0(outputDir, "/reject_bmi_with_overall_neg5_reject_aID")
 
 # nominal fdr
 if (Snum == 1) {
@@ -128,7 +128,6 @@ for (file_it in 1:9) {
     allResults <- rbind(allResults, tempRes %>% mutate(aID = file_it))
 
     # save
-    setwd(outputDir)
     write.table(rejectDat, paste0(rejectOutRoot, file_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     next
   }
@@ -169,7 +168,6 @@ for (file_it in 1:9) {
     allResults <- rbind(allResults, tempRes %>% mutate(aID = file_it))
     
     # save
-    setwd(outputDir)
     write.table(rejectDat, paste0(rejectOutRoot, file_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     next
   }
