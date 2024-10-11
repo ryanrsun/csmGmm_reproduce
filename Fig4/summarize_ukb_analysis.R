@@ -59,7 +59,7 @@ if (Snum == 1) {
 }
 
 # how the raw output files are named
-fnameRoot <- paste0("Fig4_data_aID", 1:9, ".txt")
+fnameRoot <- paste0("Fig4_data_aID", 1:9)
 fnameDACT <- paste0(fnameRoot, "_DACTp.txt")
 fnameHDMT <- paste0(fnameRoot, "_hdmt.txt")
 fnameKernel <- paste0(fnameRoot, "_kernel.txt")
