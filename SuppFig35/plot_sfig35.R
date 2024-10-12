@@ -94,7 +94,7 @@ s9new <- s9 %>% filter(rejNew == 1) %>%
   mutate(BP = substr(chrpos, colonPos + 1, chars))
 
 # for plotting axes
-allZ <- fread(paste0(here::here("data", "bmi_with_overall.txt"))) %>%
+allZ <- fread(paste0(here::here("Data", "bmi_with_overall.txt"))) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(colonPos = gregexpr(":", chrpos)) %>%
   mutate(colonPos = as.numeric(colonPos)) %>%
