@@ -176,7 +176,7 @@ manPlotRep
 
 # read summary of pleiotropy analysis
 adjAnal <- fread(here::here(outputDir, "processed_ukb_data_S1.txt"))
-origAnal <- fread(here::here("processed_ukb_data_S2.txt"))
+origAnal <- fread(here::here(outputDir, "processed_ukb_data_S2.txt"))
 
 tab2 <- origAnal %>% filter(aID == 6) %>% select(Method, numReject) %>%
   mutate(a4 = origAnal %>% filter(aID == 2) %>% select(numReject) %>% unlist(.)) %>%
