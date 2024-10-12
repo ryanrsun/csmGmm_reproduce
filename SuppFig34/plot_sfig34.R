@@ -22,7 +22,7 @@ library(xtable)
 # 6 is three way ILCCO overall, Cardiogram CAD, UKB BMI
 
 outputDir <- here::here("Fig4", "output/")
-outputDir <- here::here("Data")
+dataDir <- here::here("Data")
 
 # for colors
 gg_color_hue <- function(n) {
