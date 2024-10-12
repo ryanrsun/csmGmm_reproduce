@@ -30,7 +30,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("Fig4", "output")
-dataDir <- here::here("Fig4", "Data")
+dataDir <- here::here("Data")
 
 # for colors
 gg_color_hue <- function(n) {
