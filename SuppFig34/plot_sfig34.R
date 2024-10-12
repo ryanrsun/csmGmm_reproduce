@@ -101,8 +101,7 @@ s5new <- s5 %>% filter(rejNew == 1) %>%
   mutate(BP = substr(chrpos, colonPos + 1, chars))
 
 # for plotting axes
-setwd(outputDir)
-allZ <- fread("bmi_with_overall.txt") %>%
+allZ <- fread(paste0(outputDir, "bmi_with_overall.txt")) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(colonPos = gregexpr(":", chrpos)) %>%
   mutate(colonPos = as.numeric(colonPos)) %>%
