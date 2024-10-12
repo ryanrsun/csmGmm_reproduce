@@ -45,7 +45,7 @@ allResults <- c()
 for (file_it in 6:6) {
 
   # open data
-  cleanZ <- fread(paste(dataDir, "/bmi_with_overall.txt"))
+  cleanZ <- fread(paste0(dataDir, "/bmi_with_overall.txt"))
   fdrLimitHDMT <- 0.01
   fdrLimitDACT <- 0.01
   fdrLimitKernel <- 0.01
