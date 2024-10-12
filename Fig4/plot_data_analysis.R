@@ -30,6 +30,7 @@ purrr::map(paste0(codePath, "/", toBeSourced), source)
 
 # set output directory 
 outputDir <- here::here("Fig4", "output")
+dataDir <- here::here("Fig4", "Data")
 
 # for colors
 gg_color_hue <- function(n) {
@@ -120,7 +121,7 @@ s5new <- s5 %>% filter(rejNew == 1) %>%
   mutate(BP = substr(chrpos, colonPos + 1, chars))
 
 # for plotting axes
-allZ <- fread(here::here(outputDir, "bmi_with_overall.txt")) %>%
+allZ <- fread(here::here(dataDir, "bmi_with_overall.txt")) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(colonPos = gregexpr(":", chrpos)) %>%
   mutate(colonPos = as.numeric(colonPos)) %>%
