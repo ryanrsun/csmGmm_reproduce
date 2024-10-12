@@ -76,9 +76,9 @@ plotManhattan <- function(plotRes, chrCounts, colValues, shapeValues, ylimits, l
 
 
 # add position information to data
-s2 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_aID2.txt"))
-s4 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_aID4.txt"))
-s5 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_aID5.txt"))
+s2 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_S_1_aID2.txt"))
+s4 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_S_1_aID4.txt"))
+s5 <- fread(paste0(outputDir, "reject_bmi_with_overall_neg5_reject_S_1_aID5.txt"))
 s2new <- s2 %>% filter(rejNew == 1) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(chars = nchar(chrpos)) %>%
