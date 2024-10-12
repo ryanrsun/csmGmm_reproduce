@@ -205,7 +205,7 @@ allResList <- list()
 rejTab <- c()
 for(snp_it in 1:15) {
   
-  tempRoot <- paste0("med_analysis_aID", snp_it)
+  tempRoot <- paste0(outputDir, "/med_analysis_aID", snp_it)
   tempStatsDat <- fread(paste0(tempRoot, "_dat.txt")) %>%
     mutate(SNP = snp_it)
 
