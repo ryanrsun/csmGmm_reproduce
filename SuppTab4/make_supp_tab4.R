@@ -1,26 +1,26 @@
 # Supplementary Table 4
 
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppTab4/make_supp_tab4.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppTab4/make_supp_tab4.R")
+
 # load libraries
 library(data.table)
 library(dplyr)
 library(devtools)
 library(ks)
-devtools::install_github("ryanrsun/csmGmm")
 library(csmGmm)
-setwd('../supportingCode')
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
-#------------------------------------------------------------------#
-# parameters to be changed
-# set output directory 
-outputDir <- "/rsrch3/home/biostatistics/rsun3/empBayes/reproduce/Fig4/output"
-fnameOut <- "processed_ukb_data"
-rejectOutRoot <- "reject_bmi_with_overall_neg5_reject_aID"
-#------------------------------------------------------------------#
+library(here)
 
+outputDir <- here::here("Fig4", "output")
+dataDir <- here::here("Data")
+
+fnameRoot <- paste0(outputDir, "/Fig4_data_aID", 1:9)
+rejectOutRoot <- "reject_bmi_with_overall_neg5_reject_S_1_aID"
 
 # how the raw output files are named
-fnameRoot <- paste0("Fig4_data_aID", 1:9, ".txt")
 fnameDACT <- paste0(fnameRoot, "_DACTp.txt")
 fnameHDMT <- paste0(fnameRoot, "_hdmt.txt")
 fnameKernel <- paste0(fnameRoot, "_kernel.txt")
@@ -45,12 +45,12 @@ allResults <- c()
 for (file_it in 6:6) {
 
   # open data
-  cleanZ <- fread("bmi_with_overall.txt")
-  fdrLimitHDMT <- fdrLimitHDMTi
-  fdrLimitDACT <- fdrLimitDACTi
-  fdrLimitKernel <- fdrLimitKerneli
-  fdrLimit50 <- fdrLimit50i
-  fdrLimit7 <- fdrLimit7i  
+  cleanZ <- fread(paste(dataDir, "/bmi_with_overall.txt"))
+  fdrLimitHDMT <- 0.01
+  fdrLimitDACT <- 0.01
+  fdrLimitKernel <- 0.01
+  fdrLimit50 <- 0.01
+  fdrLimit7 <- 0.01  
  
   # hold temporary results
   tempRes <- data.frame(Method=c("New", "Kernel", "df50", "df7", "HDMT", "DACT"), numReject=NA)
