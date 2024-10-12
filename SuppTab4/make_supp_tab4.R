@@ -51,6 +51,7 @@ for (file_it in 6:6) {
   fdrLimitKernel <- 0.01
   fdrLimit50 <- 0.01
   fdrLimit7 <- 0.01  
+  fdrLimitNew <- 0.1
  
   # hold temporary results
   tempRes <- data.frame(Method=c("New", "Kernel", "df50", "df7", "HDMT", "DACT"), numReject=NA)
