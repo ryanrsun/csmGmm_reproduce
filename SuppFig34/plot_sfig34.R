@@ -22,6 +22,7 @@ library(xtable)
 # 6 is three way ILCCO overall, Cardiogram CAD, UKB BMI
 
 outputDir <- here::here("Fig4", "output/")
+outputDir <- here::here("Data")
 
 # for colors
 gg_color_hue <- function(n) {
@@ -101,7 +102,7 @@ s5new <- s5 %>% filter(rejNew == 1) %>%
   mutate(BP = substr(chrpos, colonPos + 1, chars))
 
 # for plotting axes
-allZ <- fread(paste0(outputDir, "bmi_with_overall.txt")) %>%
+allZ <- fread(paste0(dataDir, "bmi_with_overall.txt")) %>%
   mutate(chars = nchar(chrpos)) %>%
   mutate(colonPos = gregexpr(":", chrpos)) %>%
   mutate(colonPos = as.numeric(colonPos)) %>%
