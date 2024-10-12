@@ -127,7 +127,7 @@ for (file_it in 1:9) {
     allResults <- rbind(allResults, tempRes %>% mutate(aID = file_it))
 
     # save
-    write.table(rejectDat, paste0(rejectFname, "_aID", file_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
+    write.table(rejectDat, paste0(rejectFnameRoot, "_aID", file_it, ".txt"), append=F, quote=F, row.names=F, col.names=T, sep='\t')
     next
   }
 
