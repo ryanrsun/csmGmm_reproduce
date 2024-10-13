@@ -1,4 +1,11 @@
-# Supp Fig 35
+# Collect results and plot Supp Figure 35
+
+# Using the here package to manage file paths. If an error is thrown, please
+# set the working directory to the folder that holds this Rscript, e.g.
+# setwd("/path/to/csmGmm_reproduce/SuppFig35/plot_sfig35.R") or set the path after the -cwd flag
+# in the .lsf file, and then run again.
+here::i_am("SuppFig35/plot_sfig35.R")
+
 library(dplyr)
 library(magrittr)
 library(data.table)
