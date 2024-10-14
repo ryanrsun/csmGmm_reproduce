@@ -12,7 +12,7 @@ Code to reproduce simulation results, figures, and real data analysis results fr
 
 - In general, one folder is provided for each figure or each table. For example, all the code needed to reproduce Figure 1 is placed inside the Fig1 folder.
 
-- When a folder does not exist for a figure, it's code can be found in the preceding figure folder. For example, Supplemental Figures 21-22 rely on much of the same code, so there is only a SuppFig21 folder and no SuppFig22 folder.
+- When a folder does not exist for a figure, its code can be found in the preceding figure folder. For example, Supplemental Figures 21-22 rely on much of the same code, so there is only a SuppFig21 folder and no SuppFig22 folder.
 
 - We use the 'here' package to refer to file locations within this project. When running this code, please make sure the working directory is set to somewhere within the csmGmm_reproduce folder to ensure that the here package works correctly.
 
@@ -23,12 +23,19 @@ Code to reproduce simulation results, figures, and real data analysis results fr
 - Each folder also contains an R script that starts with the word "plot" such as "plot_Fig1.R." After all jobs in a folder have finished running, this script should be run to produce the final figure or table from the manuscript.
 
 - An upper bound on the amount of time needed to execute the code in each folder is roughly equivalent to the largest -W argument given in the lsf files of each folder. For example, -W 3:00 indicates the code should take less than 3 hours. The actual time needed will depend on many factors such as the hardware of the computing cluster. If there is a waiting time for jobs to be run, that time will also need to be added on top of the -W time. We also provide an upper bound on time estimates here for convenience:
+
 Fig1 - 3 hours
+
 Fig2 - 3 hours
+
 Fig3 - 7 hours
+
 Fig4 - 4 hours
+
 Tab1/Tab2 - 5 hours
+
 SuppFig1 - 3 hours
+
 SuppFig2 - 3 hours
 SuppFig3 - 7 hours
 SuppFig4 - 7 hours
