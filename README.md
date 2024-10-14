@@ -37,11 +37,19 @@ Tab1/Tab2 - 5 hours
 SuppFig1 - 3 hours
 
 SuppFig2 - 3 hours
+
 SuppFig3 - 7 hours
+
 SuppFig4 - 7 hours
+
 SuppFig5 - 4 hours
+
 SuppFig6-SuppFig35 - 3 hours
+
 SuppTab1 - Instant
+
 SuppTab2 - 23 hours
+
 SuppTab3 - Instant
+
 SuppTab4 - Instant
