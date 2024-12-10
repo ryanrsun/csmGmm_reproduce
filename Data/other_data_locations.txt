@@ -1,29 +1,29 @@
 Larger summary statistic datasets we used can be found at:
 
-Three Outcome Summary Statistics - https://www.dropbox.com/scl/fi/c5ftmij2hsuw45mxlfsk8/bmi_with_overall.txt?rlkey=ztdjk8jja1076p1eo1dzdq6zh&st=y2rs6ed8&dl=0
+Three Outcome Summary Statistics - https://odin.mdacc.tmc.edu/~rsun3/bmi_with_overall.txt
 
 The Three Outcome Summary Statistics are harmonized and cleaned summary statistics used to perform the three-way and two-way pleiotropy analyses in the manuscript. They contain summary statistics for lung cancer, coronary artery disease (CAD), and BMI. Please see manuscript for more details.
 
-CAD Only Summary Statistics - https://www.dropbox.com/scl/fi/bl3j9afhwnaxoydpvio0h/cad_for_replication.txt?rlkey=4c4tt8oo3csnu785qspadzduu&st=yr7kafvn&dl=0
+CAD Only Summary Statistics - https://odin.mdacc.tmc.edu/~rsun3/cad_for_replication.txt
 
 The CAD Only Summary Statistics hold only summary statistics for coronary artery disease from the UK Biobank and the CARDIoGRAMplusC4D Consortium. They are used for replication analysis of CAD risk SNPs.
 
-LC Only Summary Statistics - https://www.dropbox.com/scl/fi/pszo9ojmsod5wv4rh3sx4/replication_with_lcoverall.txt?rlkey=exwjwbc9e4olk44xgh19xnjnz&st=2oo3mauy&dl=0
+LC Only Summary Statistics - https://odin.mdacc.tmc.edu/~rsun3/replication_with_lcoverall.txt
 
 The Lung Cancer Only Summary statistics hold only summary statistics for lung cancer from the UK Biobank and the International Lung Cancer Consortium. They are used for replication analysis of lung cancer risk SNPs.
 
-Lung cancer TWAS summary statistics - https://www.dropbox.com/scl/fi/ftrbybngfat6y0fe3q1lc/scc_lung_addchr1.csv?rlkey=2gct1647k21k9uw9uqxwcrzxh&st=2jo3cmu8&dl=0
+Lung cancer TWAS summary statistics - https://odin.mdacc.tmc.edu/~rsun3/scc_lung_addchr1.csv
 
 These summary statistics test the association between gene expression in lung tissue and lung cancer.
 
-synthDat.txt - https://www.dropbox.com/scl/fi/l6dk45obfgh8uxxl3f67q/synthDat.txt?rlkey=3mzrf7a8oogcz30itp3voih6r&st=k0w364ka&dl=0
+synthDat.txt - https://odin.mdacc.tmc.edu/~rsun3/synthDat.txt
 
 This synthetic dataset is provided in place of the GTEx dataset, which we cannot provide for privacy reasons. This dataset can be used to run our code, but it will not reproduce the original results.
 
-cleanG_set1_dataset1.txt - https://www.dropbox.com/scl/fi/o6ts52z7sl37umxsq99k7/cleanG_set1_dataset1.txt?rlkey=hu6j5oav6deq0uh0dfkcog904&st=uf9v96sz&dl=0
+cleanG_set1_dataset1.txt - https://odin.mdacc.tmc.edu/~rsun3/cleanG_set1_dataset1.txt
 
 This synthetic genotype dataset is used in place of real datasets from the UK Biobank, which we cannot provide for privacy reasons. This dataset can be used to run our code, but it will not reproduce the original results.
 
-eqtl_results folder - https://www.dropbox.com/scl/fi/kbnmmsr82ybah3bg0l4kk/eqtl_results.zip?rlkey=rurppk5d80dxihge2emrzr17i&st=pp8owbdp&dl=0
+eqtl_results folder - https://odin.mdacc.tmc.edu/~rsun3/eqtl_results.zip
 
 The output in these folders is what would be produced if running the calculate_eqtl_stats_synthetic.R script with the original data (needed to produce Table 1). Since the original data cannot be shared without restrictions, we provide the output, which can be used in the rest of the Table 1 pipeline.
