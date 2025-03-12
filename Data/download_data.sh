@@ -10,4 +10,4 @@ wget "https://odin.mdacc.tmc.edu/~rsun3/synthDat.txt" -O synthDat.txt
 
 wget "https://odin.mdacc.tmc.edu/~rsun3/eqtl_results.zip" -O eqtl_results.zip      
 
-Wget "https://odin.mdacc.tmc.edu/~rsun3/cleanG_set1_dataset1.txt" -O cleanG_set1_dataset1.txt 
+wget "https://odin.mdacc.tmc.edu/~rsun3/cleanG_set1_dataset1.txt" -O cleanG_set1_dataset1.txt 
