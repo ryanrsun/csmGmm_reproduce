@@ -14,6 +14,7 @@ library(bindata)
 library(tidyverse)
 library(ks)
 library(csmGmm)
+library(locfdr)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)

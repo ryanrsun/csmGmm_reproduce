@@ -15,6 +15,7 @@ library(devtools)
 library(ks)
 library(csmGmm)
 library(here)
+library(locfdr)
 
 # record input - controls seed, parameters, etc.
 args <- commandArgs(trailingOnly=TRUE)
