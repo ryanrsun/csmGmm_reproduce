@@ -70,7 +70,7 @@ summary1d <- summarize_raw(res1d)
 
 # save summaries
 write.table(summary1a, paste0(outputDir, "/Fig1a_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
-write.table(summary1b, paste0(outputDir, "Fig1b_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
+write.table(summary1b, paste0(outputDir, "/Fig1b_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 write.table(summary1c, paste0(outputDir, "/Fig1c_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 write.table(summary1d, paste0(outputDir, "/Fig1d_summary.txt"), append=F,quote=F, row.names=F, col.names=T, sep='\t')
 
