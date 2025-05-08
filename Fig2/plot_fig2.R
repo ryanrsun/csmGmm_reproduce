@@ -71,7 +71,7 @@ for (q_it in 1:9) {
   tempResa <- res2a %>% filter(q == q_it)
   tempSummarya <- summarize_raw(tempResa)
   tempSummaryaName <- here::here(outputDir, paste0("Fig2a_power", q_it, "_summary.txt"))
-  write.table(tempSummarya, append=F, quote=F, row.names=F, col.names=T, sep='\t')
+  write.table(tempSummarya, tempSummaryaName, append=F, quote=F, row.names=F, col.names=T, sep='\t')
 
   tempResb <- res2b %>% filter(q == q_it)
   tempSummaryb <- summarize_raw(tempResb)
@@ -106,7 +106,7 @@ Fig2a_fixq <- Fig2a_fixq %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = factor(Method, levels=c("csmGmm", "DACT", "Kernel", "locfdr7df",
                                           "locfdr50df", "HDMT"))) %>%
-  rbind(., fread("Fig1c_summary.txt") %>% mutate(q = 0.1) %>% 
+  rbind(., fread(here::here("Fig1", "output", "Fig1c_summary.txt")) %>% mutate(q = 0.1) %>% 
         mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
         mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
         mutate(Method = ifelse(Method == "df50", "locfdr50df", Method))) %>%
@@ -164,7 +164,7 @@ Fig2b_fixq <- Fig2b_fixq %>%
   mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
   mutate(Method = factor(Method, levels=c("csmGmm", "DACT", "Kernel", "locfdr7df",
                                           "locfdr50df", "HDMT"))) %>%
-  rbind(., fread("Fig1d_summary.txt") %>% mutate(q = 0.1) %>%
+  rbind(., rbind(., fread(here::here("Fig1", "output", "Fig1d_summary.txt")) %>% mutate(q = 0.1) %>%
         mutate(Method = ifelse(Method == "New", "csmGmm", Method)) %>%
         mutate(Method = ifelse(Method == "df7", "locfdr7df", Method)) %>%
         mutate(Method = ifelse(Method == "df50", "locfdr50df", Method))) %>%
